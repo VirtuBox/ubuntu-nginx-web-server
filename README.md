@@ -46,14 +46,14 @@ sudo apt install mariadb-server
 ```
 wget -qO ee rt.cx/ee && bash ee
 ee stack install
-sudo wp --allow-root cli update --nightly
+
 ```
 
-**8) Install Composer and Fix phpmyadmin error 
+**8) Install Composer - Fix phpmyadmin and wp-cli errors 
 ```
 bash <(wget --no-check-certificate -O - https://git.virtubox.net/virtubox/debian-config/raw/master/composer.sh)
-ee stack install --phpmyadmin
 sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
+sudo wp --allow-root cli update --nightly
 ```
 
 
