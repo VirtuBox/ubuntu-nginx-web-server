@@ -49,7 +49,7 @@ ee stack install
 
 ```
 
-**8) Install Composer - Fix phpmyadmin and wp-cli errors 
+**8) Install Composer - Fix phpmyadmin and wp-cli errors**
 ```
 bash <(wget --no-check-certificate -O - https://git.virtubox.net/virtubox/debian-config/raw/master/composer.sh)
 sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
