@@ -13,7 +13,7 @@ apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 
 **2) Install useful packages**
 ```
-apt install haveged curl git unzip zip fail2ban htop
+sudo apt install haveged curl git unzip zip fail2ban htop -y
 ```
 
 **3) Tweak Kernel sysctl configuration**
@@ -38,8 +38,8 @@ Follow instructions available in my [KnowledgeBase article](https://kb.virtubox.
 ```
 curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
 | sudo bash -s -- --mariadb-server-version=10.2 --skip-maxscale
-apt update
-apt install mariadb-server
+sudo apt update
+sudo apt install mariadb-server
 ```
 
 **7) Install EasyEngine**
