@@ -46,7 +46,6 @@ sudo apt install mariadb-server
 ```
 wget -qO ee rt.cx/ee && bash ee
 ee stack install
-
 ```
 
 **8) Install Composer - Fix phpmyadmin and wp-cli errors**
