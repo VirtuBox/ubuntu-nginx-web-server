@@ -1,6 +1,7 @@
 # Ubuntu web server custom configuration with EasyEngine
 
-This is my initial web server configuration from scratch with EasyEngine, on a clean Ubuntu 16.04 LTS installation.
+This is step by step guide of my initial web server configuration with EasyEngine, on a clean Ubuntu 16.04 LTS installation.
+Do not hesitate to share your tips or configurations by opening an issue or with a pull request.
 
 --------
 
