@@ -31,7 +31,7 @@ newaliases
 bash <(curl -Ss https://my-netdata.io/kickstart-static64.sh) all
 ```
 
-**6) Install MariaDB 10.2**
+**6) Install MariaDB 10.2** <br>
 Follow instructions available in my [KnowledgeBase article](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/) 
 
 ```
