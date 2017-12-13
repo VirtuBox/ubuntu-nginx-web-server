@@ -21,7 +21,7 @@ apt install haveged curl git unzip zip fail2ban htop
 sysctl -e -p <(curl -Ss https://git.virtubox.net/virtubox/debian-config/raw/master/etc/sysctl.conf)
 ```
 
-**4) Set your email instead of root@localhost **
+**4) Set your email instead of root@localhost**
 ```
 echo "root: my.email@address.com" >> /etc/aliases
 newaliases
