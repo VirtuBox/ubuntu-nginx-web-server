@@ -55,6 +55,11 @@ sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
 sudo wp --allow-root cli update --nightly
 ```
 
+**9) Compile last Nginx mainline release with my [nginx-ee bash script](https://github.com/VirtuBox/nginx-ee)**
+
+```
+bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+```
 
 
 
