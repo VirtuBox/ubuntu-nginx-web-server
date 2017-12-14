@@ -46,20 +46,20 @@ sudo apt install mariadb-server
 ```
 wget -qO ee rt.cx/ee && bash ee
 ```
-**7) Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend **
+**8) Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend**
 ```
 ee stack install
 ee stack install --php7 --redis --admin --phpredisadmin
 ```
 
-**8) Install Composer - Fix phpmyadmin and wp-cli errors**
+**9) Install Composer - Fix phpmyadmin and wp-cli errors**
 ```
 bash <(wget --no-check-certificate -O - https://git.virtubox.net/virtubox/debian-config/raw/master/composer.sh)
 sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
 sudo wp --allow-root cli update --nightly
 ```
 
-**9) Compile last Nginx mainline release with my [nginx-ee bash script](https://github.com/VirtuBox/nginx-ee)**
+**10) Compile last Nginx mainline release with my [nginx-ee bash script](https://github.com/VirtuBox/nginx-ee)**
 
 ```
 bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
