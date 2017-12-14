@@ -65,5 +65,20 @@ sudo wp --allow-root cli update --nightly
 bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
 ```
 
+**11) Apply Nginx optimized configuration**
+```
+wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx.conf
+nginx -t
+service nginx reload
+```
+
+**12) Install certbot-nginx**
+```
+sudo apt-get install software-properties-common -y
+sudo add-apt-repository ppa:certbot/certbot -y
+sudo apt-get update
+sudo apt-get install python-certbot-nginx  -y
+```
+
 
 
