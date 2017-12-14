@@ -49,7 +49,7 @@ wget -qO ee rt.cx/ee && bash ee
 **7) Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend **
 ```
 ee stack install
-ee stack install --php7 --redis
+ee stack install --php7 --redis --admin --phpredisadmin
 ```
 
 **8) Install Composer - Fix phpmyadmin and wp-cli errors**
