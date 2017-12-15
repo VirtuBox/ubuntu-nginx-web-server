@@ -19,6 +19,7 @@ sudo apt install haveged curl git unzip zip fail2ban htop -y
 **3) Tweak Kernel sysctl configuration**
 ```
 sysctl -e -p <(curl -Ss https://git.virtubox.net/virtubox/debian-config/raw/master/etc/sysctl.conf)
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ```
 
 **4) Set your email instead of root@localhost**
