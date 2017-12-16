@@ -70,7 +70,7 @@ bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/ngin
 **11) Apply Nginx optimized configuration**
 ```
 wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx.conf
-wget -O /etc/nginx/nginx.conf  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/default
+wget -O /etc/nginx/sites-available/default  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/default
 wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/22222
 nginx -t
 service nginx reload
