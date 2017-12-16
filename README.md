@@ -20,6 +20,7 @@ sudo apt install haveged curl git unzip zip fail2ban htop -y
 ```
 sysctl -e -p <(curl -Ss https://git.virtubox.net/virtubox/debian-config/raw/master/etc/sysctl.conf)
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
+wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
 ```
 
 **4) Set your email instead of root@localhost**
