@@ -31,7 +31,7 @@ newaliases
 
 **5) Install netdata monitoring**
 ```
-bash <(curl -Ss https://my-netdata.io/kickstart-static64.sh) all
+bash <(curl -Ss https://my-netdata.io/kickstart.sh) all
 ```
 
 **6) Install MariaDB 10.2** <br>
