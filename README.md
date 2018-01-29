@@ -90,8 +90,6 @@ cd acme.sh
 --home ~/.acme.sh \
 --certhome  /etc/letsencrypt/acme.sh/certs \
 --accountemail  "hi@acme.sh" \
---accountkey  ~/myaccount.key \
---accountconf ~/myaccount.conf 
 ```
 
 **13) Issue a SSL certificate with Cloudflare API**  
