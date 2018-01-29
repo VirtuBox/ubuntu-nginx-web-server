@@ -89,7 +89,7 @@ cd acme.sh
 ./acme.sh --install  \
 --home ~/.acme.sh \
 --certhome  /etc/letsencrypt/acme.sh/certs \
---accountemail  "hi@acme.sh" \
+--accountemail  "hi@acme.sh" 
 ```
 
 **13) Issue a SSL certificate with Cloudflare API**  
