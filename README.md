@@ -29,10 +29,13 @@ echo "root: my.email@address.com" >> /etc/aliases
 newaliases
 ```
 
-**5) Install netdata monitoring**  
+**5) Install netdata monitoring and set custom settings**  
 ```
 bash <(curl -Ss https://my-netdata.io/kickstart.sh) all
+wget -O /etc/netdata/health_alarm_notify.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/netdata/health_alarm_notify.conf
+wget -O /etc/netdata/python.d/phpfpm.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/netdata/python.d/phpfpm.conf
 ```
+
 
 **6) Install MariaDB 10.2**   
 Follow instructions available in my [KnowledgeBase article](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/) 
