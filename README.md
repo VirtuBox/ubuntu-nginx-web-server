@@ -116,7 +116,7 @@ Issue a cert
 # domain
 acme.sh  --issue  -d example.com  --dns dns_cf
 # domain + www
-acme.sh  --issue  -d example.com  --dns dns_cf  -d www.example.com -d dev.example.com
+acme.sh  --issue  -d example.com  --dns dns_cf  -d www.example.com
 # SAN mode
 acme.sh  --issue  -d example.com  --dns dns_cf  -d www.example.com -d dev.example.com
 ```
