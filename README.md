@@ -16,30 +16,20 @@ apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 sudo apt install haveged curl git unzip zip fail2ban htop -y
 ```
 
-**3) Add custom configuration for fail2ban**
-```
-wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf
-wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf
-wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf
-wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf
-
-fail2ban-client reload
-```
-
-**4) Tweak Kernel sysctl configuration**  
+**3) Tweak Kernel sysctl configuration**  
 ```
 sysctl -e -p <(curl -Ss https://git.virtubox.net/virtubox/debian-config/raw/master/etc/sysctl.conf)
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
 ```
 
-**5) Set your email instead of root@localhost**  
+**4) Set your email instead of root@localhost**  
 ```
 echo "root: my.email@address.com" >> /etc/aliases
 newaliases
 ```
 
-**6) Install netdata monitoring and set custom settings**  
+**5) Install netdata monitoring and set custom settings**  
 ```
 bash <(curl -Ss https://my-netdata.io/kickstart.sh) all
 wget -O /etc/netdata/health_alarm_notify.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/netdata/health_alarm_notify.conf
@@ -47,7 +37,7 @@ wget -O /etc/netdata/python.d/phpfpm.conf https://raw.githubusercontent.com/Virt
 ```
 
 
-**7) Install MariaDB 10.2**   
+**6) Install MariaDB 10.2**   
 Follow instructions available in my [KnowledgeBase article](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/) 
 
 ```
@@ -57,14 +47,24 @@ sudo apt update
 sudo apt install mariadb-server
 ```
 
-**8) Install EasyEngine**  
+**7) Install EasyEngine**  
 ```
 wget -qO ee rt.cx/ee && bash ee
 ```
-**9) Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend**  
+**8) Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend**  
 ```
 ee stack install
 ee stack install --php7 --redis --admin --phpredisadmin
+```
+
+**9) Add custom configuration for fail2ban**
+```
+wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf
+wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf
+wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf
+wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf
+
+fail2ban-client reload
 ```
 
 **10) Install Composer - Fix phpmyadmin and wp-cli errors**  
