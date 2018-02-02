@@ -32,7 +32,15 @@ newaliases
 **5) Install netdata monitoring and set custom settings**  
 ```
 bash <(curl -Ss https://my-netdata.io/kickstart.sh) all
+
+# save 40-60% of netdata memory
+echo 1 >/sys/kernel/mm/ksm/run
+echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
+
+# disable email notifications
 wget -O /etc/netdata/health_alarm_notify.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/netdata/health_alarm_notify.conf
+
+# set custom php-fpm status URL
 wget -O /etc/netdata/python.d/phpfpm.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/netdata/python.d/phpfpm.conf
 ```
 
