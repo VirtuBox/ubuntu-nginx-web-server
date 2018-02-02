@@ -104,12 +104,12 @@ wget -O -  https://get.acme.sh | sh
 Or 
 ```
 apt-get install openssl cron  netcat-openbsd  curl
-mkdir -p /etc/letsencrypt/acme.sh/certs
+mkdir -p /var/www/acme.sh/certs
 git clone https://github.com/Neilpang/acme.sh.git
 cd acme.sh
 ./acme.sh --install  \
 --home ~/.acme.sh \
---certhome  /etc/letsencrypt/acme.sh/certs \
+--certhome  /var/www/acme.sh/certs \
 --accountemail  "hi@acme.sh" 
 ```
 
