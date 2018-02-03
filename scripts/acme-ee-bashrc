@@ -1,0 +1,46 @@
+# bashrc functions to install your ssl certificate with easyengine
+domain-acme-install ()
+{
+read -p "Enter your domain name: " domain_name
+
+cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    ssl on;
+    ssl_certificate     /var/www/acme.sh/certs/$domain_name/fullchain.cer;
+    ssl_certificate_key     /var/www/acme.sh/certs/$domain_name/$domain_name.key; 
+EOF
+cat <<EOF >/etc/nginx/conf.d/$domain_name-forcessl.conf
+server {
+	listen 80;
+    listen [::]:80;
+	server_name $domain_name www.$domain_name;
+	return 301 https://$domain_name$request_uri;
+}
+EOF
+nginx -t
+service nginx reload
+}
+
+subdomain-acme-install ()
+{
+read -p "Enter your sub-domain name: " domain_name
+
+cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    ssl on;
+    ssl_certificate     /var/www/acme.sh/certs/$domain_name/fullchain.cer;
+    ssl_certificate_key     /var/www/acme.sh/certs/$domain_name/$domain_name.key; 
+EOF
+cat <<EOF >/etc/nginx/conf.d/$domain_name-forcessl.conf
+server {
+	listen 80;
+    listen [::]:80;
+	server_name $domain_name;
+	return 301 https://$domain_name$request_uri;
+}
+EOF
+nginx -t
+service nginx reload
+}
