@@ -100,36 +100,6 @@ service nginx reload
 **13) Install acme.sh v2**  
 ```
 wget -O -  https://get.acme.sh | sh
+sudo source ~/.bashrc 
 ```
-Or 
-```
-apt-get install openssl cron  netcat-openbsd  curl
-mkdir -p /var/www/acme.sh/certs
-git clone https://github.com/Neilpang/acme.sh.git
-cd acme.sh
-./acme.sh --install  \
---home ~/.acme.sh \
---certhome  /var/www/acme.sh/certs \
---accountemail  "hi@acme.sh" 
-```
-
-**14) Issue a SSL certificate with Cloudflare API**  
-Set your email and API key settings
-```
-export CF_Key="sdfsdfsdfljlbjkljlkjsdfoiwje"
-export CF_Email="hi@acme.sh"
-```
-Issue a cert
-```
-# domain
-acme.sh  --issue  -d example.com  --dns dns_cf
-# domain + www
-acme.sh  --issue  -d example.com  --dns dns_cf  -d www.example.com
-# SAN mode
-acme.sh  --issue  -d example.com  --dns dns_cf  -d www.example.com -d dev.example.com
-```
-
-
-
-
 
