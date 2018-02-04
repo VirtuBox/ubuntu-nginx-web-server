@@ -40,8 +40,6 @@ echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
 # disable email notifications
 wget -O /etc/netdata/health_alarm_notify.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/netdata/health_alarm_notify.conf
 
-# set custom php-fpm status URL
-wget -O /etc/netdata/python.d/phpfpm.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/netdata/python.d/phpfpm.conf
 ```
 
 
