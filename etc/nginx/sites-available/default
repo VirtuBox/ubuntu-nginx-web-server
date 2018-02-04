@@ -60,6 +60,14 @@ location /nginx_status {
   deny all;
 }
 
+# phpfpm pool monitoring
+location ~ ^/(status|ping) {
+  include fastcgi_params;
+  fastcgi_pass php7;
+  include common/acl.conf;
+}
+
+
 
 	# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
 	#
