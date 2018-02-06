@@ -62,6 +62,12 @@ wget -qO ee rt.cx/ee && bash ee
 ee stack install
 ee stack install --php7 --redis --admin --phpredisadmin
 ```
+**9) Set custom conf for php**
+```
+# PHP 7.0 CLI & FPM
+wget -O /etc/php/7.0/cli/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.0/cli/php.ini
+wget -O /etc/php/7.0/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.0/fpm/php.ini
+```
 
 **9) Add custom configuration for fail2ban**
 ```
