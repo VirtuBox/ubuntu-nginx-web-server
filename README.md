@@ -88,9 +88,18 @@ bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/ngin
 
 **12) Apply Nginx optimized configuration**  
 ```
+
+# TLSv1.2 TLSv1.3 only
 wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx.conf
+
+# Cloudflare compatible
+wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx-cloudflare.conf
+
+# custom conf for netdata
 wget -O /etc/nginx/sites-available/default  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/default
+
 wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/22222
+
 nginx -t
 service nginx reload
 ```
