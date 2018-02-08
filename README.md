@@ -18,7 +18,8 @@ sudo apt install haveged curl git unzip zip fail2ban htop -y
 
 **3) Tweak Kernel sysctl configuration**  
 ```
-sysctl -e -p <(curl -Ss https://git.virtubox.net/virtubox/debian-config/raw/master/etc/sysctl.conf)
+wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/sysctl.conf
+sysctl -p
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
 ```
