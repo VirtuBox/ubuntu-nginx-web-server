@@ -13,7 +13,7 @@ apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 
 **2) Install useful packages**  
 ```
-sudo apt install haveged curl git unzip zip fail2ban htop -y
+sudo apt install haveged curl git unzip zip fail2ban python-pip python-setuptools htop -y
 ```
 
 **3) Tweak Kernel sysctl configuration**  
