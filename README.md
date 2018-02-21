@@ -30,6 +30,24 @@ echo "root: my.email@address.com" >> /etc/aliases
 newaliases
 ```
 
+**5) Install cheat**
+```
+pip install cheat
+```
+usage : cheat command  
+example : 
+```
+~# cheat cat
+# Display the contents of a file
+cat /path/to/foo
+
+# Display contents with line numbers
+cat -n /path/to/foo
+
+# Display contents with line numbers (blank lines excluded)
+cat -b /path/to/foo
+```
+
 **5) Install netdata monitoring and set custom settings**  
 ```
 bash <(curl -Ss https://my-netdata.io/kickstart.sh) all
@@ -110,7 +128,6 @@ wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/Virtu
 nginx -t
 service nginx reload
 ```
-
 **13) Install acme.sh v2**  
 ```
 wget -O -  https://get.acme.sh | sh
