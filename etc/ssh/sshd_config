@@ -1,0 +1,31 @@
+#Port 22
+
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+PermitRootLogin without-password
+AllowUsers root
+
+PubkeyAuthentication yes
+
+AuthorizedKeysFile      %h/.ssh/authorized_keys
+
+PasswordAuthentication no
+PermitEmptyPasswords no
+
+ChallengeResponseAuthentication no
+
+UsePAM yes
+
+X11Forwarding yes
+
+#PrintMotd no
+
+# Allow client to pass locale environment variables
+AcceptEnv LANG LC_*
+
+# override default of no subsystems
+Subsystem sftp /usr/lib/openssh/sftp-server
+
+KexAlgorithms curve25519-sha256@libssh.org
+Ciphers chacha20-poly1305@openssh.com
+MACs umac-128-etm@openssh.com,umac-128@openssh.com
