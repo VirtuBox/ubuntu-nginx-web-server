@@ -12,7 +12,7 @@ Custom server configuration with EasyEngine on Ubuntu 16.04 LTS
 apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 ```
 
-** Install useful packages**  
+**Install useful packages**  
 ```
 sudo apt install haveged curl git unzip zip fail2ban python-pip python-setuptools htop -y
 ```
@@ -98,9 +98,16 @@ wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-
 # Cloudflare compatible
 wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx-cloudflare.conf
 
+```
+**custom nginx conf**  
+```
 # custom conf for netdata
 wget -O /etc/nginx/sites-available/default  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/default
 
+# add netdata, php7.1 and php7.2 upstream
+wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/conf.d/upstream.conf
+
+# add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
 wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/22222
 
 nginx -t
