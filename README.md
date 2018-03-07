@@ -27,7 +27,7 @@ wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubu
 
 **Set your email instead of root@localhost**  
 ```
-echo "root: my.email@address.com" >> /etc/aliases
+echo 'root: my.email@address.com' >> /etc/aliases
 newaliases
 ```
 
