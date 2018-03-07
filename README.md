@@ -25,12 +25,6 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
 ```
 
-**Set your email instead of root@localhost**  
-```
-echo 'root: my.email@address.com' >> /etc/aliases
-newaliases
-```
-
 ----
 
 ## EasyEngine Setup
@@ -54,6 +48,12 @@ wget -qO ee rt.cx/ee && bash ee
 ```
 ee stack install
 ee stack install --php7 --redis --admin --phpredisadmin
+```
+
+**Set your email instead of root@localhost**  
+```
+echo 'root: my.email@address.com' >> /etc/aliases
+newaliases
 ```
 
 **Install Composer - Fix phpmyadmin and wp-cli errors**  
