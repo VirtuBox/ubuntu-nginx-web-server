@@ -95,8 +95,11 @@ fail2ban-client reload
 # TLSv1.2 TLSv1.3 only
 wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx.conf
 
-# Cloudflare compatible
-wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx-cloudflare.conf
+# TLS intermediate
+wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx-intermediate.conf
+
+# TLSv1.2 only
+wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx-tlsv12.conf
 
 ```
 **custom nginx conf**  
