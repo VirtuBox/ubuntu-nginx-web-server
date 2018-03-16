@@ -63,6 +63,11 @@ sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
 sudo wp --allow-root cli update --nightly
 ```
 
+**Allow ssh access for www-data for SFTP usage**
+```
+usermod -s /bin/bash www-data
+```
+
 **Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)**  
 
 ```
