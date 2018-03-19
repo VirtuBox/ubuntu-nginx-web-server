@@ -1,7 +1,7 @@
 # .bashrc functions to automate ssl certificate installation with acme.sh
 # 
 
-ssl-ee-domain ()
+ee-ssl-www ()
 {
 read -p "Enter your domain name: " domain_name
 
@@ -10,7 +10,7 @@ if [ ! -f ~/.acme.sh/acme.sh ]; then
 wget -O -  https://get.acme.sh | sh
 fi
 
-~/.acme.sh/acme.sh --issue -d $domain_name -d www.$domain_name  --keylength ec-384 --dns  dns_cf --dnssleep 60
+~/.acme.sh/acme.sh --issue -d $domain_name -d www.$domain_name --keylength ec-384 --standalone --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 
 if [ ! -f /var/www/$domain_name/conf/nginx/ssl.conf ]; then
 
@@ -28,9 +28,9 @@ fi
 # create folder to store certificate
 mkdir -p /etc/nginx/acme.sh/$domain_name
 
-if [ ! -f /etc/nginx/conf.d/$domain_name-forcessl.conf ]; then
+if [ ! -f /etc/nginx/conf.d/force-ssl-$domain_name.conf ]; then
 # add the redirection from http to https
-cat <<EOF >/etc/nginx/conf.d/$domain_name-forcessl.conf
+cat <<EOF >/etc/nginx/conf.d/force-ssl-$domain_name.conf
 server {
 	listen 80;
     listen [::]:80;
@@ -49,7 +49,7 @@ acme.sh --install-cert -d $domain_name --ecc \
 
 }
 
-ssl-ee-subdomain ()
+ee-ssl-sub ()
 {
 read -p "Enter your sub-domain name: " domain_name
 
@@ -58,7 +58,7 @@ wget -O -  https://get.acme.sh | sh
 fi
 
 # issue cert
-~/.acme.sh/acme.sh --issue -d $domain_name --keylength ec-384 --dns  dns_cf --dnssleep 60
+~/.acme.sh/acme.sh --issue -d $domain_name --keylength ec-384 --standalone --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 
 # create folder to store certificate
 mkdir -p /etc/nginx/acme.sh/$domain_name
@@ -75,9 +75,9 @@ cat <<EOF >/var/www/$domain_name/conf/nginx/ssl.conf
 EOF
 fi
 
-if [ ! -f /etc/nginx/conf.d/$domain_name-forcessl.conf ]; then
+if [ ! -f /etc/nginx/conf.d/force-ssl-$domain_name.conf ]; then
 # add the redirection from http to https
-cat <<EOF >/etc/nginx/conf.d/$domain_name-forcessl.conf
+cat <<EOF >/etc/nginx/conf.d/force-ssl-$domain_name.conf
 server {
 	listen 80;
     listen [::]:80;
