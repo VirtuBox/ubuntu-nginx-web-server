@@ -118,6 +118,12 @@ wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuB
 # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
 wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/22222
 
+# new nginx rules for wordpress with DoS attack fix and webp support 
+# php7
+wget -O /etc/nginx/common/wpcommon-php7.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php7.conf
+# php7.1
+wget -O /etc/nginx/common/wpcommon-php71.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php71.conf
+
 nginx -t
 service nginx reload
 ```
