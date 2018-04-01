@@ -1,4 +1,5 @@
-#Port 22
+# Use a custom port in the following range : 1024-65536
+Port 22
 
 #Prefer ed25519 & ECDSA keys rather than 2048 bit RSA
 HostKey /etc/ssh/ssh_host_ecdsa_key
