@@ -25,6 +25,11 @@ wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx
 sysctl -p
 wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
 ```
+**Harden SSH Security** [sshd_config](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
+```
+wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/ssh/sshd_config
+```
+
 **disable transparent hugepage for redis**
 ```
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
