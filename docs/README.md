@@ -17,13 +17,21 @@ apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 ```
 sudo apt install haveged curl git unzip zip fail2ban python-pip python-setuptools htop -y
 ```
-
-**Tweak Kernel sysctl configuration**  
+  
+**Tweak Kernel sysctl.conf** [sysctl.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf) 
 ```
 wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/sysctl.conf
 sysctl -p
-echo never > /sys/kernel/mm/transparent_hugepage/enabled
+```
+  
+**Increase open files limits** : [limits.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf)
+```
 wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
+```
+  
+**disable transparent hugepage for redis**
+```
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ```
 
 ----
