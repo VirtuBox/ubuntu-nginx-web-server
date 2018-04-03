@@ -117,9 +117,9 @@ wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-
 wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx-tlsv12.conf
 
 ```
-**custom nginx conf**  
+**nginx configuration for netdata & new upstreams**  
 ```
-# custom conf for netdata
+# custom conf for netdata metrics (php-fpm & nginx status pages)
 wget -O /etc/nginx/sites-available/default  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/default
 
 # add netdata, php7.1 and php7.2 upstream
@@ -127,8 +127,14 @@ wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuB
 
 # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
 wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/22222
+```
 
-# new nginx rules for wordpress with DoS attack fix and webp support 
+**php7 common configurations for wordpress with webp support harden security**  
+```
+# add webp mapping 
+wget /etc/nginx/conf.d/webp.conf -O https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/conf.d/webp.conf
+
+# new wpcommon nginx configuraitons for wordpress with DoS attack fix and webp support 
 # php7
 wget -O /etc/nginx/common/wpcommon-php7.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php7.conf
 # php7.1
