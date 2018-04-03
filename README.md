@@ -1,3 +1,4 @@
+
 # Ubuntu custom configuration with EasyEngine
 
 Custom server configuration with EasyEngine on Ubuntu 16.04 LTS
@@ -16,13 +17,22 @@ apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 ```
 sudo apt install haveged curl git unzip zip fail2ban python-pip python-setuptools htop -y
 ```
-
-**Tweak Kernel sysctl configuration**  
+  
+**Tweak Kernel** [sysctl.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf) &
+**Increase open files limits** : [limits.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf)
 ```
 wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/sysctl.conf
 sysctl -p
-echo never > /sys/kernel/mm/transparent_hugepage/enabled
 wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
+```
+**Harden SSH Security** [sshd_config](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
+```
+wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/ssh/sshd_config
+```
+
+**disable transparent hugepage for redis**
+```
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ```
 
 ----
@@ -107,9 +117,9 @@ wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-
 wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx-tlsv12.conf
 
 ```
-**custom nginx conf**  
+**nginx configuration for netdata & new upstreams**  
 ```
-# custom conf for netdata
+# custom conf for netdata metrics (php-fpm & nginx status pages)
 wget -O /etc/nginx/sites-available/default  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/default
 
 # add netdata, php7.1 and php7.2 upstream
@@ -117,8 +127,14 @@ wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuB
 
 # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
 wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/22222
+```
 
-# new nginx rules for wordpress with DoS attack fix and webp support 
+**php7 common configurations for wordpress with webp support harden security**  
+```
+# add webp mapping 
+wget /etc/nginx/conf.d/webp.conf -O https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/conf.d/webp.conf
+
+# new wpcommon nginx configuraitons for wordpress with DoS attack fix and webp support 
 # php7
 wget -O /etc/nginx/common/wpcommon-php7.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php7.conf
 # php7.1
@@ -167,4 +183,3 @@ cat -n /path/to/foo
 # Display contents with line numbers (blank lines excluded)
 cat -b /path/to/foo
 ```
-
