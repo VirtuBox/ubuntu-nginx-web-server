@@ -150,7 +150,7 @@ service nginx reload
 **Install acme.sh v2**  
 ```
 wget -O -  https://get.acme.sh | sh
-sudo source ~/.bashrc 
+source ~/.bashrc 
 ```
 
 **Install netdata monitoring and set custom settings**  
