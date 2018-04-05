@@ -132,7 +132,7 @@ wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/Virtu
 **php7 common configurations for wordpress with webp support harden security**  
 ```
 # add webp mapping 
-wget /etc/nginx/conf.d/webp.conf -O https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/conf.d/webp.conf
+wget -O /etc/nginx/conf.d/webp.conf  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/conf.d/webp.conf
 
 # new wpcommon nginx configuraitons for wordpress with DoS attack fix and webp support 
 # php7
