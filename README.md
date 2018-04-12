@@ -73,6 +73,34 @@ sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
 sudo wp --allow-root cli update --nightly
 ```
 
+**Install php7.1-fpm & php7.2-fpm**    
+  
+  php7.1-fpm
+```bash
+apt update && apt install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
+php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y
+
+wget -O /etc/php/7.1/fpm/pool.d/www.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.1/fpm/pool.d/www.conf
+service php7.1-fpm restart
+```
+php7.2-fpm
+```
+apt update && apt install php7.2-fpm php7.2-xml php7.2-bz2  php7.2-zip php7.2-mysql  php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
+
+wget -O /etc/php/7.2/fpm/pool.d/www.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.2/fpm/pool.d/www.conf
+service php7.2-fpm restart
+```
+add nginx upstreams
+```
+wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/conf.d/upstream.conf
+service nginx reload
+```
+add ee common configuration 
+```
+cd /etc/nginx/common || exit
+wget https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/common.zip
+unzip common.zip
+```
 **Allow ssh access for www-data for SFTP usage**
 ```
 usermod -s /bin/bash www-data
