@@ -15,7 +15,7 @@ apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 
 **Install useful packages**  
 ```
-sudo apt install haveged curl git unzip zip fail2ban python-pip python-setuptools htop -y
+sudo apt install haveged curl git unzip zip fail2ban htop -y
 ```
   
 **Tweak Kernel** [sysctl.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf) &
@@ -147,13 +147,15 @@ service nginx reload
 
 ## Optional tools
 
-**Install acme.sh v2**  
+### Acme.sh 
+[Github repository](https://github.com/Neilpang/acme.sh) 
 ```
 wget -O -  https://get.acme.sh | sh
 source ~/.bashrc 
 ```
 
-**Install netdata monitoring and set custom settings**  
+### netdata 
+[Github repository](https://github.com/firehol/netdata)
 ```
 bash <(curl -Ss https://my-netdata.io/kickstart.sh) all
 
@@ -166,20 +168,30 @@ wget -O /etc/netdata/health_alarm_notify.conf https://raw.githubusercontent.com/
 
 ```
 
-**Install cheat**
-```
-pip install cheat
+### bash-snippets
+[Github repository](https://github.com/alexanderepstein/Bash-Snippets)
+```bash 
+sudo add-apt-repository ppa:navanchauhan/bash-snippets
+sudo apt update
+sudo apt install bash-snippets
 ```
 usage : cheat command  
-example : 
-```
-~# cheat cat
-# Display the contents of a file
-cat /path/to/foo
 
-# Display contents with line numbers
-cat -n /path/to/foo
+```bash
+root@vps:~ cheat cat
+# cat
 
-# Display contents with line numbers (blank lines excluded)
-cat -b /path/to/foo
+# Print and concatenate files.
+
+# Print the contents of a file to the standard output:
+  cat file
+
+# Concatenate several files into the target file:
+  cat file1 file2 > target_file
+
+# Append several files into the target file:
+  cat file1 file2 >> target_file
+
+# Number all output lines:
+  cat -n file
 ```
