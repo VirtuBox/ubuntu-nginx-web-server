@@ -122,7 +122,7 @@ wget -O /etc/php/7.0/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubun
 service php7.0-fpm restart
 
 # PHP 7.1
-wget -O /etc/php/7.1/fpm/php.ini https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/php/7.1/fpm/php.ini
+wget -O /etc/php/7.1/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.1/fpm/php.ini
 service php7.1-fpm restart
 
 # PHP 7.2
