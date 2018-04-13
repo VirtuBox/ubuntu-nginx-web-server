@@ -115,11 +115,19 @@ bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/ngin
 
 ## Custom configurations
 
-**php7.0-fpm conf**
+**php-fpm conf**
 ```
-# PHP 7.0 CLI & FPM
-wget -O /etc/php/7.0/cli/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.0/cli/php.ini
+# PHP 7.0 
 wget -O /etc/php/7.0/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.0/fpm/php.ini
+service php7.0-fpm restart
+
+# PHP 7.1
+wget -O /etc/php/7.1/fpm/php.ini https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/php/7.1/fpm/php.ini
+service php7.1-fpm restart
+
+# PHP 7.2
+wget -O /etc/php/7.2/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.2/fpm/php.ini
+service php7.2-fpm restart
 ```
 
 **Addtional jails for fail2ban**
