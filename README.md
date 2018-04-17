@@ -66,7 +66,8 @@ wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuB
 fail2ban-client reload
 ```
 
-**UFW** [Knowledgebase article](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
+**UFW** Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
+
 ```
 # enable ufw log - allow outgoing - deny incoming 
 ufw logging on
@@ -94,9 +95,7 @@ ufw enable
 
 ## EasyEngine Setup
 
-**Install MariaDB 10.2**  
- 
-Follow instructions available in my [KnowledgeBase article](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/) 
+**Install MariaDB 10.2** Instructions available in   [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/) 
 
 ```
 curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
@@ -138,16 +137,16 @@ usermod -s /bin/bash www-data
 
 **Install php7.1-fpm & php7.2-fpm**    
   
-  php7.1-fpm
+
 ```bash
+# php7.1-fpm
 apt update && apt install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
 php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
 
 wget -O /etc/php/7.1/fpm/pool.d/www.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.1/fpm/pool.d/www.conf
 service php7.1-fpm restart
-```
-php7.2-fpm
-```
+
+# php7.2-fpm
 apt update && apt install php7.2-fpm php7.2-xml php7.2-bz2  php7.2-zip php7.2-mysql  php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
 
 wget -O /etc/php/7.2/fpm/pool.d/www.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.2/fpm/pool.d/www.conf
@@ -218,6 +217,7 @@ wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/Virtu
 * webp rewrite rules added
 * DoS attack CVE fix added
 * php7.1 & php7.2 configuration added
+
 ```
 # 1) add webp mapping 
 wget -O /etc/nginx/conf.d/webp.conf  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/conf.d/webp.conf
@@ -288,3 +288,5 @@ root@vps:~ cheat cat
 # Number all output lines:
   cat -n file
 ```
+
+Published & maintained by [VirtuBox](https://virtubox.net)
