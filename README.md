@@ -13,7 +13,7 @@
 
 ----
 
-Each link in step title point to the file
+Configuration files with comments and informations available by following the link **source**
 
 ## Initial configuration
 
