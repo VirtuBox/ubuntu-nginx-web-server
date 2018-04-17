@@ -1,9 +1,19 @@
 
-# Ubuntu custom configuration with EasyEngine
-
-Custom server configuration with EasyEngine on Ubuntu 16.04 LTS
+# Ubuntu optimized configuration with EasyEngine
+----
+## Server Stack :
+* Nginx 1.13x
+* PHP-FPM 7/7.1/7.2
+* MariaDB 10.2
+* REDIS 4.0
+* Memcached
+* Fail2ban 
+* Netdata 
+* UFW 
 
 ----
+
+Each link in step title point to the file
 
 ## Initial configuration
 
@@ -18,22 +28,67 @@ apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 sudo apt install haveged curl git unzip zip fail2ban htop -y
 ```
   
-**Tweak Kernel** [sysctl.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf) &
-**Increase open files limits** : [limits.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf)
+**Tweak Kernel** [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf) &
+**Increase open files limits**  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf)
 ```
 wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/sysctl.conf
 sysctl -p
 wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
 ```
-**Harden SSH Security** [sshd_config](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
-```
-wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/ssh/sshd_config
-```
-
 **disable transparent hugepage for redis**
 ```
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ```
+
+## Security 
+----
+
+**Harden SSH Security**  
+WARNING : SSH Configuration with root login allowed with ed25519 & ECDSA SSH keys only  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
+```
+wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/ssh/sshd_config
+```
+
+**Custom jails for fail2ban**
+
+* wordpress bruteforce
+* ssh 
+* recidive (after 3 bans)
+* backend http auth 
+* nginx bad bots 
+
+```
+wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf
+wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf
+wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf
+wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf
+
+fail2ban-client reload
+```
+
+**UFW** [Knowledgebase article](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
+```
+# enable ufw log - allow outgoing - deny incoming 
+ufw logging on
+ufw default allow outgoing
+ufw default deny incoming
+
+# SSH - DNS - HTTP/S - FTP - NTP - SNMP - Librenms - Netdata - EE Backend  
+ufw allow 22
+ufw allow 53
+ufw allow http
+ufw allow https
+ufw allow 21
+ufw allow 123
+ufw allow 161
+ufw allow 6556
+ufw allow 19999
+ufw allow 22222
+
+# enable UFW
+ufw enable
+```
+
 
 ----
 
@@ -66,19 +121,27 @@ echo 'root: my.email@address.com' >> /etc/aliases
 newaliases
 ```
 
-**Install Composer - Fix phpmyadmin and wp-cli errors**  
+**Install Composer - Fix phpmyadmin install issue**  
 ```
-bash <(wget --no-check-certificate -O - https://git.virtubox.net/virtubox/debian-config/raw/master/composer.sh)
+cd ~/
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/bin/composer
 sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
-sudo wp --allow-root cli update --nightly
 ```
+
+**Allow shell for www-data for SFTP usage**
+```
+usermod -s /bin/bash www-data
+```
+
+## PHP 7.1 & 7.2 Setup 
 
 **Install php7.1-fpm & php7.2-fpm**    
   
   php7.1-fpm
 ```bash
 apt update && apt install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
-php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y
+php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
 
 wget -O /etc/php/7.1/fpm/pool.d/www.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.1/fpm/pool.d/www.conf
 service php7.1-fpm restart
@@ -101,11 +164,6 @@ cd /etc/nginx/common || exit
 wget https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/common.zip
 unzip common.zip
 ```
-**Allow ssh access for www-data for SFTP usage**
-```
-usermod -s /bin/bash www-data
-```
-
 **Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)**  
 
 ```
@@ -115,7 +173,7 @@ bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/ngin
 
 ## Custom configurations
 
-**php-fpm conf**
+**clean php-fpm php.ini configurations**
 ```
 # PHP 7.0 
 wget -O /etc/php/7.0/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.0/fpm/php.ini
@@ -130,15 +188,6 @@ wget -O /etc/php/7.2/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubun
 service php7.2-fpm restart
 ```
 
-**Addtional jails for fail2ban**
-```
-wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf
-wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf
-wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf
-wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf
-
-fail2ban-client reload
-```
 
 **Nginx optimized configurations**  
 ```
@@ -165,16 +214,24 @@ wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuB
 wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/22222
 ```
 
-**php7 common configurations for wordpress with webp support harden security**  
+**wpcommon-php7x configurations**  
+* webp rewrite rules added
+* DoS attack CVE fix added
+* php7.1 & php7.2 configuration added
 ```
-# add webp mapping 
+# 1) add webp mapping 
 wget -O /etc/nginx/conf.d/webp.conf  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/conf.d/webp.conf
 
-# new wpcommon nginx configuraitons for wordpress with DoS attack fix and webp support 
+# 2) wpcommon files 
+
 # php7
 wget -O /etc/nginx/common/wpcommon-php7.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php7.conf
+
 # php7.1
 wget -O /etc/nginx/common/wpcommon-php71.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php71.conf
+
+# php7.2
+wget -O /etc/nginx/common/wpcommon-php72.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php72.conf
 
 nginx -t
 service nginx reload

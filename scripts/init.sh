@@ -1,5 +1,62 @@
 #!/bin/bash
 
+CSI="\\033["
+CEND="${CSI}0m"
+CRED="${CSI}1;31m"
+CGREEN="${CSI}1;32m"
+
+# Check if user is root
+if [ "$(id -u)" != "0" ]; then
+    echo "Error: You must be root to run this script, please use the root user to install the software."
+    exit 1
+fi
+
+clear
+
+# additionals modules choice
+
+echo ""
+echo "Welcome to the nginx-ee bash script."
+echo ""
+
+echo ""
+echo "Do you want to install ProFTPd ? (y/n)"
+read -r proftpd
+echo ""
+echo "What ssh port do you want to use ?"
+read -r ssh_port_custom
+
+
+  sed -i "s/Port.*/Port ${ssh_port_custom}/" /etc/ssh/sshd_config
+
+
+ufw logging on
+ufw default allow outgoing
+ufw default deny incoming
+ufw allow "${ssh_port_custom}"
+ufw allow 53
+ufw allow http
+ufw allow https
+ufw allow 21
+
+ufw allow 123
+ufw allow 161
+ufw allow 6556
+ufw allow 19999
+ufw allow 22222
+
+if [ "$proftpd" = "y" ]
+then
+	sudo apt-get install proftpd 
+   #RequireValidShell
+   #DefaultRoot
+   sudo systemctl restart proftpd
+else
+	ngx_naxsi=""
+fi
+
+ufw enable
+
 apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 
 sudo apt install haveged curl git unzip zip fail2ban htop -y
@@ -15,6 +72,21 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
 | sudo bash -s -- --mariadb-server-version=10.2 --skip-maxscale -y
 sudo apt update
+
+ROOT_SQL_PASS=$(/dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1; echo;)
+export DEBIAN_FRONTEND=noninteractive
+sudo debconf-set-selections <<< 'mariadb-server mysql-server/root_password password $ROOT_SQL_PASS'
+sudo debconf-set-selections <<< 'mariadb-server mysql-server/root_password_again password $ROOT_SQL_PASS'
+sudo apt-get install -y mariadb-server
+
+cat <<EOF >~/.my.cnf
+ [client]
+ user=root
+ password=$ROOT_SQL_PASS
+EOF
+
+
+
 sudo apt install mariadb-server -y
 
 wget -qO ee rt.cx/ee && bash ee
