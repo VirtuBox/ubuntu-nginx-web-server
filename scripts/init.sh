@@ -62,7 +62,7 @@ apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 sudo apt install haveged curl git unzip zip fail2ban htop -y
 
 wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/sysctl.conf
-sysctl -p
+sudo sysctl -p
 wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
 
 wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/ssh/sshd_config
