@@ -108,6 +108,10 @@ sudo apt install mariadb-server
 ```
 wget -qO ee rt.cx/ee && bash ee
 ```
+**enable ee bash_completion**
+```
+source /etc/bash_completion.d/ee_auto.rc
+```
 **Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend**  
 ```
 ee stack install

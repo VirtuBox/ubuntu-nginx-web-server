@@ -13,6 +13,8 @@
 
 ----
 
+All Instructions are available on the [repository Github page}(https://virtubox.github.io/ubuntu-nginx-web-server/)
+
 Configuration files with comments and informations available by following the link **source**
 
 ## Initial configuration
@@ -47,23 +49,6 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 WARNING : SSH Configuration with root login allowed with ed25519 & ECDSA SSH keys only  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
 ```
 wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/ssh/sshd_config
-```
-
-**Custom jails for fail2ban**
-
-* wordpress bruteforce
-* ssh 
-* recidive (after 3 bans)
-* backend http auth 
-* nginx bad bots 
-
-```
-wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf
-wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf
-wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf
-wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf
-
-fail2ban-client reload
 ```
 
 **UFW** Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
@@ -131,6 +116,23 @@ sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
 **Allow shell for www-data for SFTP usage**
 ```
 usermod -s /bin/bash www-data
+```
+
+**Custom jails for fail2ban**
+
+* wordpress bruteforce
+* ssh 
+* recidive (after 3 bans)
+* backend http auth 
+* nginx bad bots 
+
+```
+wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf
+wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf
+wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf
+wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf
+
+fail2ban-client reload
 ```
 
 ## PHP 7.1 & 7.2 Setup 
