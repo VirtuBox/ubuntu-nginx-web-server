@@ -266,9 +266,10 @@ wget -O /etc/netdata/health_alarm_notify.conf https://raw.githubusercontent.com/
 ### bash-snippets
 [Github repository](https://github.com/alexanderepstein/Bash-Snippets)
 ```bash 
-sudo add-apt-repository ppa:navanchauhan/bash-snippets
-sudo apt update
-sudo apt install bash-snippets
+git clone https://github.com/alexanderepstein/Bash-Snippets
+cd Bash-Snippets
+git checkout v1.22.0
+./install.sh cheat
 ```
 usage : cheat command  
 
