@@ -31,6 +31,7 @@ sudo apt install haveged curl git unzip zip fail2ban htop -y
 **Tweak Kernel** [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf) &
 **Increase open files limits**  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf)
 ```
+modprobe tcp_htcp
 wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/sysctl.conf
 sysctl -p
 wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
@@ -39,40 +40,6 @@ wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubu
 ```
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ```
-
-## Security 
-----
-
-**Harden SSH Security**  
-WARNING : SSH Configuration with root login allowed with ed25519 & ECDSA SSH keys only  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
-```
-wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/ssh/sshd_config
-```
-
-**UFW** Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
-
-```
-# enable ufw log - allow outgoing - deny incoming 
-ufw logging on
-ufw default allow outgoing
-ufw default deny incoming
-
-# SSH - DNS - HTTP/S - FTP - NTP - SNMP - Librenms - Netdata - EE Backend  
-ufw allow 22
-ufw allow 53
-ufw allow http
-ufw allow https
-ufw allow 21
-ufw allow 123
-ufw allow 161
-ufw allow 6556
-ufw allow 19999
-ufw allow 22222
-
-# enable UFW
-ufw enable
-```
-
 
 ----
 
@@ -118,23 +85,6 @@ sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
 **Allow shell for www-data for SFTP usage**
 ```
 usermod -s /bin/bash www-data
-```
-
-**Custom jails for fail2ban**
-
-* wordpress bruteforce
-* ssh 
-* recidive (after 3 bans)
-* backend http auth 
-* nginx bad bots 
-
-```
-wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf
-wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf
-wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf
-wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf
-
-fail2ban-client reload
 ```
 
 ## PHP 7.1 & 7.2 Setup 
@@ -241,6 +191,62 @@ nginx -t
 service nginx reload
 ```
 ----
+
+## Security 
+----
+
+**Harden SSH Security**  
+WARNING : SSH Configuration with root login allowed with ed25519 & ECDSA SSH keys only  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
+```
+wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/ssh/sshd_config
+```
+
+**UFW** Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
+
+```
+# enable ufw log - allow outgoing - deny incoming 
+ufw logging on
+ufw default allow outgoing
+ufw default deny incoming
+
+# SSH - DNS - HTTP/S - FTP - NTP - SNMP - Librenms - Netdata - EE Backend  
+ufw allow 22
+ufw allow 53
+ufw allow http
+ufw allow https
+ufw allow 21
+ufw allow 123
+ufw allow 161
+ufw allow 6556
+ufw allow 19999
+ufw allow 22222
+
+# enable UFW
+ufw enable
+```
+
+**Custom jails for fail2ban**
+
+* wordpress bruteforce
+* ssh 
+* recidive (after 3 bans)
+* backend http auth 
+* nginx bad bots 
+
+```
+wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf
+wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf
+wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf
+wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf
+
+fail2ban-client reload
+```
+
+**Secure Memcached server**
+```
+echo '-U 0' >> /etc/memcached.conf 
+sudo systemctl restart memcached
+```
 
 ## Optional tools
 
