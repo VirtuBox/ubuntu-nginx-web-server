@@ -268,6 +268,7 @@ echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
 
 # disable email notifications
 wget -O /etc/netdata/health_alarm_notify.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/netdata/health_alarm_notify.conf
+service netdata restart
 
 ```
 
