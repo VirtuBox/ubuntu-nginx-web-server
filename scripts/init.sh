@@ -1,9 +1,14 @@
 #!/bin/bash
 
+# automated EasyEngine server configuration script 
+# dev currently in progress, not ready to be used
+
 CSI="\\033["
 CEND="${CSI}0m"
 CRED="${CSI}1;31m"
 CGREEN="${CSI}1;32m"
+
+
 
 # Check if user is root
 if [ "$(id -u)" != "0" ]; then

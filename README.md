@@ -2,7 +2,7 @@
 # Ubuntu optimized configuration with EasyEngine
 ----
 ## Server Stack :
-* Nginx 1.13x
+* Nginx 1.14.x
 * PHP-FPM 7/7.1/7.2
 * MariaDB 10.2
 * REDIS 4.0
@@ -13,7 +13,7 @@
 
 ----
 
-All Instructions are available on the [repository Github page}(https://virtubox.github.io/ubuntu-nginx-web-server/)
+## All Instructions and informations are listed on the [Github page](https://virtubox.github.io/ubuntu-nginx-web-server/)
 
 Configuration files with comments and informations available by following the link **source**
 
