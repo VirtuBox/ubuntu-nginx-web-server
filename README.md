@@ -292,4 +292,11 @@ root@vps:~ cheat cat
   cat -n file
 ```
 
+## nanorc - Improved Nano Syntax Highlighting Files
+[Github repository](https://github.com/scopatz/nanorc)
+```
+wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -O- | sh
+```
+
+
 Published & maintained by [VirtuBox](https://virtubox.net)
