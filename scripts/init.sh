@@ -24,21 +24,21 @@ echo ""
 echo "Welcome to the nginx-ee bash script."
 echo ""
 
-echo ""
-echo "Do you want to install ProFTPd ? (y/n)"
-read -r proftpd
-echo ""
-echo "What ssh port do you want to use ?"
-read -r ssh_port_custom
+#echo ""
+#echo "Do you want to install ProFTPd ? (y/n)"
+#read -r proftpd
+#echo ""
+#echo "What ssh port do you want to use ?"
+#read -r ssh_port_custom
 
 
-  sed -i "s/Port.*/Port ${ssh_port_custom}/" /etc/ssh/sshd_config
+#  sed -i "s/Port.*/Port ${ssh_port_custom}/" /etc/ssh/sshd_config
 
 
 ufw logging on
 ufw default allow outgoing
 ufw default deny incoming
-ufw allow "${ssh_port_custom}"
+ufw allow 22
 ufw allow 53
 ufw allow http
 ufw allow https
@@ -50,35 +50,35 @@ ufw allow 6556
 ufw allow 19999
 ufw allow 22222
 
-if [ "$proftpd" = "y" ]
-then
+ufw enable
+
+#if [ "$proftpd" = "y" ]
+#then
 	sudo apt-get install proftpd 
    #RequireValidShell
    #DefaultRoot
-   sudo systemctl restart proftpd
-else
-	ngx_naxsi=""
-fi
+#   sudo systemctl restart proftpd0
+#else
+#	ngx_naxsi=""
+#fi
 
-ufw enable
 
-apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 
-sudo apt install haveged curl git unzip zip fail2ban htop -y
+apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean >> /tmp/ubuntu-nginx-web-server
 
-wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/sysctl.conf
-sudo sysctl -p
-wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf
+apt install haveged curl git unzip zip fail2ban htop -y >> /tmp/ubuntu-nginx-web-server
 
-wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/ssh/sshd_config
+wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/sysctl.conf >> /tmp/ubuntu-nginx-web-server
+sysctl -p >> /tmp/ubuntu-nginx-web-server
+wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/security/limits.conf >> /tmp/ubuntu-nginx-web-server
 
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
-| sudo bash -s -- --mariadb-server-version=10.2 --skip-maxscale -y
+| sudo bash -s -- --mariadb-server-version=10.2 --skip-maxscale -y | sudo tee -a /tmp/ubuntu-nginx-web-server
 sudo apt update
 
-ROOT_SQL_PASS=$(/dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1; echo;)
+ROOT_SQL_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1; echo;)
 export DEBIAN_FRONTEND=noninteractive
 sudo debconf-set-selections <<< 'mariadb-server mysql-server/root_password password $ROOT_SQL_PASS'
 sudo debconf-set-selections <<< 'mariadb-server mysql-server/root_password_again password $ROOT_SQL_PASS'
@@ -89,10 +89,6 @@ cat <<EOF >~/.my.cnf
  user=root
  password=$ROOT_SQL_PASS
 EOF
-
-
-
-sudo apt install mariadb-server -y
 
 wget -qO ee rt.cx/ee && bash ee
 
@@ -111,10 +107,10 @@ php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmat
 wget -O /etc/php/7.1/fpm/pool.d/www.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.1/fpm/pool.d/www.conf
 service php7.1-fpm restart
 
-apt update && apt install php7.2-fpm php7.2-xml php7.2-bz2  php7.2-zip php7.2-mysql  php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
+#apt update && apt install php7.2-fpm php7.2-xml php7.2-bz2  php7.2-zip php7.2-mysql  php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
 
-wget -O /etc/php/7.2/fpm/pool.d/www.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.2/fpm/pool.d/www.conf
-service php7.2-fpm restart
+#wget -O /etc/php/7.2/fpm/pool.d/www.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.2/fpm/pool.d/www.conf
+#service php7.2-fpm restart
 
 wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/conf.d/upstream.conf
 service nginx reload
@@ -123,24 +119,24 @@ cd /etc/nginx/common || exit
 wget https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/common.zip
 unzip common.zip
 
-wget -O /etc/php/7.0/cli/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.0/cli/php.ini
-wget -O /etc/php/7.0/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.0/fpm/php.ini
+wget -O /etc/php/7.0/cli/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.0/cli/php.ini >> /tmp/ubuntu-nginx-web-server
+wget -O /etc/php/7.0/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/php/7.0/fpm/php.ini >> /tmp/ubuntu-nginx-web-server
 
-wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf
-wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf
-wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf
-wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf
+wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ddos.conf >> /tmp/ubuntu-nginx-web-server
+wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/filter.d/ee-wordpress.conf >> /tmp/ubuntu-nginx-web-server
+wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/custom.conf >> /tmp/ubuntu-nginx-web-server
+wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/fail2ban/jail.d/ddos.conf >> /tmp/ubuntu-nginx-web-server
 
-fail2ban-client reload
+fail2ban-client reload >> /tmp/ubuntu-nginx-web-server
 
-wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx-intermediate.conf
+wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/nginx-intermediate.conf >> /tmp/ubuntu-nginx-web-server
 
-wget -O /etc/nginx/sites-available/default  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/default
+wget -O /etc/nginx/sites-available/default  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/default >> /tmp/ubuntu-nginx-web-server
 
-wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/22222
+wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/sites-available/22222 >> /tmp/ubuntu-nginx-web-server
 
-wget -O /etc/nginx/common/wpcommon-php7.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php7.conf
+wget -O /etc/nginx/common/wpcommon-php7.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php7.conf >> /tmp/ubuntu-nginx-web-server
 
-wget -O /etc/nginx/common/wpcommon-php71.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php71.conf
+wget -O /etc/nginx/common/wpcommon-php71.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/etc/nginx/common/wpcommon-php71.conf >> /tmp/ubuntu-nginx-web-server
 
-wget -O -  https://get.acme.sh | sh
+
