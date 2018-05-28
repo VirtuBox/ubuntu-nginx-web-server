@@ -1,0 +1,9 @@
+#!/bin/sh
+# make sure the process is stopped
+/etc/init.d/clamav-freshclam stop
+
+# check if database is outdated 
+/usr/bin/freshclam -v >> /var/log/result_freshclam.log
+
+# update virus database
+/etc/init.d/clamav-freshclam start

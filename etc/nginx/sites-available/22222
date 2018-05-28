@@ -4,7 +4,7 @@ server {
 
   listen 22222 default_server ssl http2;
 
-  access_log   /var/log/nginx/22222.access.log rt_cache;
+  access_log   off;
   error_log    /var/log/nginx/22222.error.log;
 
   ssl_certificate /var/www/22222/cert/22222.crt;

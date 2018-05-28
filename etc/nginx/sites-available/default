@@ -37,6 +37,9 @@ server {
 	index index.html index.htm index.nginx-debian.html;
 
 	server_name _;
+	
+	access_log off;
+	error_log /var/log/nginx/default.error.log;
 
 	location / {
 		# First attempt to serve request as file, then
