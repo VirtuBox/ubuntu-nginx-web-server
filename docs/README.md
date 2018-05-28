@@ -50,8 +50,7 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ```
 curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
 | sudo bash -s -- --mariadb-server-version=10.2 --skip-maxscale
-sudo apt update
-sudo apt install mariadb-server
+sudo apt update && sudo apt install mariadb-server percona-xtrabackup-24 -y
 ```
 
 **Install EasyEngine**  
