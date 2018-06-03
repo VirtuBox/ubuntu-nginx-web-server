@@ -90,6 +90,8 @@ cat <<EOF >~/.my.cnf
  password=$ROOT_SQL_PASS
 EOF
 
+cp ~/.my.cnf /etc/mysql/conf.d/my.cnf
+
 wget -qO ee rt.cx/ee && bash ee
 
 ee stack install
