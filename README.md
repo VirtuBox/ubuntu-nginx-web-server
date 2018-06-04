@@ -65,6 +65,25 @@ curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
 sudo apt update && sudo apt install mariadb-server percona-xtrabackup-24 -y
 ```
 
+#### MySQL Tuning
+
+You can download my example of my.cnf, optimized for VPS with 4GB RAM. [my.cnf source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/mysql/my.cnf)
+
+```bash
+wget -O /etc/mysql/my.cnf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/mysql/my.cnf
+```
+
+It include modification of innodb_log_file_size variable, so you need to use the following commands to apply the new configuration :
+
+```bash
+sudo service mysql stop
+
+sudo mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
+sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
+
+sudo service mysql start
+```
+
 #### Install EasyEngine
 
 ```bash
