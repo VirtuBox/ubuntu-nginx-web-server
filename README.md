@@ -31,7 +31,7 @@ apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 #### Install useful packages
 
 ```bash
-sudo apt install haveged curl git unzip zip fail2ban htop -y
+sudo apt install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
 ```
 
 #### Tweak Kernel & Increase open files limits
