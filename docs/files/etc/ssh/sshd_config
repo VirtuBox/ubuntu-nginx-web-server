@@ -2,6 +2,7 @@
 Port 22
 
 #Prefer ed25519 & ECDSA keys rather than 2048 bit RSA
+HostKey /etc/ssh/ssh_host_rsa_key
 HostKey /etc/ssh/ssh_host_ecdsa_key
 HostKey /etc/ssh/ssh_host_ed25519_key
 
@@ -24,7 +25,6 @@ PermitEmptyPasswords no
 # No challenge response Authentication
 ChallengeResponseAuthentication no
 
-
 UsePAM yes
 X11Forwarding yes
 
@@ -36,7 +36,7 @@ AcceptEnv LANG LC_*
 # override default of no subsystems
 Subsystem sftp /usr/lib/openssh/sftp-server
 
-# use strong ciphers
+# use strong ciphers (you may have to comment those lines with some sftp clients)
 KexAlgorithms curve25519-sha256@libssh.org
 Ciphers chacha20-poly1305@openssh.com
 MACs umac-128-etm@openssh.com,umac-128@openssh.com

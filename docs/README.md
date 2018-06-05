@@ -235,7 +235,7 @@ WARNING : SSH Configuration with root login allowed with ed25519 & ECDSA SSH key
 Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
 ```bash
 # enable ufw log - allow outgoing - deny incoming 
-ufw logging on
+ufw logging low
 ufw default allow outgoing
 ufw default deny incoming
 
