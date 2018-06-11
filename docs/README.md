@@ -179,7 +179,7 @@ service php7.2-fpm restart
     # TLSv1.2 TLSv1.3 only
     wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx.conf
 
-    # TLS intermediate
+    # TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3
     wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx-intermediate.conf
 
     # TLSv1.2 only
@@ -309,7 +309,7 @@ echo 1 >/sys/kernel/mm/ksm/run
 echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
 
 # disable email notifications
-wget -O /etc/netdata/health_alarm_notify.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/netdata/health_alarm_notify.conf
+sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /etc/netdata/health_alarm_notify.conf
 service netdata restart
 ```
 
