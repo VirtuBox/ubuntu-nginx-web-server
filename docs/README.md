@@ -349,6 +349,21 @@ root@vps:~ cheat cat
 
 [Github repository](https://github.com/scopatz/nanorc)
 
-    wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -O- | sh
+```bash
+wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -O- | sh
+```
+
+#### ucaresystem - script to update & cleanup packages easily
+
+```bash
+sudo add-apt-repository ppa:utappia/stable -y
+sudo apt update
+sudo apt install ucaresystem-core -y
+```
+
+Run server maintenance with the command : 
+```bash
+sudo ucaresystem-core
+```
 
 Published & maintained by [VirtuBox](https://virtubox.net)
