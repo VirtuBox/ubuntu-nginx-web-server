@@ -87,6 +87,9 @@ sudo service mysql start
 #### Install EasyEngine
 
 ```bash
+# noninteractive install - you can replace $USER with your username & root@$HOSTNAME by your email
+sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = root@$HOSTNAME" > $HOME/.gitconfig'
+
 wget -qO ee rt.cx/ee && bash ee
 ```
 
