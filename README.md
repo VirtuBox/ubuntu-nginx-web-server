@@ -380,8 +380,8 @@ sudo ucaresystem-core
 
 ```bashrc
 wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
-wget -O /var/www/.profile https://virtubox.github.io/ubuntu-nginx-web-server/files/var/www/.profile
-wget -O /var/www/.bashrc https://virtubox.github.io/ubuntu-nginx-web-server/files/var/www/.bashrc
+wget -O /var/www/.profile https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/docs/files/var/www/.profile
+wget -O /var/www/.bashrc https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/docs/files/var/www/.bashrc
 ```
 
 
