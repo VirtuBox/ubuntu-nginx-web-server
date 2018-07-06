@@ -369,4 +369,14 @@ Run server maintenance with the command :
 sudo ucaresystem-core
 ```
 
+### WP-CLI 
+
+#### Add bash-completion for user www-data
+
+```bashrc
+wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
+wget -O /var/www/.profile https://virtubox.github.io/ubuntu-nginx-web-server/files/var/www/.profile
+wget -O /var/www/.bashrc https://virtubox.github.io/ubuntu-nginx-web-server/files/var/www/.bashrc
+```
+
 Published & maintained by [VirtuBox](https://virtubox.net)
