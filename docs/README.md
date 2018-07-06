@@ -374,9 +374,19 @@ sudo ucaresystem-core
 #### Add bash-completion for user www-data
 
 ```bashrc
+# download wp-cli bash_completion
 wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
+
+# change /var/www owner
+chown www-data:www-data /var/www
+
+# download .profile & .bashrc for www-data
 wget -O /var/www/.profile https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/docs/files/var/www/.profile
 wget -O /var/www/.bashrc https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/docs/files/var/www/.bashrc
+
+# set owner
+chown www-data:www-data /var/www/.profile
+chown www-data:www-data /var/www/.bashrc
 ```
 
 Published & maintained by [VirtuBox](https://virtubox.net)
