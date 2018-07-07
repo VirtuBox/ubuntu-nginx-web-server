@@ -81,6 +81,13 @@ sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
 
 sudo service mysql start
 ```
+Increase MariaDB open files limits 
+```bash
+wget -O /etc/systemd/system/mariadb.service.d/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/systemd/system/mariadb.service.d/limits.conf
+
+sudo systemctl daemon-reload
+sudo systemctl restart mariadb
+```
 
 #### Install EasyEngine
 
