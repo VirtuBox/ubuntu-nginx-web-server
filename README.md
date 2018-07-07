@@ -157,18 +157,24 @@ service php7.2-fpm restart
 
 #### add nginx upstreams
 
-    wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
-    service nginx reload
+```bash
+wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
+service nginx reload
+```
 
 #### add ee common configuration
 
-    cd /etc/nginx/common || exit
-    wget https://virtubox.github.io/ubuntu-nginx-web-server/files/common.zip
-    unzip common.zip
+```bash
+cd /etc/nginx/common || exit
+wget https://virtubox.github.io/ubuntu-nginx-web-server/files/common.zip
+unzip common.zip
+```
 
 ### Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)
 
-    bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+```bash
+bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+```
 
 * * *
 
@@ -176,20 +182,24 @@ service php7.2-fpm restart
 
 #### clean php-fpm php.ini configuration
 
-    # PHP 7.0
-    wget -O /etc/php/7.0/fpm/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.0/fpm/php.ini
-    service php7.0-fpm restart
+```bash
+# PHP 7.0
+wget -O /etc/php/7.0/fpm/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.0/fpm/php.ini
+service php7.0-fpm restart
+```
 
 #### Nginx optimized configurations
 
-    # TLSv1.2 TLSv1.3 only
-    wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx.conf
+```bash
+# TLSv1.2 TLSv1.3 only
+wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx.conf
 
-    # TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3
-    wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx-intermediate.conf
+# TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3
+wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx-intermediate.conf
 
-    # TLSv1.2 only
-    wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx-tlsv12.conf
+# TLSv1.2 only
+wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx-tlsv12.conf
+```
 
 #### Nginx configuration for netdata & new upstreams
 
