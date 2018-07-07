@@ -193,14 +193,26 @@ service php7.2-fpm restart
 
 #### Nginx configuration for netdata & new upstreams
 
-    # custom conf for netdata metrics (php-fpm & nginx status pages)
-    wget -O /etc/nginx/sites-available/default  https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/default
+```bash
+# custom conf for netdata metrics (php-fpm & nginx status pages)
+wget -O /etc/nginx/sites-available/default  https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/default
 
-    # add netdata, php7.1 and php7.2 upstream
-    wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
+# add netdata, php7.1 and php7.2 upstream
+wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
 
-    # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
-    wget -O /etc/nginx/sites-available/22222 https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/22222
+# add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
+wget -O /etc/nginx/sites-available/22222 https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/22222
+```
+
+#### Increase Nginx open files limits
+
+```bash
+sudo mkdir -p /etc/systemd/system/nginx.service.d
+wget -O /etc/systemd/system/nginx.service.d/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/systemd/system/nginx.service.d/limits.conf
+
+sudo systemctl daemon-reload
+sudo systemctl restart nginx.service
+```  
 
 #### wpcommon-php7x configurations
 

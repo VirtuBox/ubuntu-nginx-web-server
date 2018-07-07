@@ -17,6 +17,7 @@
 * * *
 
 Configuration files with comments and informations available by following the link **source**
+
 ### Initial configuration
 
 #### System update and packages cleanup
@@ -154,18 +155,24 @@ service php7.2-fpm restart
 
 #### add nginx upstreams
 
-    wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
-    service nginx reload
+```bash
+wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
+service nginx reload
+```
 
 #### add ee common configuration
 
-    cd /etc/nginx/common || exit
-    wget https://virtubox.github.io/ubuntu-nginx-web-server/files/common.zip
-    unzip common.zip
+```bash
+cd /etc/nginx/common || exit
+wget https://virtubox.github.io/ubuntu-nginx-web-server/files/common.zip
+unzip common.zip
+```
 
 ### Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)
 
-    bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+```bash
+bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+```
 
 * * *
 
@@ -173,31 +180,47 @@ service php7.2-fpm restart
 
 #### clean php-fpm php.ini configuration
 
-    # PHP 7.0
-    wget -O /etc/php/7.0/fpm/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.0/fpm/php.ini
-    service php7.0-fpm restart
+```bash
+# PHP 7.0
+wget -O /etc/php/7.0/fpm/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.0/fpm/php.ini
+service php7.0-fpm restart
+```
 
 #### Nginx optimized configurations
 
-    # TLSv1.2 TLSv1.3 only
-    wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx.conf
+```bash
+# TLSv1.2 TLSv1.3 only
+wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx.conf
 
-    # TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3
-    wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx-intermediate.conf
+# TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3
+wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx-intermediate.conf
 
-    # TLSv1.2 only
-    wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx-tlsv12.conf
+# TLSv1.2 only
+wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx-tlsv12.conf
+```
 
 #### Nginx configuration for netdata & new upstreams
 
-    # custom conf for netdata metrics (php-fpm & nginx status pages)
-    wget -O /etc/nginx/sites-available/default  https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/default
+```bash
+# custom conf for netdata metrics (php-fpm & nginx status pages)
+wget -O /etc/nginx/sites-available/default  https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/default
 
-    # add netdata, php7.1 and php7.2 upstream
-    wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
+# add netdata, php7.1 and php7.2 upstream
+wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
 
-    # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
-    wget -O /etc/nginx/sites-available/22222 https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/22222
+# add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
+wget -O /etc/nginx/sites-available/22222 https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/22222
+```
+
+#### Increase Nginx open files limits
+
+```bash
+sudo mkdir -p /etc/systemd/system/nginx.service.d
+wget -O /etc/systemd/system/nginx.service.d/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/systemd/system/nginx.service.d/limits.conf
+
+sudo systemctl daemon-reload
+sudo systemctl restart nginx.service
+```  
 
 #### wpcommon-php7x configurations
 
@@ -287,6 +310,8 @@ sudo systemctl restart memcached
 #### ee-acme-sh
 
 [Github repository](https://virtubox.github.io/ee-acme-sh/) - Script to setup letsencrypt certificates using acme.sh on EasyEngine servers
+
+
 
 * subdomain support
 * ivp6 support
@@ -388,5 +413,7 @@ wget -O /var/www/.bashrc https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx
 chown www-data:www-data /var/www/.profile
 chown www-data:www-data /var/www/.bashrc
 ```
+
+
 
 Published & maintained by [VirtuBox](https://virtubox.net)
