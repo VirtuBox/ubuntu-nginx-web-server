@@ -25,6 +25,12 @@ server {
   location / {
     try_files $uri $uri/ /index.php?$args;
   }
+  
+  # nginx-vts-status 
+  #location /vts_status {
+  #vhost_traffic_status_display;
+  #vhost_traffic_status_display_format html;
+  #}
 
   # Display menu at location /fpm/status/
   location =  /fpm/status/ {}

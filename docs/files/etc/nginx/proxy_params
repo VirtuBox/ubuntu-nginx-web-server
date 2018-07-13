@@ -8,3 +8,4 @@ proxy_buffers 256 16k;
 proxy_busy_buffers_size 256k;
 proxy_temp_file_write_size 256k;
 proxy_max_temp_file_size 0;
+proxy_read_timeout 3000;
