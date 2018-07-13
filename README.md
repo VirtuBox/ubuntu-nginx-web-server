@@ -382,7 +382,7 @@ root@vps:~ cheat cat
 # Number all output lines:
   cat -n file
 ```
-
+ 
 #### nanorc - Improved Nano Syntax Highlighting Files
 
 [Github repository](https://github.com/scopatz/nanorc)
