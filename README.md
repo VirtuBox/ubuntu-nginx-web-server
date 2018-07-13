@@ -124,10 +124,12 @@ newaliases
 #### Install Composer - Fix phpmyadmin install issue
 
 ```bash
-cd ~/
+cd ~/ ||exit
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/bin/composer
-sudo -u www-data composer update -d /var/www/22222/htdocs/db/pma/
+
+chown www-data:www-data /var/www
+sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
 ```
 
 #### Allow shell for www-data for SFTP usage
