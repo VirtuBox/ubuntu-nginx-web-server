@@ -49,7 +49,7 @@ sudo apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 
 if [ ! -d /etc/ufw ];
 then
-  apt-get install ufw -y
+  sudo apt-get install ufw -y
 fi
 
 ufw logging low
@@ -191,6 +191,16 @@ chown www-data:www-data /var/www/.bashrc
 # Install php7.1-fpm
 ##################################
 
+echo ""
+echo "Do you want php7.1-fpm ? (y/n)"
+while [[ $phpfpm71 != "y" && $phpfpm71 != "n" ]]; do
+	read -p "Select an option [y/n]: " phpfpm71
+done
+echo ""
+
+if [ "$phpfpm71" = "y" ]
+then
+
 sudo apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
 php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
 
@@ -200,15 +210,29 @@ sudo wget -O /etc/php/7.1/fpm/php.ini https://virtubox.github.io/ubuntu-nginx-we
 wget -O  /etc/php/7.1/cli/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.1/cli/php.ini
 sudo service php7.1-fpm restart
 
+fi
+
 ##################################
 # Install php7.2-fpm
 ##################################
+
+echo ""
+echo "Do you want php7.2-fpm ? (y/n)"
+while [[ $phpfpm72 != "y" && $phpfpm72 != "n" ]]; do
+	read -p "Select an option [y/n]: " phpfpm72
+done
+echo ""
+
+if [ "$phpfpm72" = "y" ]
+then
 
 sudo apt-get install php7.2-fpm php7.2-xml php7.2-bz2  php7.2-zip php7.2-mysql  php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
 
 wget -O /etc/php/7.2/fpm/pool.d/www.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.2/fpm/pool.d/www.conf
 wget -O  /etc/php/7.2/cli/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.2/cli/php.ini
 service php7.2-fpm restart
+
+fi
 
 ##################################
 # Update php7.0-fpm config
@@ -221,7 +245,9 @@ wget -O /etc/php/7.0/fpm/php.ini https://virtubox.github.io/ubuntu-nginx-web-ser
 # Compile latest nginx release from source 
 ##################################
 
-bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+wget https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh
+chmod +x nginx-build.sh
+./nginx-build.sh
 
 ##################################
 # Add nginx additional conf
@@ -256,7 +282,7 @@ fi
 
 if [[ "$CONF_DEFAULT" = 0 ]] 
 then
-  # additional nginx logrep -cion for monitoring
+  # additional nginx locations for monitoring
 sudo wget -O /etc/nginx/sites-available/default  https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/default
 fi
 
@@ -316,6 +342,16 @@ sudo apt-get install ucaresystem-core -y
 # Install ProFTPd 
 ##################################
 
+echo ""
+echo "Do you want proftpd ? (y/n)"
+while [[ $proftpd != "y" && $proftpd != "n" ]]; do
+	read -p "Select an option [y/n]: " proftpd
+done
+echo ""
+
+if [ "$proftpd" = "y" ]
+then
+
 sudo apt install proftpd -y
 
 # secure proftpd and enable PassivePorts
@@ -325,6 +361,8 @@ sed -i 's/# RequireValidShell/RequireValidShell/' /etc/proftpd/proftpd.conf
 sed -i 's/# PassivePorts                  49152 65534/PassivePorts                  49000 50000/' /etc/proftpd/proftpd.conf
 
 sudo service proftpd restart
+
+fi
 
 ##################################
 # Install Netdata 
