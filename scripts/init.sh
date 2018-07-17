@@ -15,6 +15,7 @@ CGREEN="${CSI}1;32m"
 EE_DASH_VER="1.0"
 EXTPLORER_VER="2.1.10"
 BASH_SNIPPETS_VER="1.22.0"
+EXEC_PATH=${pwd}
 
 ##################################
 # Check if user is root 
@@ -93,13 +94,20 @@ sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
 sudo systemctl enable ntp
 
 ##################################
+# clone repository
+##################################
+
+cd /tmp || exit
+git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git 
+
+##################################
 # Sysctl tweaks +  open_files limits
 ##################################
 
 sudo modprobe tcp_htcp
-wget -O /etc/sysctl.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/sysctl.conf
+cp -f /tmp/ubuntu-nginx-web-server/etc/sysctl.conf /etc/sysctl.conf
 sysctl -p
-wget -O /etc/security/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/security/limits.conf
+cp -f  /tmp/ubuntu-nginx-web-server/etc/security/limits.conf /etc/security/limits.conf
 
 ##################################
 # Redis transparent_hugepage
@@ -136,14 +144,14 @@ sudo apt-get install -y mariadb-server
 # MariaDB tweaks
 ##################################
 
-wget -O /etc/mysql/my.cnf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/mysql/my.cnf
+cp -f /tmp/ubuntu-nginx-web-server/etc/mysql/my.cnf /etc/mysql/my.cnf
 
 sudo service mysql stop
 
 sudo mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
 sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
 
-wget -O /etc/systemd/system/mariadb.service.d/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/systemd/system/mariadb.service.d/limits.conf
+cp -f  /tmp/ubuntu-nginx-web-server/etc/systemd/system/mariadb.service.d/limits.conf /etc/systemd/system/mariadb.service.d/limits.conf
 sudo systemctl daemon-reload
 
 sudo service mysql start
@@ -168,9 +176,10 @@ ee stack install --php7 --redis --admin --phpredisadmin
 # Fix phpmyadmin install
 ##################################
 
-cd ~/ ||exit
+cd ~/ || exit
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/bin/composer
+
 chown www-data:www-data /var/www
 sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
 
@@ -180,9 +189,9 @@ sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
 
 usermod -s /bin/bash www-data
 
-wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/files/utils/wp-completion.bash
-wget -O /var/www/.profile https://virtubox.github.io/ubuntu-nginx-web-server/files/docs/files/var/www/.profile
-wget -O /var/www/.bashrc https://virtubox.github.io/ubuntu-nginx-web-server/files/docs/files/var/www/.bashrc
+wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
+cp -f  /var/www/.profile /tmp/ubuntu-nginx-web-server/files/var/www/.profile
+cp -f  /var/www/.bashrc /tmp/ubuntu-nginx-web-server/files/var/www/.bashrc
 
 chown www-data:www-data /var/www/.profile
 chown www-data:www-data /var/www/.bashrc
@@ -194,7 +203,7 @@ chown www-data:www-data /var/www/.bashrc
 echo ""
 echo "Do you want php7.1-fpm ? (y/n)"
 while [[ $phpfpm71 != "y" && $phpfpm71 != "n" ]]; do
-	read -p "Select an option [y/n]: " phpfpm71
+	read -r "Select an option [y/n]: " phpfpm71
 done
 echo ""
 
@@ -204,10 +213,10 @@ then
 sudo apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
 php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
 
-sudo wget -O /etc/php/7.1/fpm/pool.d/www.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.1/fpm/pool.d/www.conf
+sudo cp -f /tmp/ubuntu-nginx-web-server/etc/php/7.1/fpm/pool.d/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 
-sudo wget -O /etc/php/7.1/fpm/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.1/fpm/php.ini
-wget -O  /etc/php/7.1/cli/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.1/cli/php.ini
+sudo cp -f  /tmp/ubuntu-nginx-web-server/etc/php/7.1/fpm/php.ini /etc/php/7.1/fpm/php.ini
+cp -f  /tmp/ubuntu-nginx-web-server/etc/php/7.1/cli/php.ini /etc/php/7.1/cli/php.ini
 sudo service php7.1-fpm restart
 
 fi
@@ -219,7 +228,7 @@ fi
 echo ""
 echo "Do you want php7.2-fpm ? (y/n)"
 while [[ $phpfpm72 != "y" && $phpfpm72 != "n" ]]; do
-	read -p "Select an option [y/n]: " phpfpm72
+	read -r "Select an option [y/n]: " phpfpm72
 done
 echo ""
 
@@ -228,8 +237,8 @@ then
 
 sudo apt-get install php7.2-fpm php7.2-xml php7.2-bz2  php7.2-zip php7.2-mysql  php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
 
-wget -O /etc/php/7.2/fpm/pool.d/www.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.2/fpm/pool.d/www.conf
-wget -O  /etc/php/7.2/cli/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.2/cli/php.ini
+cp -f  /tmp/ubuntu-nginx-web-server/etc/php/7.2/fpm/pool.d/www.conf /etc/php/7.2/fpm/pool.d/www.conf
+cp -f  /tmp/ubuntu-nginx-web-server/etc/php/7.2/cli/php.ini /etc/php/7.2/cli/php.ini
 service php7.2-fpm restart
 
 fi
@@ -238,8 +247,8 @@ fi
 # Update php7.0-fpm config
 ##################################
 
-wget -O /etc/php/7.0/cli/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.0/cli/php.ini
-wget -O /etc/php/7.0/fpm/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.0/fpm/php.ini
+cp -f  /tmp/ubuntu-nginx-web-server/etc/php/7.0/cli/php.ini /etc/php/7.0/cli/php.ini
+cp -f  /tmp/ubuntu-nginx-web-server/etc/php/7.0/fpm/php.ini /etc/php/7.0/fpm/php.ini
 
 ##################################
 # Compile latest nginx release from source 
@@ -256,48 +265,49 @@ chmod +x nginx-build.sh
 # php7.1 & 7.2 common configurations
 
 cd /etc/nginx/common || exit
-wget https://virtubox.github.io/ubuntu-nginx-web-server/files/common.zip
+wget /tmp/ubuntu-nginx-web-server/common.zip
 unzip common.zip
+rm common.zip
 
 # optimized nginx.config
-wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx.conf
+cp -f  /tmp/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
 
 # check nginx configuration
 CONF_22222=$(grep -c netdata /etc/nginx/sites-available/22222)
-CONF_UPSTREAM=$(grep -c /etc/nginx/conf.d/upstream.conf)
-CONF_DEFAULT=$(grep -c /etc/nginx/sites-available/default)
+CONF_UPSTREAM=$(grep -c netdata /etc/nginx/conf.d/upstream.conf)
+CONF_DEFAULT=$(grep -c status /etc/nginx/sites-available/default)
 
-if [[ "$CONF_22222" = 0 ]] 
+if [ "$CONF_22222" = 0 ]
 then
   # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
-sudo wget -O /etc/nginx/sites-available/22222 https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/22222
+sudo cp -f  /tmp/ubuntu-nginx-web-server/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
 fi
 
-if [[ "$CONF_UPSTREAM" = 0 ]] 
+if [ "$CONF_UPSTREAM" = 0 ]
 then
   # add netdata, php7.1 and php7.2 upstream
-sudo wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
+sudo cp -f  /tmp/ubuntu-nginx-web-server/etc/nginx/conf.d/upstream.conf /etc/nginx/conf.d/upstream.conf
 fi
 
-if [[ "$CONF_DEFAULT" = 0 ]] 
+if [ "$CONF_DEFAULT" = 0 ] 
 then
   # additional nginx locations for monitoring
-sudo wget -O /etc/nginx/sites-available/default  https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/default
+sudo cp -f  /tmp/ubuntu-nginx-web-server/etc/nginx/sites-available/default /etc/nginx/sites-available/default
 fi
 
 # 1) add webp mapping
-wget -O /etc/nginx/conf.d/webp.conf  https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/webp.conf
+cp -f /tmp/ubuntu-nginx-web-server/etc/nginx/conf.d/webp.conf /etc/nginx/conf.d/webp.conf
 
 # 2) wpcommon files
 # php7
-wget -O /etc/nginx/common/wpcommon-php7.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/common/wpcommon-php7.conf
+cp -f /tmp/ubuntu-nginx-web-server/etc/nginx/common/wpcommon-php7.conf /etc/nginx/common/wpcommon-php7.conf
 
 # php7.1
-wget -O /etc/nginx/common/wpcommon-php71.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/common/wpcommon-php71.conf
+cp -f /tmp/ubuntu-nginx-web-server/etc/nginx/common/wpcommon-php71.conf /etc/nginx/common/wpcommon-php71.conf
 
 # php7.2
-wget -O /etc/nginx/common/wpcommon-php72.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/common/wpcommon-php72.conf
+cp -f /tmp/ubuntu-nginx-web-server/etc/nginx/common/wpcommon-php72.conf /etc/nginx/common/wpcommon-php72.conf 
 
 nginx -t
 service nginx reload
@@ -306,10 +316,10 @@ service nginx reload
 # Add fail2ban configurations
 ##################################
 
-wget -O /etc/fail2ban/filter.d/ddos.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/fail2ban/filter.d/ddos.conf
-wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/fail2ban/filter.d/ee-wordpress.conf
-wget -O /etc/fail2ban/jail.d/custom.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/fail2ban/jail.d/custom.conf
-wget -O  /etc/fail2ban/jail.d/ddos.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/fail2ban/jail.d/ddos.conf
+cp -f /tmp/ubuntu-nginx-web-server/etc/fail2ban/filter.d/ddos.conf /etc/fail2ban/filter.d/ddos.conf
+cp -f /tmp/ubuntu-nginx-web-server/etc/fail2ban/filter.d/ee-wordpress.conf /etc/fail2ban/filter.d/ee-wordpress.conf
+cp -f /tmp/ubuntu-nginx-web-server/etc/fail2ban/jail.d/custom.conf /etc/fail2ban/jail.d/custom.conf
+cp -f /tmp/ubuntu-nginx-web-server/etc/fail2ban/jail.d/ddos.conf  /etc/fail2ban/jail.d/ddos.conf
 
 sudo fail2ban-client reload
 
@@ -345,7 +355,7 @@ sudo apt-get install ucaresystem-core -y
 echo ""
 echo "Do you want proftpd ? (y/n)"
 while [[ $proftpd != "y" && $proftpd != "n" ]]; do
-	read -p "Select an option [y/n]: " proftpd
+	read -r "Select an option [y/n]: " proftpd
 done
 echo ""
 
@@ -406,9 +416,9 @@ fi
 cd /var/www/22222 || exit
 
 ## download latest version of EasyEngine-dashboard
-wget https://github.com/VirtuBox/easyengine-dashboard/archive/v$EE_DASH_VER.zip -O easyengine-dashboard.zip
-unzip easyengine-dashboard.zip
-sudo cp -rf easyengine-dashboard-$EE_DASH_VER/* /var/www/22222/htdocs/
+cd /tmp || exit
+https://github.com/VirtuBox/easyengine-dashboard.git
+sudo cp -rf /tmp/easyengine-dashboard/* /var/www/22222/htdocs/
 sudo chown -R www-data:www-data /var/www/22222/htdocs
 
 
