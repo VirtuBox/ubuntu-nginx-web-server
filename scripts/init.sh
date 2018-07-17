@@ -12,10 +12,8 @@ CGREEN="${CSI}1;32m"
 # Variables 
 ##################################
 
-EE_DASH_VER="1.0"
 EXTPLORER_VER="2.1.10"
 BASH_SNIPPETS_VER="1.22.0"
-EXEC_PATH=${pwd}
 
 ##################################
 # Check if user is root 
