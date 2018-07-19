@@ -330,7 +330,9 @@ sudo systemctl restart memcached
 * wildcards certificates support
 
 ```bash
-cd && bash <(wget --no-check-certificate -O - https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/install.sh)
+wget -O install-ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/install.sh
+chmod +x install-ee-acme.sh 
+./install-ee-acme.sh 
 
 # enable acme.sh & ee-acme-sh
 source .bashrc
