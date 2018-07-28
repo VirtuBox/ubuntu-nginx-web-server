@@ -5,7 +5,7 @@
 ## Server Stack
 
 - Ubuntu 16/18.04 LTS
-- Nginx 1.14.x
+- Nginx 1.15.x / 1.14.x
 - PHP-FPM 7/7.1/7.2
 - MariaDB 10.3
 - REDIS 4.0
@@ -23,7 +23,7 @@ Configuration files with comments and informations available by following the li
 #### System update and packages cleanup
 
 ```bash
-apt-get update && apt-get upgrade -y && apt-get autoremove -y && apt-get clean
+apt-get update && apt-get upgrade -y && apt-get autoremove --purge -y && apt-get clean
 ```
 
 #### Install useful packages
@@ -81,7 +81,9 @@ sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
 
 sudo service mysql start
 ```
-Increase MariaDB open files limits 
+
+Increase MariaDB open files limits
+
 ```bash
 wget -O /etc/systemd/system/mariadb.service.d/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/systemd/system/mariadb.service.d/limits.conf
 
@@ -98,7 +100,7 @@ sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = root@$HOSTNAME" > $HOME
 wget -qO ee rt.cx/ee && bash ee
 ```
 
-#### enable ee bash_completion 
+#### enable ee bash_completion
 
 ```bash
 source /etc/bash_completion.d/ee_auto.rc
@@ -268,6 +270,7 @@ WARNING : SSH Configuration with root login allowed with ed25519 & ECDSA SSH key
 #### UFW
 
 Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
+
 ```bash
 # enable ufw log - allow outgoing - deny incoming 
 ufw logging low
@@ -310,7 +313,7 @@ fail2ban-client reload
 #### Secure Memcached server
 
 ```bash
-echo '-U 0' >> /etc/memcached.conf 
+echo '-U 0' >> /etc/memcached.conf
 sudo systemctl restart memcached
 ```
 
@@ -320,16 +323,14 @@ sudo systemctl restart memcached
 
 [Github repository](https://virtubox.github.io/ee-acme-sh/) - Script to setup letsencrypt certificates using acme.sh on EasyEngine servers
 
-
-
 * subdomain support
 * ivp6 support
 * wildcards certificates support
 
 ```bash
 wget -O install-ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/install.sh
-chmod +x install-ee-acme.sh 
-./install-ee-acme.sh 
+chmod +x install-ee-acme.sh
+./install-ee-acme.sh
 
 # enable acme.sh & ee-acme-sh
 source .bashrc
@@ -400,12 +401,13 @@ sudo apt update
 sudo apt install ucaresystem-core -y
 ```
 
-Run server maintenance with the command : 
+Run server maintenance with the command :
+
 ```bash
 sudo ucaresystem-core
 ```
 
-### WP-CLI 
+### WP-CLI
 
 #### Add bash-completion for user www-data
 
@@ -425,6 +427,24 @@ chown www-data:www-data /var/www/.profile
 chown www-data:www-data /var/www/.bashrc
 ```
 
+### Custom Nginx error pages
 
+[Github Repository](https://github.com/alexphelps/server-error-pages)
+
+Installation
+
+```bash
+# clone the github repository
+sudo -u www-data -H git clone https://github.com/alexphelps/server-error-pages.git /var/www/error
+
+# download nginx configuration
+wget -O /etc/nginx/common/error_pages.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/common/error_pages.conf
+```
+
+Then include this configuration in your nginx vhost by adding the following line
+
+```bash
+include common/error_pages.conf;
+```
 
 Published & maintained by [VirtuBox](https://virtubox.net)

@@ -22,6 +22,8 @@ REPO_PATH="/tmp/ubuntu-nginx-web-server"
 
 if [ "$(id -u)" != "0" ]; then
     echo "Error: You must be root to run this script, please use the root user to install the software."
+    echo ""
+    echo "Use 'sudo su - root' to login as root"
     exit 1
 fi
 
@@ -103,7 +105,7 @@ ufw() {
     
     if [ ! -d /etc/ufw ];
     then
-        sudo apt-get install ufw -y
+        apt-get install ufw -y
     fi
     
     ufw logging low
@@ -136,10 +138,10 @@ ufw() {
 
 useful() {
     
-    sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
+    apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
     
     # ntp time
-    sudo systemctl enable ntp
+    systemctl enable ntp
     
 }
 
@@ -340,12 +342,11 @@ nginx_ee() {
 # Add nginx additional conf
 ##################################
 
+nginx_conf() {
+
 # php7.1 & 7.2 common configurations
 
-cd /etc/nginx/common || exit
-wget $REPO_PATH/common.zip
-unzip common.zip
-rm common.zip
+cp -rf $REPO_PATH/etc/nginx/common/* /etc/nginx/common/
 
 # optimized nginx.config
 cp -f  $REPO_PATH/etc/nginx/nginx.conf /etc/nginx/nginx.conf
@@ -377,18 +378,10 @@ fi
 # 1) add webp mapping
 cp -f $REPO_PATH/etc/nginx/conf.d/webp.conf /etc/nginx/conf.d/webp.conf
 
-# 2) wpcommon files
-# php7
-cp -f $REPO_PATH/etc/nginx/common/wpcommon-php7.conf /etc/nginx/common/wpcommon-php7.conf
-
-# php7.1
-cp -f $REPO_PATH/etc/nginx/common/wpcommon-php71.conf /etc/nginx/common/wpcommon-php71.conf
-
-# php7.2
-cp -f $REPO_PATH/etc/nginx/common/wpcommon-php72.conf /etc/nginx/common/wpcommon-php72.conf
-
 nginx -t
 service nginx reload
+
+}
 
 ##################################
 # Add fail2ban configurations
@@ -562,6 +555,7 @@ fi
 if [ "$nginxee" = "y" ]
 then
     nginx_ee
+    nginx_conf
 fi
 
 if [ "$fail2ban" = "y" ]
@@ -575,7 +569,7 @@ then
 fi
 
 bashrc_extra
-ucaresystem
+#ucaresystem
 
 netdata
 extplorer
