@@ -152,7 +152,8 @@ useful() {
 dl_repo() {
     
     cd /tmp || exit
-    git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git
+    rm -rf /tmp/ubuntu-nginx-web-server
+    git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git /tmp/ubuntu-nginx-web-server
     
 }
 
