@@ -516,8 +516,9 @@ ee_dashboard() {
 ##################################
 
 useful
-sysctl
 dl_repo
+sysctl
+
 
 if [ "$ufw" = "y" ]
 then
