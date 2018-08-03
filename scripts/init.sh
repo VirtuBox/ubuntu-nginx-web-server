@@ -42,17 +42,6 @@ echo ""
 ##################################
 
 echo ""
-echo "Do you want to install ufw (firewall) ? (y/n)"
-while [[ $ufw_install != "y" && $ufw_install != "n" ]]; do
-	read -p "Select an option [y/n]: " ufw_install
-done
-echo ""
-echo ""
-echo "Do you want to install fail2ban ? (y/n)"
-while [[ $fail2ban_install != "y" && $fail2ban_install != "n" ]]; do
-	read -p "Select an option [y/n]: " fail2ban_install
-done
-echo ""
 echo "Do you want to install MariaDB-server 10.3 ? (y/n)"
 while [[ $mariadb_server_install != "y" && $mariadb_server_install != "n" ]]; do
 	read -p "Select an option [y/n]: " mariadb_server_install
@@ -64,11 +53,6 @@ if [ "$mariadb_server_install" = "n" ]; then
 		read -p "Select an option [y/n]: " mariadb_client_install
 	done
 fi
-echo ""
-echo "Do you want to compile the last nginx-ee ? (y/n)"
-while [[ $nginxee_install != "y" && $nginxee_install != "n" ]]; do
-	read -p "Select an option [y/n]: " nginxee_install
-done
 echo ""
 echo "Do you want php7.1-fpm ? (y/n)"
 while [[ $phpfpm71_install != "y" && $phpfpm71_install != "n" ]]; do
@@ -84,7 +68,6 @@ echo "Do you want proftpd ? (y/n)"
 while [[ $proftpd_install != "y" && $proftpd_install != "n" ]]; do
 	read -p "Select an option [y/n]: " proftpd_install
 done
-
 echo ""
 
 ##################################
@@ -132,7 +115,7 @@ ufw_setup() {
 # Useful packages
 ##################################
 
-useful_packages_setup () {
+useful_packages_setup() {
 
 	apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
 
@@ -145,7 +128,7 @@ useful_packages_setup () {
 # clone repository
 ##################################
 
-dl_git_repo_setup () {
+dl_git_repo_setup() {
 
 	cd /tmp || exit
 	rm -rf /tmp/ubuntu-nginx-web-server
@@ -157,7 +140,7 @@ dl_git_repo_setup () {
 # Sysctl tweaks +  open_files limits
 ##################################
 
-sysctl_tweaks_setup () {
+sysctl_tweaks_setup() {
 
 	sudo modprobe tcp_htcp
 	cp -f $REPO_PATH/etc/sysctl.conf /etc/sysctl.conf
@@ -378,7 +361,7 @@ nginx_conf_setup() {
 # Add fail2ban configurations
 ##################################
 
-f2b_setup () {
+f2b_setup() {
 
 	cp -f $REPO_PATH/etc/fail2ban/filter.d/ddos.conf /etc/fail2ban/filter.d/ddos.conf
 	cp -f $REPO_PATH/etc/fail2ban/filter.d/ee-wordpress.conf /etc/fail2ban/filter.d/ee-wordpress.conf
@@ -569,18 +552,14 @@ useful_packages_setup
 dl_git_repo_setup
 sysctl_tweaks_setup
 
-if [ "$ufw_install" = "y" ]; then
-	ufw_setup
-fi
+ufw_setup
 
 mariadb_repo_setup
 
 if [ "$mariadb_server_install" = "y" ]; then
 	mariadb_setup
 	mariadb_tweaks_setup
-fi
-
-if [ "$mariadb_client_install" = "y" ]; then
+elif [ "$mariadb_client_install" = "y" ]; then
 	mariadb_client_setup
 fi
 
@@ -588,7 +567,7 @@ ee_install_setup
 ee_setup
 ee_fix_setup
 web_user_setup
-php7_conf_setup	
+php7_conf_setup
 
 if [ "$phpfpm71_install" = "y" ]; then
 	php71_setup
@@ -598,14 +577,10 @@ if [ "$phpfpm72_install" = "y" ]; then
 	php72_setup
 fi
 
-if [ "$nginxee_install" = "y" ]; then
-	nginx_ee_setup
-	nginx_conf_setup
-fi
+nginx_ee_setup
+nginx_conf_setup
 
-if [ "$fail2ban_install" = "y" ]; then
-	f2b_setup
-fi
+f2b_setup
 
 if [ "$proftpd_install" = "y" ]; then
 	proftpd_setup
