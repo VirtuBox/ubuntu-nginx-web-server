@@ -3,10 +3,10 @@
 # automated EasyEngine server configuration script
 # currently in progress, not ready to be used in production yet
 
-CSI="\\033["
-CEND="${CSI}0m"
-CRED="${CSI}1;31m"
-CGREEN="${CSI}1;32m"
+#CSI="\\033["
+#CEND="${CSI}0m"
+#CRED="${CSI}1;31m"
+#CGREEN="${CSI}1;32m"
 
 ##################################
 # Variables
@@ -43,46 +43,46 @@ echo ""
 
 echo ""
 echo "Do you want to install ufw (firewall) ? (y/n)"
-while [[ $ufw != "y" && $ufw != "n" ]]; do
-	read -p "Select an option [y/n]: " ufw
+while [[ $ufw_install != "y" && $ufw_install != "n" ]]; do
+	read -p "Select an option [y/n]: " ufw_install
 done
 echo ""
 echo ""
 echo "Do you want to install fail2ban ? (y/n)"
-while [[ $fail2ban != "y" && $fail2ban != "n" ]]; do
-	read -p "Select an option [y/n]: " fail2ban
+while [[ $fail2ban_install != "y" && $fail2ban_install != "n" ]]; do
+	read -p "Select an option [y/n]: " fail2ban_install
 done
 echo ""
 echo "Do you want to install MariaDB-server 10.3 ? (y/n)"
-while [[ $mariadb_server != "y" && $mariadb_server != "n" ]]; do
-	read -p "Select an option [y/n]: " mariadb_server
+while [[ $mariadb_server_install != "y" && $mariadb_server_install != "n" ]]; do
+	read -p "Select an option [y/n]: " mariadb_server_install
 done
-if [ "$mariadb_server" = "n" ]; then
+if [ "$mariadb_server_install" = "n" ]; then
 	echo ""
 	echo "Do you want to install MariaDB-client ? (y/n)"
-	while [[ $mariadb_client != "y" && $mariadb_client != "n" ]]; do
-		read -p "Select an option [y/n]: " mariadb_client
+	while [[ $mariadb_client_install != "y" && $mariadb_client_install != "n" ]]; do
+		read -p "Select an option [y/n]: " mariadb_client_install
 	done
 fi
 echo ""
 echo "Do you want to compile the last nginx-ee ? (y/n)"
-while [[ $nginxee != "y" && $nginxee != "n" ]]; do
-	read -p "Select an option [y/n]: " nginxee
+while [[ $nginxee_install != "y" && $nginxee_install != "n" ]]; do
+	read -p "Select an option [y/n]: " nginxee_install
 done
 echo ""
 echo "Do you want php7.1-fpm ? (y/n)"
-while [[ $phpfpm71 != "y" && $phpfpm71 != "n" ]]; do
-	read -p "Select an option [y/n]: " phpfpm71
+while [[ $phpfpm71_install != "y" && $phpfpm71_install != "n" ]]; do
+	read -p "Select an option [y/n]: " phpfpm71_install
 done
 echo ""
 echo "Do you want php7.2-fpm ? (y/n)"
-while [[ $phpfpm72 != "y" && $phpfpm72 != "n" ]]; do
-	read -p "Select an option [y/n]: " phpfpm72
+while [[ $phpfpm72_install != "y" && $phpfpm72_install != "n" ]]; do
+	read -p "Select an option [y/n]: " phpfpm72_install
 done
 echo ""
 echo "Do you want proftpd ? (y/n)"
-while [[ $proftpd != "y" && $proftpd != "n" ]]; do
-	read -p "Select an option [y/n]: " proftpd
+while [[ $proftpd_install != "y" && $proftpd_install != "n" ]]; do
+	read -p "Select an option [y/n]: " proftpd_install
 done
 
 echo ""
@@ -132,7 +132,7 @@ ufw_setup() {
 # Useful packages
 ##################################
 
-useful() {
+useful_packages_setup () {
 
 	apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
 
@@ -145,7 +145,7 @@ useful() {
 # clone repository
 ##################################
 
-dl_repo() {
+dl_git_repo_setup () {
 
 	cd /tmp || exit
 	rm -rf /tmp/ubuntu-nginx-web-server
@@ -157,7 +157,7 @@ dl_repo() {
 # Sysctl tweaks +  open_files limits
 ##################################
 
-sysctl_tweaks() {
+sysctl_tweaks_setup () {
 
 	sudo modprobe tcp_htcp
 	cp -f $REPO_PATH/etc/sysctl.conf /etc/sysctl.conf
@@ -173,7 +173,7 @@ sysctl_tweaks() {
 # Add MariaDB 10.3 repository
 ##################################
 
-mariadb_repo() {
+mariadb_repo_setup() {
 
 	curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup |
 		sudo bash -s -- --mariadb-server-version=10.3 --skip-maxscale -y
@@ -191,7 +191,7 @@ mariadb_setup() {
 
 }
 
-mariadb_client() {
+mariadb_client_setup() {
 
 	sudo apt-get install -y mariadb-client
 
@@ -201,7 +201,7 @@ mariadb_client() {
 # MariaDB tweaks
 ##################################
 
-mariadb_tweaks() {
+mariadb_tweaks_setup() {
 
 	cp -f $REPO_PATH/etc/mysql/my.cnf /etc/mysql/my.cnf
 
@@ -221,7 +221,7 @@ mariadb_tweaks() {
 # EasyEngine automated install
 ##################################
 
-ee_install() {
+ee_install_setup() {
 
 	sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = $USER@$HOSTNAME" > $HOME/.gitconfig'
 	sudo wget -qO ee rt.cx/ee && sudo bash ee
@@ -245,7 +245,7 @@ ee_setup() {
 # Fix phpmyadmin install
 ##################################
 
-ee_fix() {
+ee_fix_setup() {
 
 	cd ~/ || exit
 	curl -sS https://getcomposer.org/installer | php
@@ -260,7 +260,7 @@ ee_fix() {
 # Allow www-data shell access for SFTP + add .bashrc settings et completion
 ##################################
 
-web_user() {
+web_user_setup() {
 
 	usermod -s /bin/bash www-data
 
@@ -310,7 +310,7 @@ php72_setup() {
 # Update php7.0-fpm config
 ##################################
 
-php7_conf() {
+php7_conf_setup() {
 
 	if [ ! -d /etc/php/7.0 ]; then
 
@@ -325,7 +325,7 @@ php7_conf() {
 # Compile latest nginx release from source
 ##################################
 
-nginx_ee() {
+nginx_ee_setup() {
 
 	wget https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh
 	chmod +x nginx-build.sh
@@ -337,7 +337,7 @@ nginx_ee() {
 # Add nginx additional conf
 ##################################
 
-nginx_conf() {
+nginx_conf_setup() {
 
 	# php7.1 & 7.2 common configurations
 
@@ -378,7 +378,7 @@ nginx_conf() {
 # Add fail2ban configurations
 ##################################
 
-f2b() {
+f2b_setup () {
 
 	cp -f $REPO_PATH/etc/fail2ban/filter.d/ddos.conf /etc/fail2ban/filter.d/ddos.conf
 	cp -f $REPO_PATH/etc/fail2ban/filter.d/ee-wordpress.conf /etc/fail2ban/filter.d/ee-wordpress.conf
@@ -393,7 +393,7 @@ f2b() {
 # Install cheat & nanorc
 ##################################
 
-bashrc_extra() {
+bashrc_extra_setup() {
 
 	git clone https://github.com/alexanderepstein/Bash-Snippets .Bash-Snippets
 	cd .Bash-Snippets || exit
@@ -408,7 +408,7 @@ bashrc_extra() {
 # Install ucaresystem
 ##################################
 
-ucaresystem() {
+ucaresystem_setup() {
 
 	sudo add-apt-repository ppa:utappia/stable -y
 	sudo apt-get update
@@ -432,7 +432,7 @@ proftpd_setup() {
 
 	sudo service proftpd restart
 
-	if [ "$ufw" = "y" ]; then
+	if [ "$ufw_install" = "y" ]; then
 
 		# ftp passive ports
 		ufw allow 49000:50000/tcp
@@ -444,7 +444,7 @@ proftpd_setup() {
 # Install Netdata
 ##################################
 
-netdata_install() {
+netdata_setup() {
 
 	if [ ! -d /etc/netdata ]; then
 
@@ -472,7 +472,7 @@ netdata_install() {
 # Install eXtplorer
 ##################################
 
-extplorer() {
+extplorer_setup() {
 
 	if [ ! -d /var/www/22222/htdocs/files ]; then
 
@@ -487,7 +487,7 @@ extplorer() {
 # Install EasyEngine Dashboard
 ##################################
 
-ee_dashboard() {
+ee_dashboard_setup() {
 
 	cd /var/www/22222 || exit
 
@@ -503,7 +503,7 @@ ee_dashboard() {
 # Install Acme.sh
 ##################################
 
-acme_sh() {
+acme_sh_setup() {
 
 	# install acme.sh if needed
 	echo ""
@@ -514,7 +514,7 @@ acme_sh() {
 		echo "installing acme.sh"
 		echo ""
 		wget -O - https://get.acme.sh | sh
-		source $HOME/.bashrc
+		cd && source .bashrc
 	fi
 
 }
@@ -553,8 +553,8 @@ ee-acme-22222() {
 			--reloadcmd "systemctl reload nginx.service"
 
 		if [ -f /etc/letsencrypt/live/${MY_HOSTNAME}/fullchain.pem ] && [ -f /etc/letsencrypt/live/${MY_HOSTNAME}/key.pem ]; then
-			sed -i "s/ssl_certificate \/var\/www\/22222\/cert\/22222.crt;/ssl_certificate \/etc\/letsencrypt\/live\/${MY_HOSTNAME}\/fullchain.pem;/" /etc/nginx/sites-available/22222
-			sed -i "s/ssl_certificate_key \/var\/www\/22222\/cert\/22222.key;/ssl_certificate_key    \/etc\/letsencrypt\/live\/${MY_HOSTNAME}\/key.pem;/" /etc/nginx/sites-available/22222
+			sed -i "s/ssl_certificate \\/var\\/www\\/22222\\/cert\\/22222.crt;/ssl_certificate \\/etc\\/letsencrypt\\/live\\/${MY_HOSTNAME}\\/fullchain.pem;/" /etc/nginx/sites-available/22222
+			sed -i "s/ssl_certificate_key \\/var\\/www\\/22222\\/cert\\/22222.key;/ssl_certificate_key    \\/etc\\/letsencrypt\\/live\\/${MY_HOSTNAME}\\/key.pem;/" /etc/nginx/sites-available/22222
 		fi
 		service nginx reload
 
@@ -565,58 +565,58 @@ ee-acme-22222() {
 # Functions
 ##################################
 
-useful
-dl_repo
-sysctl_tweaks
+useful_packages_setup
+dl_git_repo_setup
+sysctl_tweaks_setup
 
-if [ "$ufw" = "y" ]; then
+if [ "$ufw_install" = "y" ]; then
 	ufw_setup
 fi
 
-mariadb_repo
+mariadb_repo_setup
 
-if [ "$mariadb_server" = "y" ]; then
+if [ "$mariadb_server_install" = "y" ]; then
 	mariadb_setup
-	mariadb_tweaks
+	mariadb_tweaks_setup
 fi
 
-if [ "$mariadb_client" = "y" ]; then
-	mariadb_client
+if [ "$mariadb_client_install" = "y" ]; then
+	mariadb_client_setup
 fi
 
-ee_install
+ee_install_setup
 ee_setup
-ee_fix
-web_user
-php7_conf
+ee_fix_setup
+web_user_setup
+php7_conf_setup	
 
-if [ "$phpfpm71" = "y" ]; then
+if [ "$phpfpm71_install" = "y" ]; then
 	php71_setup
 fi
 
-if [ "$phpfpm72" = "y" ]; then
+if [ "$phpfpm72_install" = "y" ]; then
 	php72_setup
 fi
 
-if [ "$nginxee" = "y" ]; then
-	nginx_ee
-	nginx_conf
+if [ "$nginxee_install" = "y" ]; then
+	nginx_ee_setup
+	nginx_conf_setup
 fi
 
-if [ "$fail2ban" = "y" ]; then
-	f2b
+if [ "$fail2ban_install" = "y" ]; then
+	f2b_setup
 fi
 
-if [ "$proftpd" = "y" ]; then
+if [ "$proftpd_install" = "y" ]; then
 	proftpd_setup
 fi
 
-bashrc_extra
+bashrc_extra_setup
 #ucaresystem
 
-netdata_install
-extplorer
-ee_dashboard
+netdata_setup
+extplorer_setup
+ee_dashboard_setup
 
-acme_sh
+acme_sh_setup
 ee-acme-22222
