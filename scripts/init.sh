@@ -21,10 +21,10 @@ REPO_PATH="/tmp/ubuntu-nginx-web-server"
 ##################################
 
 if [ "$(id -u)" != "0" ]; then
-    echo "Error: You must be root to run this script, please use the root user to install the software."
-    echo ""
-    echo "Use 'sudo su - root' to login as root"
-    exit 1
+	echo "Error: You must be root to run this script, please use the root user to install the software."
+	echo ""
+	echo "Use 'sudo su - root' to login as root"
+	exit 1
 fi
 
 clear
@@ -32,7 +32,6 @@ clear
 ##################################
 # Welcome
 ##################################
-
 
 echo ""
 echo "Welcome to ubuntu-nginx-web-server install script."
@@ -45,50 +44,48 @@ echo ""
 echo ""
 echo "Do you want to install ufw (firewall) ? (y/n)"
 while [[ $ufw != "y" && $ufw != "n" ]]; do
-    read -p "Select an option [y/n]: " ufw
+	read -p "Select an option [y/n]: " ufw
 done
 echo ""
 echo ""
 echo "Do you want to install fail2ban ? (y/n)"
 while [[ $fail2ban != "y" && $fail2ban != "n" ]]; do
-    read -p "Select an option [y/n]: " fail2ban
+	read -p "Select an option [y/n]: " fail2ban
 done
 echo ""
 echo "Do you want to install MariaDB-server 10.3 ? (y/n)"
 while [[ $mariadb_server != "y" && $mariadb_server != "n" ]]; do
-    read -p "Select an option [y/n]: " mariadb_server
+	read -p "Select an option [y/n]: " mariadb_server
 done
 if [ "$mariadb_server" = "n" ]; then
-    echo ""
-    echo "Do you want to install MariaDB-client ? (y/n)"
-    while [[ $mariadb_client != "y" && $mariadb_client != "n" ]]; do
-        read -p "Select an option [y/n]: " mariadb_client
-    done
+	echo ""
+	echo "Do you want to install MariaDB-client ? (y/n)"
+	while [[ $mariadb_client != "y" && $mariadb_client != "n" ]]; do
+		read -p "Select an option [y/n]: " mariadb_client
+	done
 fi
 echo ""
 echo "Do you want to compile the last nginx-ee ? (y/n)"
 while [[ $nginxee != "y" && $nginxee != "n" ]]; do
-    read -p "Select an option [y/n]: " nginxee
+	read -p "Select an option [y/n]: " nginxee
 done
 echo ""
 echo "Do you want php7.1-fpm ? (y/n)"
 while [[ $phpfpm71 != "y" && $phpfpm71 != "n" ]]; do
-    read -p "Select an option [y/n]: " phpfpm71
+	read -p "Select an option [y/n]: " phpfpm71
 done
 echo ""
 echo "Do you want php7.2-fpm ? (y/n)"
 while [[ $phpfpm72 != "y" && $phpfpm72 != "n" ]]; do
-    read -p "Select an option [y/n]: " phpfpm72
+	read -p "Select an option [y/n]: " phpfpm72
 done
 echo ""
 echo "Do you want proftpd ? (y/n)"
 while [[ $proftpd != "y" && $proftpd != "n" ]]; do
-    read -p "Select an option [y/n]: " proftpd
+	read -p "Select an option [y/n]: " proftpd
 done
 
 echo ""
-
-
 
 ##################################
 # Update packages
@@ -102,34 +99,33 @@ sudo apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 ##################################
 
 ufw() {
-    
-    if [ ! -d /etc/ufw ];
-    then
-        apt-get install ufw -y
-    fi
-    
-    ufw logging low
-    ufw default allow outgoing
-    ufw default deny incoming
-    
-    # required
-    ufw allow 22
-    ufw allow 53
-    ufw allow http
-    ufw allow https
-    ufw allow 21
-    ufw allow 68
-    ufw allow 546
-    ufw allow 873
-    ufw allow 123
-    ufw allow 22222
-    
-    # optional for monitoring
-    
-    ufw allow 161
-    ufw allow 6556
-    ufw allow 10050
-    
+
+	if [ ! -d /etc/ufw ]; then
+		apt-get install ufw -y
+	fi
+
+	ufw logging low
+	ufw default allow outgoing
+	ufw default deny incoming
+
+	# required
+	ufw allow 22
+	ufw allow 53
+	ufw allow http
+	ufw allow https
+	ufw allow 21
+	ufw allow 68
+	ufw allow 546
+	ufw allow 873
+	ufw allow 123
+	ufw allow 22222
+
+	# optional for monitoring
+
+	ufw allow 161
+	ufw allow 6556
+	ufw allow 10050
+
 }
 
 ##################################
@@ -137,12 +133,12 @@ ufw() {
 ##################################
 
 useful() {
-    
-    apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
-    
-    # ntp time
-    systemctl enable ntp
-    
+
+	apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
+
+	# ntp time
+	systemctl enable ntp
+
 }
 
 ##################################
@@ -150,11 +146,11 @@ useful() {
 ##################################
 
 dl_repo() {
-    
-    cd /tmp || exit
-    rm -rf /tmp/ubuntu-nginx-web-server
-    git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git /tmp/ubuntu-nginx-web-server
-    
+
+	cd /tmp || exit
+	rm -rf /tmp/ubuntu-nginx-web-server
+	git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git /tmp/ubuntu-nginx-web-server
+
 }
 
 ##################################
@@ -162,15 +158,15 @@ dl_repo() {
 ##################################
 
 sysctl() {
-    
-    sudo modprobe tcp_htcp
-    cp -f $REPO_PATH/etc/sysctl.conf /etc/sysctl.conf
-    sysctl -p
-    cp -f  $REPO_PATH/etc/security/limits.conf /etc/security/limits.conf
-    
-    # Redis transparent_hugepage
-    echo never > /sys/kernel/mm/transparent_hugepage/enabled
-    
+
+	sudo modprobe tcp_htcp
+	cp -f $REPO_PATH/etc/sysctl.conf /etc/sysctl.conf
+	sysctl -p
+	cp -f $REPO_PATH/etc/security/limits.conf /etc/security/limits.conf
+
+	# Redis transparent_hugepage
+	echo never >/sys/kernel/mm/transparent_hugepage/enabled
+
 }
 
 ##################################
@@ -178,11 +174,11 @@ sysctl() {
 ##################################
 
 mariadb_repo() {
-    
-    curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
-    | sudo bash -s -- --mariadb-server-version=10.3 --skip-maxscale -y
-    sudo apt-get update
-    
+
+	curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup |
+		sudo bash -s -- --mariadb-server-version=10.3 --skip-maxscale -y
+	sudo apt-get update
+
 }
 
 ##################################
@@ -190,15 +186,15 @@ mariadb_repo() {
 ##################################
 
 mariadb_setup() {
-    
-    sudo apt-get install -y mariadb-server
-    
+
+	sudo apt-get install -y mariadb-server
+
 }
 
 mariadb_client() {
-    
-    sudo apt-get install -y mariadb-client
-    
+
+	sudo apt-get install -y mariadb-client
+
 }
 
 ##################################
@@ -206,19 +202,19 @@ mariadb_client() {
 ##################################
 
 mariadb_tweaks() {
-    
-    cp -f $REPO_PATH/etc/mysql/my.cnf /etc/mysql/my.cnf
-    
-    sudo service mysql stop
-    
-    sudo mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
-    sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
-    
-    cp -f  $REPO_PATH/etc/systemd/system/mariadb.service.d/limits.conf /etc/systemd/system/mariadb.service.d/limits.conf
-    sudo systemctl daemon-reload
-    
-    sudo service mysql start
-    
+
+	cp -f $REPO_PATH/etc/mysql/my.cnf /etc/mysql/my.cnf
+
+	sudo service mysql stop
+
+	sudo mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
+	sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
+
+	cp -f $REPO_PATH/etc/systemd/system/mariadb.service.d/limits.conf /etc/systemd/system/mariadb.service.d/limits.conf
+	sudo systemctl daemon-reload
+
+	sudo service mysql start
+
 }
 
 ##################################
@@ -226,12 +222,12 @@ mariadb_tweaks() {
 ##################################
 
 ee_install() {
-    
-    sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = $USER@$HOSTNAME" > $HOME/.gitconfig'
-    sudo wget -qO ee rt.cx/ee && sudo bash ee
-    
-    source /etc/bash_completion.d/ee_auto.rc
-    
+
+	sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = $USER@$HOSTNAME" > $HOME/.gitconfig'
+	sudo wget -qO ee rt.cx/ee && sudo bash ee
+
+	source /etc/bash_completion.d/ee_auto.rc
+
 }
 
 ##################################
@@ -239,10 +235,10 @@ ee_install() {
 ##################################
 
 ee_setup() {
-    
-    ee stack install
-    ee stack install --php7 --redis --admin --phpredisadmin
-    
+
+	ee stack install
+	ee stack install --php7 --redis --admin --phpredisadmin
+
 }
 
 ##################################
@@ -250,14 +246,14 @@ ee_setup() {
 ##################################
 
 ee_fix() {
-    
-    cd ~/ || exit
-    curl -sS https://getcomposer.org/installer | php
-    mv composer.phar /usr/bin/composer
-    
-    chown www-data:www-data /var/www
-    sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
-    
+
+	cd ~/ || exit
+	curl -sS https://getcomposer.org/installer | php
+	mv composer.phar /usr/bin/composer
+
+	chown www-data:www-data /var/www
+	sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
+
 }
 
 ##################################
@@ -265,18 +261,18 @@ ee_fix() {
 ##################################
 
 web_user() {
-    
-    usermod -s /bin/bash www-data
-    
-    wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
-    cp -f  /var/www/.profile $REPO_PATH/files/var/www/.profile
-    cp -f  /var/www/.bashrc $REPO_PATH/files/var/www/.bashrc
-    
-    chown www-data:www-data /var/www/.profile
-    chown www-data:www-data /var/www/.bashrc
-    
-    sudo -u www-data -H wget https://raw.githubusercontent.com/scopatz/nanorc/files/install.sh -O- | sh
-    
+
+	usermod -s /bin/bash www-data
+
+	wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
+	cp -f /var/www/.profile $REPO_PATH/files/var/www/.profile
+	cp -f /var/www/.bashrc $REPO_PATH/files/var/www/.bashrc
+
+	chown www-data:www-data /var/www/.profile
+	chown www-data:www-data /var/www/.bashrc
+
+	sudo -u www-data -H wget https://raw.githubusercontent.com/scopatz/nanorc/files/install.sh -O- | sh
+
 }
 
 ##################################
@@ -284,31 +280,30 @@ web_user() {
 ##################################
 
 php71() {
-    
-    sudo apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
-    php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
-    
-    sudo cp -f $REPO_PATH/etc/php/7.1/fpm/pool.d/www.conf /etc/php/7.1/fpm/pool.d/www.conf
-    
-    sudo cp -f  $REPO_PATH/etc/php/7.1/fpm/php.ini /etc/php/7.1/fpm/php.ini
-    cp -f  $REPO_PATH/etc/php/7.1/cli/php.ini /etc/php/7.1/cli/php.ini
-    sudo service php7.1-fpm restart
-    
-}
 
+	sudo apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
+		php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
+
+	sudo cp -f $REPO_PATH/etc/php/7.1/fpm/pool.d/www.conf /etc/php/7.1/fpm/pool.d/www.conf
+
+	sudo cp -f $REPO_PATH/etc/php/7.1/fpm/php.ini /etc/php/7.1/fpm/php.ini
+	cp -f $REPO_PATH/etc/php/7.1/cli/php.ini /etc/php/7.1/cli/php.ini
+	sudo service php7.1-fpm restart
+
+}
 
 ##################################
 # Install php7.2-fpm
 ##################################
 
 php72() {
-    
-    sudo apt-get install php7.2-fpm php7.2-xml php7.2-bz2  php7.2-zip php7.2-mysql  php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
-    
-    cp -f  $REPO_PATH/etc/php/7.2/fpm/pool.d/www.conf /etc/php/7.2/fpm/pool.d/www.conf
-    cp -f  $REPO_PATH/etc/php/7.2/cli/php.ini /etc/php/7.2/cli/php.ini
-    service php7.2-fpm restart
-    
+
+	sudo apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
+
+	cp -f $REPO_PATH/etc/php/7.2/fpm/pool.d/www.conf /etc/php/7.2/fpm/pool.d/www.conf
+	cp -f $REPO_PATH/etc/php/7.2/cli/php.ini /etc/php/7.2/cli/php.ini
+	service php7.2-fpm restart
+
 }
 
 ##################################
@@ -316,15 +311,14 @@ php72() {
 ##################################
 
 php7_conf() {
-    
-    if [ ! -d /etc/php/7.0 ];
-    then
-        
-        cp -f  $REPO_PATH/etc/php/7.0/cli/php.ini /etc/php/7.0/cli/php.ini
-        cp -f  $REPO_PATH/etc/php/7.0/fpm/php.ini /etc/php/7.0/fpm/php.ini
-        
-    fi
-    
+
+	if [ ! -d /etc/php/7.0 ]; then
+
+		cp -f $REPO_PATH/etc/php/7.0/cli/php.ini /etc/php/7.0/cli/php.ini
+		cp -f $REPO_PATH/etc/php/7.0/fpm/php.ini /etc/php/7.0/fpm/php.ini
+
+	fi
+
 }
 
 ##################################
@@ -332,11 +326,11 @@ php7_conf() {
 ##################################
 
 nginx_ee() {
-    
-    wget https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh
-    chmod +x nginx-build.sh
-    ./nginx-build.sh
-    
+
+	wget https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh
+	chmod +x nginx-build.sh
+	./nginx-build.sh
+
 }
 
 ##################################
@@ -345,42 +339,38 @@ nginx_ee() {
 
 nginx_conf() {
 
-# php7.1 & 7.2 common configurations
+	# php7.1 & 7.2 common configurations
 
-cp -rf $REPO_PATH/etc/nginx/common/* /etc/nginx/common/
+	cp -rf $REPO_PATH/etc/nginx/common/* /etc/nginx/common/
 
-# optimized nginx.config
-cp -f  $REPO_PATH/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+	# optimized nginx.config
+	cp -f $REPO_PATH/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
+	# check nginx configuration
+	CONF_22222=$(grep -c netdata /etc/nginx/sites-available/22222)
+	CONF_UPSTREAM=$(grep -c netdata /etc/nginx/conf.d/upstream.conf)
+	CONF_DEFAULT=$(grep -c status /etc/nginx/sites-available/default)
 
-# check nginx configuration
-CONF_22222=$(grep -c netdata /etc/nginx/sites-available/22222)
-CONF_UPSTREAM=$(grep -c netdata /etc/nginx/conf.d/upstream.conf)
-CONF_DEFAULT=$(grep -c status /etc/nginx/sites-available/default)
+	if [ "$CONF_22222" = 0 ]; then
+		# add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
+		sudo cp -f $REPO_PATH/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
+	fi
 
-if [ "$CONF_22222" = 0 ]
-then
-    # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
-    sudo cp -f  $REPO_PATH/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
-fi
+	if [ "$CONF_UPSTREAM" = 0 ]; then
+		# add netdata, php7.1 and php7.2 upstream
+		sudo cp -f $REPO_PATH/etc/nginx/conf.d/upstream.conf /etc/nginx/conf.d/upstream.conf
+	fi
 
-if [ "$CONF_UPSTREAM" = 0 ]
-then
-    # add netdata, php7.1 and php7.2 upstream
-    sudo cp -f  $REPO_PATH/etc/nginx/conf.d/upstream.conf /etc/nginx/conf.d/upstream.conf
-fi
+	if [ "$CONF_DEFAULT" = 0 ]; then
+		# additional nginx locations for monitoring
+		sudo cp -f $REPO_PATH/etc/nginx/sites-available/default /etc/nginx/sites-available/default
+	fi
 
-if [ "$CONF_DEFAULT" = 0 ]
-then
-    # additional nginx locations for monitoring
-    sudo cp -f  $REPO_PATH/etc/nginx/sites-available/default /etc/nginx/sites-available/default
-fi
+	# 1) add webp mapping
+	cp -f $REPO_PATH/etc/nginx/conf.d/webp.conf /etc/nginx/conf.d/webp.conf
 
-# 1) add webp mapping
-cp -f $REPO_PATH/etc/nginx/conf.d/webp.conf /etc/nginx/conf.d/webp.conf
-
-nginx -t
-service nginx reload
+	nginx -t
+	service nginx reload
 
 }
 
@@ -389,14 +379,14 @@ service nginx reload
 ##################################
 
 f2b() {
-    
-    cp -f $REPO_PATH/etc/fail2ban/filter.d/ddos.conf /etc/fail2ban/filter.d/ddos.conf
-    cp -f $REPO_PATH/etc/fail2ban/filter.d/ee-wordpress.conf /etc/fail2ban/filter.d/ee-wordpress.conf
-    cp -f $REPO_PATH/etc/fail2ban/jail.d/custom.conf /etc/fail2ban/jail.d/custom.conf
-    cp -f $REPO_PATH/etc/fail2ban/jail.d/ddos.conf  /etc/fail2ban/jail.d/ddos.conf
-    
-    sudo fail2ban-client reload
-    
+
+	cp -f $REPO_PATH/etc/fail2ban/filter.d/ddos.conf /etc/fail2ban/filter.d/ddos.conf
+	cp -f $REPO_PATH/etc/fail2ban/filter.d/ee-wordpress.conf /etc/fail2ban/filter.d/ee-wordpress.conf
+	cp -f $REPO_PATH/etc/fail2ban/jail.d/custom.conf /etc/fail2ban/jail.d/custom.conf
+	cp -f $REPO_PATH/etc/fail2ban/jail.d/ddos.conf /etc/fail2ban/jail.d/ddos.conf
+
+	sudo fail2ban-client reload
+
 }
 
 ##################################
@@ -404,14 +394,14 @@ f2b() {
 ##################################
 
 bashrc_extra() {
-    
-    git clone https://github.com/alexanderepstein/Bash-Snippets .Bash-Snippets
-    cd .Bash-Snippets || exit
-    git checkout v$BASH_SNIPPETS_VER
-    ./install.sh cheat
-    
-    wget https://raw.githubusercontent.com/scopatz/nanorc/files/install.sh -O- | sh
-    
+
+	git clone https://github.com/alexanderepstein/Bash-Snippets .Bash-Snippets
+	cd .Bash-Snippets || exit
+	git checkout v$BASH_SNIPPETS_VER
+	./install.sh cheat
+
+	wget https://raw.githubusercontent.com/scopatz/nanorc/files/install.sh -O- | sh
+
 }
 
 ##################################
@@ -419,11 +409,11 @@ bashrc_extra() {
 ##################################
 
 ucaresystem() {
-    
-    sudo add-apt-repository ppa:utappia/stable -y
-    sudo apt-get update
-    sudo apt-get install ucaresystem-core -y
-    
+
+	sudo add-apt-repository ppa:utappia/stable -y
+	sudo apt-get update
+	sudo apt-get install ucaresystem-core -y
+
 }
 
 ##################################
@@ -431,24 +421,23 @@ ucaresystem() {
 ##################################
 
 proftpd_setup() {
-    
-    sudo apt install proftpd -y
-    
-    # secure proftpd and enable PassivePorts
-    
-    sed -i 's/# DefaultRoot/DefaultRoot/' /etc/proftpd/proftpd.conf
-    sed -i 's/# RequireValidShell/RequireValidShell/' /etc/proftpd/proftpd.conf
-    sed -i 's/# PassivePorts                  49152 65534/PassivePorts                  49000 50000/' /etc/proftpd/proftpd.conf
-    
-    sudo service proftpd restart
-    
-    if [ "$ufw" = "y" ];
-    then
-        
-        # ftp passive ports
-        ufw allow 49000:50000/tcp
-    fi
-    
+
+	sudo apt install proftpd -y
+
+	# secure proftpd and enable PassivePorts
+
+	sed -i 's/# DefaultRoot/DefaultRoot/' /etc/proftpd/proftpd.conf
+	sed -i 's/# RequireValidShell/RequireValidShell/' /etc/proftpd/proftpd.conf
+	sed -i 's/# PassivePorts                  49152 65534/PassivePorts                  49000 50000/' /etc/proftpd/proftpd.conf
+
+	sudo service proftpd restart
+
+	if [ "$ufw" = "y" ]; then
+
+		# ftp passive ports
+		ufw allow 49000:50000/tcp
+	fi
+
 }
 
 ##################################
@@ -456,26 +445,25 @@ proftpd_setup() {
 ##################################
 
 netdata() {
-    
-    if [ ! -d /etc/netdata ];
-    then
-        
-        ## install dependencies
-        sudo apt-get install autoconf autoconf-archive autogen automake gcc libmnl-dev lm-sensors make nodejs pkg-config python python-mysqldb python-psycopg2 python-pymongo python-yaml uuid-dev zlib1g-dev -y
-        
-        ## install nedata
-        bash <(curl -Ss https://my-netdata.io/kickstart.sh) all --dont-wait
-        
-        ## optimize netdata resources usage
-        echo 1 >/sys/kernel/mm/ksm/run
-        echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
-        
-        ## disable email notifigrep -cions
-        sudo sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /etc/netdata/health_alarm_notify.conf
-        sudo service netdata restart
-        
-    fi
-    
+
+	if [ ! -d /etc/netdata ]; then
+
+		## install dependencies
+		sudo apt-get install autoconf autoconf-archive autogen automake gcc libmnl-dev lm-sensors make nodejs pkg-config python python-mysqldb python-psycopg2 python-pymongo python-yaml uuid-dev zlib1g-dev -y
+
+		## install nedata
+		bash <(curl -Ss https://my-netdata.io/kickstart.sh) all --dont-wait
+
+		## optimize netdata resources usage
+		echo 1 >/sys/kernel/mm/ksm/run
+		echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
+
+		## disable email notifigrep -cions
+		sudo sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /etc/netdata/health_alarm_notify.conf
+		sudo service netdata restart
+
+	fi
+
 }
 
 ##################################
@@ -483,15 +471,14 @@ netdata() {
 ##################################
 
 extplorer() {
-    
-    if [ ! -d /var/www/22222/htdocs/files ];
-    then
-        
-        mkdir /var/www/22222/htdocs/files
-        wget http://extplorer.net/attachments/download/74/eXtplorer_$EXTPLORER_VER.zip -O /var/www/22222/htdocs/files/ex.zip
-        cd /var/www/22222/htdocs/files && unzip ex.zip && rm ex.zip
-    fi
-    
+
+	if [ ! -d /var/www/22222/htdocs/files ]; then
+
+		mkdir /var/www/22222/htdocs/files
+		wget http://extplorer.net/attachments/download/74/eXtplorer_$EXTPLORER_VER.zip -O /var/www/22222/htdocs/files/ex.zip
+		cd /var/www/22222/htdocs/files && unzip ex.zip && rm ex.zip
+	fi
+
 }
 
 ##################################
@@ -499,43 +486,100 @@ extplorer() {
 ##################################
 
 ee_dashboard() {
-    
-    cd /var/www/22222 || exit
-    
-    ## download latest version of EasyEngine-dashboard
-    cd /tmp || exit
-    git clone https://github.com/VirtuBox/easyengine-dashboard.git
-    sudo cp -rf /tmp/easyengine-dashboard/* /var/www/22222/htdocs/
-    sudo chown -R www-data:www-data /var/www/22222/htdocs
-    
+
+	cd /var/www/22222 || exit
+
+	## download latest version of EasyEngine-dashboard
+	cd /tmp || exit
+	git clone https://github.com/VirtuBox/easyengine-dashboard.git
+	sudo cp -rf /tmp/easyengine-dashboard/* /var/www/22222/htdocs/
+	sudo chown -R www-data:www-data /var/www/22222/htdocs
+
 }
 
+##################################
+# Install Acme.sh
+##################################
+
+acme_sh() {
+
+	# install acme.sh if needed
+	echo ""
+	echo "checking if acme.sh is already installed"
+	echo ""
+	if [ ! -f $HOME/.acme.sh/acme.sh ]; then
+		echo ""
+		echo "installing acme.sh"
+		echo ""
+		wget -O - https://get.acme.sh | sh
+		source $HOME/.bashrc
+	fi
+
+}
 
 ##################################
-# Functions 
+# Secure EasyEngine Dashboard with Acme.sh
+##################################
+
+ee-acme-22222() {
+
+	MY_HOSTNAME=$(hostname -f)
+	MY_IP=$(curl -s v4.vtbox.net)
+	MY_HOSTNAME_IP=$(dig +short @8.8.8.8 "$MY_HOSTNAME")
+
+	if [[ "$MY_IP" == "$MY_HOSTNAME_IP" ]]; then
+
+		if [ ! -f /etc/systemd/system/multi-user.target.wants/nginx.service ]; then
+			sudo systemctl enable nginx.service
+		fi
+
+		if [ ! -d $HOME/.acme.sh/${MY_HOSTNAME}_ecc ]; then
+			$HOME/.acme.sh/acme.sh --issue -d $MY_HOSTNAME --keylength ec-384 --standalone --pre-hook "service nginx stop " --post-hook "service nginx start"
+		fi
+
+		if [ -d /etc/letsencrypt/live/$MY_HOSTNAME ]; then
+			rm -rf /etc/letsencrypt/live/$MY_HOSTNAME/*
+		else
+			mkdir -p /etc/letsencrypt/live/$MY_HOSTNAME
+		fi
+
+		# install the cert and reload nginx
+		$HOME/.acme.sh/acme.sh --install-cert -d ${MY_HOSTNAME} --ecc \
+			--cert-file /etc/letsencrypt/live/${MY_HOSTNAME}/cert.pem \
+			--key-file /etc/letsencrypt/live/${MY_HOSTNAME}/key.pem \
+			--fullchain-file /etc/letsencrypt/live/${MY_HOSTNAME}/fullchain.pem \
+			--reloadcmd "systemctl reload nginx.service"
+
+		if [ -f /etc/letsencrypt/live/${MY_HOSTNAME}/fullchain.pem ] && [ -f /etc/letsencrypt/live/${MY_HOSTNAME}/key.pem ]; then
+			sed -i "s/ssl_certificate \/var\/www\/22222\/cert\/22222.crt;/ssl_certificate \/etc\/letsencrypt\/live\/${MY_HOSTNAME}\/fullchain.pem;/" /etc/nginx/sites-available/22222
+			sed -i "s/ssl_certificate_key \/var\/www\/22222\/cert\/22222.key;/ssl_certificate_key    \/etc\/letsencrypt\/live\/${MY_HOSTNAME}\/key.pem;/" /etc/nginx/sites-available/22222
+		fi
+		service nginx reload
+
+	fi
+}
+
+##################################
+# Functions
 ##################################
 
 useful
 dl_repo
 sysctl
 
-
-if [ "$ufw" = "y" ]
-then
-    ufw
+if [ "$ufw" = "y" ]; then
+	ufw
 fi
 
 mariadb_repo
 
-if [ "$mariadb_server" = "y" ]
-then
-    mariadb_setup
-    mariadb_tweaks
+if [ "$mariadb_server" = "y" ]; then
+	mariadb_setup
+	mariadb_tweaks
 fi
 
-if [ "$mariadb_client" = "y" ]
-then
-    mariadb_client
+if [ "$mariadb_client" = "y" ]; then
+	mariadb_client
 fi
 
 ee_install
@@ -544,30 +588,25 @@ ee_fix
 web_user
 php7_conf
 
-if [ "$phpfpm71" = "y" ]
-then
-    php71
+if [ "$phpfpm71" = "y" ]; then
+	php71
 fi
 
-if [ "$phpfpm72" = "y" ]
-then
-    php72
+if [ "$phpfpm72" = "y" ]; then
+	php72
 fi
 
-if [ "$nginxee" = "y" ]
-then
-    nginx_ee
-    nginx_conf
+if [ "$nginxee" = "y" ]; then
+	nginx_ee
+	nginx_conf
 fi
 
-if [ "$fail2ban" = "y" ]
-then
-    f2b
+if [ "$fail2ban" = "y" ]; then
+	f2b
 fi
 
-if [ "$proftpd" = "y" ]
-then
-    proftpd_setup
+if [ "$proftpd" = "y" ]; then
+	proftpd_setup
 fi
 
 bashrc_extra
@@ -577,14 +616,5 @@ netdata
 extplorer
 ee_dashboard
 
-
-
-
-
-
-
-
-
-
-
-
+acme_sh
+ee-acme-22222
