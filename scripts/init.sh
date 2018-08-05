@@ -13,7 +13,6 @@
 ##################################
 
 EXTPLORER_VER="2.1.10"
-BASH_SNIPPETS_VER="1.22.0"
 REPO_PATH=/tmp/ubuntu-nginx-web-server
 
 ##################################
@@ -42,7 +41,7 @@ echo ""
 ##################################
 
 echo ""
-echo "Do you want to install MariaDB-server 10.3 ? (y/n)"
+echo "Do you want to install MariaDB-server ? (y/n)"
 while [[ $mariadb_server_install != "y" && $mariadb_server_install != "n" ]]; do
 	read -p "Select an option [y/n]: " mariadb_server_install
 done
@@ -51,6 +50,13 @@ if [ "$mariadb_server_install" = "n" ]; then
 	echo "Do you want to install MariaDB-client ? (y/n)"
 	while [[ $mariadb_client_install != "y" && $mariadb_client_install != "n" ]]; do
 		read -p "Select an option [y/n]: " mariadb_client_install
+	done
+fi
+if [ "$mariadb_server_install" = "y" || "$mariadb_client_install" = "y" ]; then
+	echo ""
+	echo "What version of MariaDB Client/Server do you want to install, 10.1, 10.2 or 10.3 ?"
+	while [[ $mariadb_version_install != "10.1" && $mariadb_version_install != "10.2" && $mariadb_version_install != "10.3" ]]; do
+		read -p "Select an option [10.1 / 10.2 / 10.3]: " mariadb_version_install
 	done
 fi
 echo ""
@@ -74,8 +80,11 @@ echo ""
 # Update packages
 ##################################
 
-sudo apt-get update
-sudo apt-get upgrade -y && apt-get autoremove -y && apt-get clean
+echo "updating packages"
+apt-get update >> /tmp/ubuntu-nginx-web-server.log
+apt-get upgrade -y >> /tmp/ubuntu-nginx-web-server.log
+apt-get autoremove -y --purge >> /tmp/ubuntu-nginx-web-server.log
+apt-get autoclean -y >> /tmp/ubuntu-nginx-web-server.log
 
 ##################################
 # UFW
@@ -84,7 +93,7 @@ sudo apt-get upgrade -y && apt-get autoremove -y && apt-get clean
 ufw_setup() {
 
 	if [ ! -d /etc/ufw ]; then
-		apt-get install ufw -y
+		apt-get install ufw -y >>/tmp/ubuntu-nginx-web-server.log
 	fi
 
 	ufw logging low
@@ -117,10 +126,11 @@ ufw_setup() {
 
 useful_packages_setup() {
 
-	apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
+	echo "installing useful packages"
+	apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp -y >>/tmp/ubuntu-nginx-web-server.log
 
 	# ntp time
-	#systemctl enable ntp
+	systemctl enable ntp
 
 }
 
@@ -158,9 +168,9 @@ sysctl_tweaks_setup() {
 
 mariadb_repo_setup() {
 
-	curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup |
-		sudo bash -s -- --mariadb-server-version=10.3 --skip-maxscale -y
-	sudo apt-get update
+	curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | \
+	sudo bash -s -- --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
+	apt-get update >>/tmp/ubuntu-nginx-web-server.log
 
 }
 
@@ -170,13 +180,26 @@ mariadb_repo_setup() {
 
 mariadb_setup() {
 
-	sudo apt-get install -y mariadb-server
+	rootpass=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+	export DEBIAN_FRONTEND=noninteractive # to avoid prompt during installation
+	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password password $rootpass"
+	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password_again password $rootpass"
+	# install mariadb server
+	sudo DEBIAN_FRONTEND=noninteractive apt-get install -qq mariadb-server # -qq implies -y --force-yes
+
+	# set password to the root user and grant privileges
+	Q1="GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$rootpass' WITH GRANT OPTION;"
+	Q2="FLUSH PRIVILEGES;"
+	SQL="${Q1}${Q2}"
+	mysql -uroot -e "$SQL"
+
+	sudo bash -c 'echo -e "[client]\n\tuser = root\n\tpassword = $rootpass" > $HOME/.my.cnf'
 
 }
 
 mariadb_client_setup() {
 
-	sudo apt-get install -y mariadb-client
+	apt-get install -y mariadb-client >>/tmp/ubuntu-nginx-web-server.log
 
 }
 
@@ -231,7 +254,7 @@ ee_setup() {
 ee_fix_setup() {
 
 	cd ~/ || exit
-	curl -sS https://getcomposer.org/installer | php
+	curl -sS https://getcomposer.org/installer | php >>/tmp/ubuntu-nginx-web-server.log
 	mv composer.phar /usr/bin/composer
 
 	chown www-data:www-data /var/www
@@ -247,7 +270,7 @@ web_user_setup() {
 
 	usermod -s /bin/bash www-data
 
-	wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
+	wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash >>/tmp/ubuntu-nginx-web-server.log
 	cp -f /var/www/.profile $REPO_PATH/files/var/www/.profile
 	cp -f /var/www/.bashrc $REPO_PATH/files/var/www/.bashrc
 
@@ -264,8 +287,8 @@ web_user_setup() {
 
 php71_setup() {
 
-	sudo apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
-		php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
+	apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
+		php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl >>/tmp/ubuntu-nginx-web-server.log
 
 	sudo cp -f $REPO_PATH/etc/php/7.1/fpm/pool.d/www.conf /etc/php/7.1/fpm/pool.d/www.conf
 
@@ -281,7 +304,7 @@ php71_setup() {
 
 php72_setup() {
 
-	sudo apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
+	apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y >>/tmp/ubuntu-nginx-web-server.log
 
 	cp -f $REPO_PATH/etc/php/7.2/fpm/pool.d/www.conf /etc/php/7.2/fpm/pool.d/www.conf
 	cp -f $REPO_PATH/etc/php/7.2/cli/php.ini /etc/php/7.2/cli/php.ini
@@ -368,7 +391,7 @@ f2b_setup() {
 	cp -f $REPO_PATH/etc/fail2ban/jail.d/custom.conf /etc/fail2ban/jail.d/custom.conf
 	cp -f $REPO_PATH/etc/fail2ban/jail.d/ddos.conf /etc/fail2ban/jail.d/ddos.conf
 
-	sudo fail2ban-client reload
+	fail2ban-client reload >>/tmp/ubuntu-nginx-web-server.log
 
 }
 
@@ -378,10 +401,14 @@ f2b_setup() {
 
 bashrc_extra_setup() {
 
-	git clone https://github.com/alexanderepstein/Bash-Snippets .Bash-Snippets
-	cd .Bash-Snippets || exit
-	git checkout v$BASH_SNIPPETS_VER
-	./install.sh cheat
+	curl https://cht.sh/:cht.sh >/usr/bin/cht.sh
+	chmod +x /usr/bin/cht.sh
+	curl https://cht.sh/:bash_completion >/etc/bash_completion.d/cht.sh
+	sed -i 's/complete -F _cht_complete cht.sh/complete -F _cht_complete cheat/' /etc/bash_completion.d/cht.sh
+
+	cd || exit
+	echo "alias cheat='cht.sh'" >>.bashrc
+	source .bashrc
 
 	wget https://raw.githubusercontent.com/scopatz/nanorc/files/install.sh -O- | sh
 
@@ -393,9 +420,9 @@ bashrc_extra_setup() {
 
 ucaresystem_setup() {
 
-	sudo add-apt-repository ppa:utappia/stable -y
-	sudo apt-get update
-	sudo apt-get install ucaresystem-core -y
+	add-apt-repository ppa:utappia/stable -y >>/tmp/ubuntu-nginx-web-server.log
+	apt-get update >>/tmp/ubuntu-nginx-web-server.log
+	apt-get install ucaresystem-core -y >>/tmp/ubuntu-nginx-web-server.log
 
 }
 
@@ -405,7 +432,8 @@ ucaresystem_setup() {
 
 proftpd_setup() {
 
-	sudo apt install proftpd -y
+	echo "installing proftpd"
+	apt-get install proftpd -y >>/tmp/ubuntu-nginx-web-server.log
 
 	# secure proftpd and enable PassivePorts
 
@@ -432,10 +460,10 @@ netdata_setup() {
 	if [ ! -d /etc/netdata ]; then
 
 		## install dependencies
-		sudo apt-get install autoconf autoconf-archive autogen automake gcc libmnl-dev lm-sensors make nodejs pkg-config python python-mysqldb python-psycopg2 python-pymongo python-yaml uuid-dev zlib1g-dev -y
+		apt-get install autoconf autoconf-archive autogen automake gcc libmnl-dev lm-sensors make nodejs pkg-config python python-mysqldb python-psycopg2 python-pymongo python-yaml uuid-dev zlib1g-dev -y >>/tmp/ubuntu-nginx-web-server.log
 
 		## install nedata
-		wget https://my-netdata.io/kickstart.sh
+		wget https://my-netdata.io/kickstart.sh >>/tmp/ubuntu-nginx-web-server.log
 		chmod +x kickstart.sh
 		./kickstart.sh all --dont-wait
 
@@ -460,8 +488,10 @@ extplorer_setup() {
 	if [ ! -d /var/www/22222/htdocs/files ]; then
 
 		mkdir /var/www/22222/htdocs/files
-		wget http://extplorer.net/attachments/download/74/eXtplorer_$EXTPLORER_VER.zip -O /var/www/22222/htdocs/files/ex.zip
-		cd /var/www/22222/htdocs/files && unzip ex.zip && rm ex.zip
+		wget http://extplorer.net/attachments/download/74/eXtplorer_$EXTPLORER_VER.zip -O /var/www/22222/htdocs/files/ex.zip >>/tmp/ubuntu-nginx-web-server.log
+		cd /var/www/22222/htdocs/files || exit
+		unzip ex.zip >>/tmp/ubuntu-nginx-web-server.log
+		rm ex.zip
 	fi
 
 }
@@ -476,9 +506,9 @@ ee_dashboard_setup() {
 
 	## download latest version of EasyEngine-dashboard
 	cd /tmp || exit
-	git clone https://github.com/VirtuBox/easyengine-dashboard.git
-	sudo cp -rf /tmp/easyengine-dashboard/* /var/www/22222/htdocs/
-	sudo chown -R www-data:www-data /var/www/22222/htdocs
+	git clone https://github.com/VirtuBox/easyengine-dashboard.git >>/tmp/ubuntu-nginx-web-server.log
+	cp -rf /tmp/easyengine-dashboard/* /var/www/22222/htdocs/ >>/tmp/ubuntu-nginx-web-server.log
+	chown -R www-data:www-data /var/www/22222/htdocs >>/tmp/ubuntu-nginx-web-server.log
 
 }
 
@@ -497,7 +527,8 @@ acme_sh_setup() {
 		echo "installing acme.sh"
 		echo ""
 		wget -O - https://get.acme.sh | sh
-		cd && source .bashrc
+		cd || exit
+		source .bashrc
 	fi
 
 }
@@ -515,7 +546,7 @@ ee-acme-22222() {
 	if [[ "$MY_IP" == "$MY_HOSTNAME_IP" ]]; then
 
 		if [ ! -f /etc/systemd/system/multi-user.target.wants/nginx.service ]; then
-			sudo systemctl enable nginx.service
+			systemctl enable nginx.service >>/tmp/ubuntu-nginx-web-server.log
 		fi
 
 		if [ ! -d $HOME/.acme.sh/${MY_HOSTNAME}_ecc ]; then
