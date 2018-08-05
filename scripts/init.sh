@@ -52,7 +52,7 @@ if [ "$mariadb_server_install" = "n" ]; then
 		read -p "Select an option [y/n]: " mariadb_client_install
 	done
 fi
-if [ "$mariadb_server_install" = "y" || "$mariadb_client_install" = "y" ]; then
+if [[ "$mariadb_server_install" = "y" || "$mariadb_client_install" = "y" ]]; then
 	echo ""
 	echo "What version of MariaDB Client/Server do you want to install, 10.1, 10.2 or 10.3 ?"
 	while [[ $mariadb_version_install != "10.1" && $mariadb_version_install != "10.2" && $mariadb_version_install != "10.3" ]]; do
