@@ -15,7 +15,7 @@
 
 * * *
 
-**All Instructions and informations are listed on the [Github page](https://virtubox.github.io/ubuntu-nginx-web-server/)**
+**Documentation is still available here : [Ubuntu-Nginx-Web-Server](https://virtubox.github.io/ubuntu-nginx-web-server/docs/pages/documentation.md)**
 
 ### Features
 
@@ -27,5 +27,17 @@
 - Install and configure UFW & Fail2ban
 - Install Netdata and EasyEngine-Dashboard
 
+### Compatibility
+
+- Ubuntu 16.04 LTS
+- Ubuntu 18.04 LTS
+
+### Usage
+
+```bash
+wget https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/master/init.sh
+chmod +x init.sh
+./init.sh
+```
 
 Published & maintained by [VirtuBox](https://virtubox.net)

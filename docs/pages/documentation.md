@@ -73,7 +73,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart mariadb
 ```
 
-#### Install EasyEngine
+## Install EasyEngine
 
 ```bash
 # noninteractive install - you can replace $USER with your username & root@$HOSTNAME by your email
@@ -82,27 +82,27 @@ sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = root@$HOSTNAME" > $HOME
 wget -qO ee rt.cx/ee && bash ee
 ```
 
-#### enable ee bash_completion
+### enable ee bash_completion
 
 ```bash
 source /etc/bash_completion.d/ee_auto.rc
 ```
 
-#### Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend
+### Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend
 
 ```bash
 ee stack install
 ee stack install --php7 --redis --admin --phpredisadmin
 ```
 
-#### Set your email instead of root@localhost
+### Set your email instead of root@localhost
 
 ```bash
 echo 'root: my.email@address.com' >> /etc/aliases
 newaliases
 ```
 
-#### Install Composer - Fix phpmyadmin install issue
+### Install Composer - Fix phpmyadmin install issue
 
 ```bash
 cd ~/ ||exit
@@ -113,15 +113,15 @@ chown www-data:www-data /var/www
 sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
 ```
 
-#### Allow shell for www-data for SFTP usage
+### Allow shell for www-data for SFTP usage
 
 ```bash
 usermod -s /bin/bash www-data
 ```
 
-### PHP 7.1 & 7.2 Setup
+## PHP 7.1 & 7.2 Setup
 
-#### Install php7.1-fpm
+### Install php7.1-fpm
 
 ```bash
 # php7.1-fpm
@@ -134,7 +134,7 @@ wget -O /etc/php/7.1/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubun
 service php7.1-fpm restart
 ```
 
-#### Install php7.2-fpm
+### Install php7.2-fpm
 
 ```bash
 # php7.2-fpm
@@ -146,14 +146,14 @@ wget -O /etc/php/7.2/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubun
 service php7.2-fpm restart
 ```
 
-#### add nginx upstreams
+### add nginx upstreams
 
 ```bash
 wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
 service nginx reload
 ```
 
-#### add ee common configuration
+### add ee common configuration
 
 ```bash
 cd /etc/nginx/common || exit
@@ -161,7 +161,7 @@ wget https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/co
 unzip common.zip
 ```
 
-### Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)
+## Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)
 
 ```bash
 bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
@@ -169,9 +169,9 @@ bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/ngin
 
 * * *
 
-### Custom configurations
+## Custom configurations
 
-#### clean php-fpm php.ini configuration
+### clean php-fpm php.ini configuration
 
 ```bash
 # PHP 7.0
@@ -179,14 +179,14 @@ wget -O /etc/php/7.0/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubun
 service php7.0-fpm restart
 ```
 
-#### Nginx optimized configurations
+### Nginx optimized configurations
 
 ```bash
 # TLSv1.2 TLSv1.3 only
 wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/nginx.conf
 ```
 
-#### Nginx configuration for netdata & new upstreams
+### Nginx configuration for netdata & new upstreams
 
 ```bash
 # custom conf for netdata metrics (php-fpm & nginx status pages)
@@ -199,7 +199,7 @@ wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuB
 wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/sites-available/22222
 ```
 
-#### Increase Nginx open files limits
+### Increase Nginx open files limits
 
 ```bash
 sudo mkdir -p /etc/systemd/system/nginx.service.d
@@ -207,9 +207,9 @@ wget -O /etc/systemd/system/nginx.service.d/limits.conf https://raw.githubuserco
 
 sudo systemctl daemon-reload
 sudo systemctl restart nginx.service
-```  
+```
 
-#### wpcommon-php7x configurations
+### wpcommon-php7x configurations
 
 - webp rewrite rules added
 - DoS attack CVE fix added
@@ -235,25 +235,25 @@ service nginx reload
 
 * * *
 
-### Security
+## Security
 
-#### Harden SSH Security
+### Harden SSH Security
 
 WARNING : SSH Configuration with root login allowed with ed25519 & ECDSA SSH keys only  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
 
     wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/ssh/sshd_config
 
-#### UFW
+### UFW
 
 Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
 
 ```bash
-# enable ufw log - allow outgoing - deny incoming 
+# enable ufw log - allow outgoing - deny incoming
 ufw logging low
 ufw default allow outgoing
 ufw default deny incoming
 
-# SSH - DNS - HTTP/S - FTP - NTP - SNMP - Librenms - Netdata - EE Backend  
+# SSH - DNS - HTTP/S - FTP - NTP - SNMP - Librenms - Netdata - EE Backend
 ufw allow 22
 ufw allow 53
 ufw allow http
@@ -269,7 +269,7 @@ ufw allow 22222
 ufw enable
 ```
 
-#### Custom jails for fail2ban
+### Custom jails for fail2ban
 
 - wordpress bruteforce
 - ssh
@@ -286,16 +286,16 @@ wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuB
 fail2ban-client reload
 ```
 
-#### Secure Memcached server
+### Secure Memcached server
 
 ```bash
 echo '-U 0' >> /etc/memcached.conf
 sudo systemctl restart memcached
 ```
 
-### Optional tools
+## Optional tools
 
-#### ee-acme-sh
+### ee-acme-sh
 
 [Github repository](https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/) - Script to setup letsencrypt certificates using acme.sh on EasyEngine servers
 
@@ -312,7 +312,7 @@ chmod +x install-ee-acme.sh
 source .bashrc
 ```
 
-#### netdata
+### netdata
 
 [Github repository](https://github.com/firehol/netdata)
 
@@ -329,7 +329,7 @@ sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /etc/netdata/health_alarm_notify.co
 service netdata restart
 ```
 
-#### bash-snippets
+### bash-snippets
 
 [Github repository](https://github.com/alexanderepstein/Bash-Snippets)
 
@@ -340,7 +340,7 @@ git checkout v1.22.0
 ./install.sh cheat
 ```
 
-usage : `cheat <command>`  
+usage : `cheat <command>`
 
 ```bash
 root@vps:~ cheat cat
@@ -361,7 +361,7 @@ root@vps:~ cheat cat
   cat -n file
 ```
 
-#### nanorc - Improved Nano Syntax Highlighting Files
+### nanorc - Improved Nano Syntax Highlighting Files
 
 [Github repository](https://github.com/scopatz/nanorc)
 
@@ -369,7 +369,7 @@ root@vps:~ cheat cat
 wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -O- | sh
 ```
 
-#### ucaresystem - script to update & cleanup packages easily
+### ucaresystem - script to update & cleanup packages easily
 
 ```bash
 sudo add-apt-repository ppa:utappia/stable -y
@@ -381,6 +381,26 @@ Run server maintenance with the command :
 
 ```bash
 sudo ucaresystem-core
+```
+
+### Custom Nginx error pages
+
+[Github Repository](https://github.com/alexphelps/server-error-pages)
+
+Installation
+
+```bash
+# clone the github repository
+sudo -u www-data -H git clone https://github.com/alexphelps/server-error-pages.git /var/www/error
+
+# download nginx configuration
+wget -O /etc/nginx/common/error_pages.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/common/error_pages.conf
+```
+
+Then include this configuration in your nginx vhost by adding the following line
+
+```bash
+include common/error_pages.conf;
 ```
 
 ### WP-CLI
@@ -403,22 +423,3 @@ chown www-data:www-data /var/www/.profile
 chown www-data:www-data /var/www/.bashrc
 ```
 
-### Custom Nginx error pages
-
-[Github Repository](https://github.com/alexphelps/server-error-pages)
-
-Installation
-
-```bash
-# clone the github repository
-sudo -u www-data -H git clone https://github.com/alexphelps/server-error-pages.git /var/www/error
-
-# download nginx configuration
-wget -O /etc/nginx/common/error_pages.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/common/error_pages.conf
-```
-
-Then include this configuration in your nginx vhost by adding the following line
-
-```bash
-include common/error_pages.conf;
-```
