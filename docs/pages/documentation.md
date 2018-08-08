@@ -1,31 +1,31 @@
-### Initial configuration
+# Documentation
 
-Configuration files with comments and informations available by following the link **source**
+## Initial Configuration
 
-#### System update and packages cleanup
+### System update and packages cleanup
 
 ```bash
 apt-get update && apt-get upgrade -y && apt-get autoremove --purge -y && apt-get clean
 ```
 
-#### Install useful packages
+### Install useful packages
 
 ```bash
 sudo apt install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
 ```
 
-#### Tweak Kernel & Increase open files limits
+### Tweak Kernel & Increase open files limits
 
 [source sysctl.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf) - [limits.conf source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf)
 
 ```bash
 modprobe tcp_htcp
-wget -O /etc/sysctl.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/sysctl.conf
+wget -O /etc/sysctl.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/sysctl.conf
 sysctl -p
-wget -O /etc/security/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/security/limits.conf
+wget -O /etc/security/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/security/limits.conf
 ```
 
-#### disable transparent hugepage for redis
+### disable transparent hugepage for redis
 
 ```bash
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
@@ -33,24 +33,24 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 * * *
 
-### EasyEngine Setup
+## EasyEngine Setup
 
-#### Install MariaDB 10.3
+### Install MariaDB 10.3
 
 Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/)
 
 ```bash
 curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
 | sudo bash -s -- --mariadb-server-version=10.3 --skip-maxscale
-sudo apt update && sudo apt install mariadb-server percona-xtrabackup-24 -y
+sudo apt update && sudo apt install mariadb-server -y
 ```
 
-#### MySQL Tuning
+### MySQL Tuning
 
 You can download my example of my.cnf, optimized for VPS with 4GB RAM. [my.cnf source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/mysql/my.cnf)
 
 ```bash
-wget -O /etc/mysql/my.cnf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/mysql/my.cnf
+wget -O /etc/mysql/my.cnf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/mysql/my.cnf
 ```
 
 It include modification of innodb_log_file_size variable, so you need to use the following commands to apply the new configuration :
@@ -67,7 +67,7 @@ sudo service mysql start
 Increase MariaDB open files limits
 
 ```bash
-wget -O /etc/systemd/system/mariadb.service.d/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/systemd/system/mariadb.service.d/limits.conf
+wget -O /etc/systemd/system/mariadb.service.d/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/systemd/system/mariadb.service.d/limits.conf
 
 sudo systemctl daemon-reload
 sudo systemctl restart mariadb
@@ -149,7 +149,7 @@ service php7.2-fpm restart
 #### add nginx upstreams
 
 ```bash
-wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
+wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
 service nginx reload
 ```
 
@@ -157,7 +157,7 @@ service nginx reload
 
 ```bash
 cd /etc/nginx/common || exit
-wget https://virtubox.github.io/ubuntu-nginx-web-server/files/common.zip
+wget https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/common.zip
 unzip common.zip
 ```
 
@@ -175,7 +175,7 @@ bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/ngin
 
 ```bash
 # PHP 7.0
-wget -O /etc/php/7.0/fpm/php.ini https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/php/7.0/fpm/php.ini
+wget -O /etc/php/7.0/fpm/php.ini https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/php/7.0/fpm/php.ini
 service php7.0-fpm restart
 ```
 
@@ -183,27 +183,27 @@ service php7.0-fpm restart
 
 ```bash
 # TLSv1.2 TLSv1.3 only
-wget -O /etc/nginx/nginx.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/nginx.conf
+wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/nginx.conf
 ```
 
 #### Nginx configuration for netdata & new upstreams
 
 ```bash
 # custom conf for netdata metrics (php-fpm & nginx status pages)
-wget -O /etc/nginx/sites-available/default  https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/default
+wget -O /etc/nginx/sites-available/default  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/sites-available/default
 
 # add netdata, php7.1 and php7.2 upstream
-wget -O /etc/nginx/conf.d/upstream.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
+wget -O /etc/nginx/conf.d/upstream.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/conf.d/upstream.conf
 
 # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
-wget -O /etc/nginx/sites-available/22222 https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/sites-available/22222
+wget -O /etc/nginx/sites-available/22222 https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/sites-available/22222
 ```
 
 #### Increase Nginx open files limits
 
 ```bash
 sudo mkdir -p /etc/systemd/system/nginx.service.d
-wget -O /etc/systemd/system/nginx.service.d/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/systemd/system/nginx.service.d/limits.conf
+wget -O /etc/systemd/system/nginx.service.d/limits.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/systemd/system/nginx.service.d/limits.conf
 
 sudo systemctl daemon-reload
 sudo systemctl restart nginx.service
@@ -217,17 +217,17 @@ sudo systemctl restart nginx.service
 
 ```bash
 # 1) add webp mapping
-wget -O /etc/nginx/conf.d/webp.conf  https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/conf.d/webp.conf
+wget -O /etc/nginx/conf.d/webp.conf  https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/conf.d/webp.conf
 
 # 2) wpcommon files
 # php7
-wget -O /etc/nginx/common/wpcommon-php7.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/common/wpcommon-php7.conf
+wget -O /etc/nginx/common/wpcommon-php7.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/common/wpcommon-php7.conf
 
 # php7.1
-wget -O /etc/nginx/common/wpcommon-php71.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/common/wpcommon-php71.conf
+wget -O /etc/nginx/common/wpcommon-php71.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/common/wpcommon-php71.conf
 
 # php7.2
-wget -O /etc/nginx/common/wpcommon-php72.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/common/wpcommon-php72.conf
+wget -O /etc/nginx/common/wpcommon-php72.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/common/wpcommon-php72.conf
 
 nginx -t
 service nginx reload
@@ -241,7 +241,7 @@ service nginx reload
 
 WARNING : SSH Configuration with root login allowed with ed25519 & ECDSA SSH keys only  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
 
-    wget -O /etc/ssh/sshd_config https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/ssh/sshd_config
+    wget -O /etc/ssh/sshd_config https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/ssh/sshd_config
 
 #### UFW
 
@@ -278,10 +278,10 @@ ufw enable
 - nginx bad bots
 
 ```bash
-wget -O /etc/fail2ban/filter.d/ddos.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/fail2ban/filter.d/ddos.conf
-wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/fail2ban/filter.d/ee-wordpress.conf
-wget -O /etc/fail2ban/jail.d/custom.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/fail2ban/jail.d/custom.conf
-wget -O  /etc/fail2ban/jail.d/ddos.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/fail2ban/jail.d/ddos.conf
+wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/fail2ban/filter.d/ddos.conf
+wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/fail2ban/filter.d/ee-wordpress.conf
+wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/fail2ban/jail.d/custom.conf
+wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/fail2ban/jail.d/ddos.conf
 
 fail2ban-client reload
 ```
@@ -297,7 +297,7 @@ sudo systemctl restart memcached
 
 #### ee-acme-sh
 
-[Github repository](https://virtubox.github.io/ee-acme-sh/) - Script to setup letsencrypt certificates using acme.sh on EasyEngine servers
+[Github repository](https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/) - Script to setup letsencrypt certificates using acme.sh on EasyEngine servers
 
 * subdomain support
 * ivp6 support
@@ -414,7 +414,7 @@ Installation
 sudo -u www-data -H git clone https://github.com/alexphelps/server-error-pages.git /var/www/error
 
 # download nginx configuration
-wget -O /etc/nginx/common/error_pages.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/nginx/common/error_pages.conf
+wget -O /etc/nginx/common/error_pages.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/nginx/common/error_pages.conf
 ```
 
 Then include this configuration in your nginx vhost by adding the following line
