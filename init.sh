@@ -3,10 +3,10 @@
 # automated EasyEngine server configuration script
 # currently in progress, not ready to be used in production yet
 
-#CSI="\\033["
-#CEND="${CSI}0m"
+CSI="\\033["
+CEND="${CSI}0m"
 #CRED="${CSI}1;31m"
-#CGREEN="${CSI}1;32m"
+CGREEN="${CSI}1;32m"
 
 ##################################
 # Variables
@@ -47,10 +47,19 @@ while [[ $mariadb_server_install != "y" && $mariadb_server_install != "n" ]]; do
 done
 if [ "$mariadb_server_install" = "n" ]; then
 	echo ""
-	echo "Do you want to install MariaDB-client ? (y/n)"
+	echo "Do you want to install MariaDB-client for a remote database ? (y/n)"
 	while [[ $mariadb_client_install != "y" && $mariadb_client_install != "n" ]]; do
 		read -p "Select an option [y/n]: " mariadb_client_install
 	done
+	echo ""
+	echo "What is the IP of your remote database ?"
+	read -p "IP : " mariadb_remote_ip
+	echo ""
+	echo "What is the user of your remote database ?"
+	read -p "User : " mariadb_remote_user
+	echo ""
+	echo "What is the password of your remote database ?"
+	read -s -p "password [hidden] : " mariadb_remote_pass
 fi
 if [[ "$mariadb_server_install" == "y" || "$mariadb_client_install" == "y" ]]; then
 	echo ""
@@ -80,7 +89,8 @@ echo ""
 # Update packages
 ##################################
 
-echo "updating packages"
+
+echo -ne "     Updating packages      [..]\\r"
 {
 	apt-get update
 	apt-get upgrade -y
@@ -88,10 +98,13 @@ echo "updating packages"
 	apt-get autoclean -y
 } >>/tmp/ubuntu-nginx-web-server.log
 
+echo -ne "     Updating packages      [${CGREEN}OK${CEND}]\\r"
+
 ##################################
 # UFW
 ##################################
-echo "configuring UFW"
+echo ""
+echo -ne "     Configuring UFW     [..]\\r"
 {
 	if [ ! -d /etc/ufw ]; then
 		apt-get install ufw -y >>/tmp/ubuntu-nginx-web-server.log
@@ -121,35 +134,44 @@ echo "configuring UFW"
 
 } >>/tmp/ubuntu-nginx-web-server.log
 
+echo -ne "     Configuring UFW      [${CGREEN}OK${CEND}]\\r"
+
 ##################################
 # Useful packages
 ##################################
 
-echo "installing useful packages"
+echo -ne "     Installing useful packages     [..]\\r"
 {
 
 	apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg2 wget -y
 	# ntp time
 	systemctl enable ntp
 
+	# increase history size
+	export HISTSIZE=10000
+
 } >>/tmp/ubuntu-nginx-web-server.log
+
+echo -ne "     Installing useful packages      [${CGREEN}OK${CEND}]\\r"
 
 ##################################
 # clone repository
 ##################################
-
-echo "cloning ubuntu-nginx-web-server"
+echo ""
+echo -ne "     Cloning ubuntu-nginx-web-server     [..]\\r"
 {
 	cd /tmp || exit
 	rm -rf /tmp/ubuntu-nginx-web-server
 	git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git
 
 } >>/tmp/ubuntu-nginx-web-server.log
+echo -ne "           [${CGREEN}OK${CEND}]\\r"
 
 ##################################
 # Sysctl tweaks +  open_files limits
 ##################################
-echo "applying kernel tweaks"
+echo ""
+echo -ne "     Applying kernel tweaks    [..]\\r"
 {
 	sudo modprobe tcp_htcp
 	cp -f $REPO_PATH/etc/sysctl.conf /etc/sysctl.conf
@@ -160,16 +182,18 @@ echo "applying kernel tweaks"
 	echo never >/sys/kernel/mm/transparent_hugepage/enabled
 
 } >>/tmp/ubuntu-nginx-web-server.log
-
+echo -ne "     Cloning ubuntu-nginx-web-server      [${CGREEN}OK${CEND}]\\r"
 ##################################
 # Add MariaDB 10.3 repository
 ##################################
 
 if [[ "$mariadb_server_install" == "y" || "$mariadb_client_install" == "y" ]]; then
-	echo "adding mariadb repository"
+	echo ""
+	echo -ne "     Adding mariadb repository    [..]\\r"
 	curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup |
 		sudo bash -s -- --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
 	apt-get update >>/tmp/ubuntu-nginx-web-server.log
+	echo -ne "     Adding mariadb repository      [${CGREEN}OK${CEND}]\\r"
 fi
 
 ##################################
@@ -177,7 +201,9 @@ fi
 ##################################
 
 if [ "$mariadb_server_install" = "y" ]; then
-	echo "installing MariaDB $mariadb_version_install"
+	echo ""
+	echo -ne "     Installing MariaDB $mariadb_version_install    [..]\\r"
+	
 	MYSQL_ROOT_PASS=$(date +%s | sha256sum | base64 | head -c 32)
 	export DEBIAN_FRONTEND=noninteractive # to avoid prompt during installation
 	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password password $MYSQL_ROOT_PASS"
@@ -192,7 +218,8 @@ if [ "$mariadb_server_install" = "y" ]; then
 	Q2="FLUSH PRIVILEGES;"
 	SQL="${Q1}${Q2}"
 	mysql -uroot -e "$SQL"
-
+	
+	echo -ne "     Installing MariaDB $mariadb_version_install      [${CGREEN}OK${CEND}]\\r"
 	##################################
 	# MariaDB tweaks
 	##################################
@@ -209,26 +236,40 @@ if [ "$mariadb_server_install" = "y" ]; then
 	sudo systemctl daemon-reload >>/tmp/ubuntu-nginx-web-server.log
 
 	sudo service mysql start >>/tmp/ubuntu-nginx-web-server.log
+
 elif [ "$mariadb_client_install" = "y" ]; then
 	echo "installing mariadb-client"
 	apt-get install -y mariadb-client >>/tmp/ubuntu-nginx-web-server.log
+	echo "[client]" >>$HOME/.my.cnf
+	echo "host = $mariadb_remote_ip" >>$HOME/.my.cnf
+	echo "port = 3306" >>$HOME/.my.cnf
+	echo "password = $mariadb_remote_user" >>$HOME/.my.cnf
+	echo "password = $mariadb_remote_password" >>$HOME/.my.cnf
+	cp -f $REPO_PATH/etc/mysql/my.cnf /etc/mysql/my.cnf
+	sudo sed -i 's/grant-host = localhost/grant-host = \%/' /etc/ee/ee.conf
 fi
 
 ##################################
 # EasyEngine automated install
 ##################################
+echo "installing easyengine"
 
 sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = $USER@$HOSTNAME" > $HOME/.gitconfig'
-sudo wget -qO ee rt.cx/ee && sudo bash ee
+{
+	sudo wget -qO ee rt.cx/ee && sudo bash ee
 
-source /etc/bash_completion.d/ee_auto.rc
+	source /etc/bash_completion.d/ee_auto.rc
+} >>/tmp/ubuntu-nginx-web-server.log 2>&1
 
 ##################################
 # EasyEngine stacks install
 ##################################
 
-ee stack install
-ee stack install --php7 --redis --admin --phpredisadmin
+echo "Installing ee stack"
+{
+	ee stack install
+	ee stack install --php7 --redis --admin --phpredisadmin
+} >>/tmp/ubuntu-nginx-web-server.log 2>&1
 
 ##################################
 # Fix phpmyadmin install
@@ -243,7 +284,7 @@ echo "updating phpmyadmin"
 	chown www-data:www-data /var/www
 	sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
 
-} >>/tmp/ubuntu-nginx-web-server.log
+} >>/tmp/ubuntu-nginx-web-server.log 2>&1
 
 ##################################
 # Allow www-data shell access for SFTP + add .bashrc settings et completion
@@ -254,8 +295,8 @@ echo "configuring www-data permissions"
 	usermod -s /bin/bash www-data
 
 	wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash >>/tmp/ubuntu-nginx-web-server.log
-	cp -f /var/www/.profile $REPO_PATH/files/var/www/.profile
-	cp -f /var/www/.bashrc $REPO_PATH/files/var/www/.bashrc
+	cp -f $REPO_PATH/var/www/.profile /var/www/.profile
+	cp -f $REPO_PATH/var/www/.bashrc /var/www/.bashrc
 
 	chown www-data:www-data /var/www/.profile
 	chown www-data:www-data /var/www/.bashrc
@@ -367,6 +408,7 @@ echo "configuring fail2ban"
 {
 
 	cp -f $REPO_PATH/etc/fail2ban/filter.d/ddos.conf /etc/fail2ban/filter.d/ddos.conf
+	cp -f $REPO_PATH/etc/fail2ban/filter.d/nginx-forbidden.conf /etc/fail2ban/filter.d/nginx-forbidden.conf
 	cp -f $REPO_PATH/etc/fail2ban/filter.d/ee-wordpress.conf /etc/fail2ban/filter.d/ee-wordpress.conf
 	cp -f $REPO_PATH/etc/fail2ban/jail.d/custom.conf /etc/fail2ban/jail.d/custom.conf
 	cp -f $REPO_PATH/etc/fail2ban/jail.d/ddos.conf /etc/fail2ban/jail.d/ddos.conf
@@ -424,22 +466,23 @@ fi
 
 if [ ! -d /etc/netdata ]; then
 	echo "installing netdata"
-	## install dependencies
-	apt-get install autoconf autoconf-archive autogen automake gcc libmnl-dev lm-sensors make nodejs pkg-config python python-mysqldb python-psycopg2 python-pymongo python-yaml uuid-dev zlib1g-dev -y >>/tmp/ubuntu-nginx-web-server.log
+	{
+		## install dependencies
+		apt-get install autoconf autoconf-archive autogen automake gcc libmnl-dev lm-sensors make nodejs pkg-config python python-mysqldb python-psycopg2 python-pymongo python-yaml uuid-dev zlib1g-dev -y >>/tmp/ubuntu-nginx-web-server.log
 
-	## install nedata
-	wget https://my-netdata.io/kickstart.sh >>/tmp/ubuntu-nginx-web-server.log
-	chmod +x kickstart.sh
-	./kickstart.sh all --dont-wait
+		## install nedata
+		wget https://my-netdata.io/kickstart.sh >>/tmp/ubuntu-nginx-web-server.log
+		chmod +x kickstart.sh
+		./kickstart.sh all --dont-wait
 
-	## optimize netdata resources usage
-	echo 1 >/sys/kernel/mm/ksm/run
-	echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
+		## optimize netdata resources usage
+		echo 1 >/sys/kernel/mm/ksm/run
+		echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
 
-	## disable email notifigrep -cions
-	sudo sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /etc/netdata/health_alarm_notify.conf
-	sudo service netdata restart
-
+		## disable email notifigrep -cions
+		sudo sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /etc/netdata/health_alarm_notify.conf
+		sudo service netdata restart
+	} >>/tmp/ubuntu-nginx-web-server.log
 fi
 
 ##################################
