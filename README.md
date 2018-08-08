@@ -1,4 +1,4 @@
-# Bash Script to setup an optimized web server with EasyEngine v3
+# Bash Script to setup an EasyEngine v3 optimized
 
 * * *
 
@@ -26,6 +26,8 @@
 - Compile the latest Nginx release
 - Install and configure UFW & Fail2ban
 - Install Netdata and EasyEngine-Dashboard
+- Install Proftpd
+-
 
 ### Compatibility
 

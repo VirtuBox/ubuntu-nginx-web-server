@@ -280,6 +280,7 @@ ufw enable
 ```bash
 wget -O /etc/fail2ban/filter.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/fail2ban/filter.d/ddos.conf
 wget -O /etc/fail2ban/filter.d/ee-wordpress.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/fail2ban/filter.d/ee-wordpress.conf
+wget -O /etc/fail2ban/filter.d/nginx-forbidden.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/fail2ban/filter.d/nginx-forbidden.conf
 wget -O /etc/fail2ban/jail.d/custom.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/fail2ban/jail.d/custom.conf
 wget -O  /etc/fail2ban/jail.d/ddos.conf https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/etc/fail2ban/jail.d/ddos.conf
 
