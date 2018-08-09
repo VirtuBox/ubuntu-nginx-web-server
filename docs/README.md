@@ -27,7 +27,6 @@
 - Install and configure UFW & Fail2ban
 - Install Netdata and EasyEngine-Dashboard
 - Install Proftpd
--
 
 ### Compatibility
 
