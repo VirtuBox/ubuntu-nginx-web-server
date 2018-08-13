@@ -4,14 +4,14 @@
 
 ## Server Stack
 
-- Nginx 1.15.x / 1.14.x
+- Nginx 1.15/1.14 with [nginx-ee](https://virtubox.github.io/nginx-ee/)
 - PHP-FPM 7/7.1/7.2
 - MariaDB 10.1/10.2/10.3
 - REDIS 4.0
 - Fail2ban & UFW
 - Netdata
 - Proftpd
-- Acme.sh
+- Acme.sh with [ee-acme-sh]()
 
 * * *
 

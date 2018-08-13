@@ -1,4 +1,51 @@
-# Documentation
+# Ubuntu-Nginx-Web-Server Documentation
+
+Table Of Contents
+<!-- TOC -->
+
+- [Ubuntu-Nginx-Web-Server Documentation](#ubuntu-nginx-web-server-documentation)
+  - [Initial Configuration](#initial-configuration)
+    - [System update and packages cleanup](#system-update-and-packages-cleanup)
+    - [Install useful packages](#install-useful-packages)
+    - [Tweak Kernel & Increase open files limits](#tweak-kernel--increase-open-files-limits)
+    - [disable transparent hugepage for redis](#disable-transparent-hugepage-for-redis)
+  - [EasyEngine Setup](#easyengine-setup)
+    - [Install MariaDB 10.3](#install-mariadb-103)
+    - [MySQL Tuning](#mysql-tuning)
+  - [Install EasyEngine](#install-easyengine)
+    - [enable ee bash_completion](#enable-ee-bashcompletion)
+    - [Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend](#install-nginx-php56-php70-postfix-redis-and-configure-ee-backend)
+    - [Set your email instead of root@localhost](#set-your-email-instead-of-rootlocalhost)
+    - [Install Composer - Fix phpmyadmin install issue](#install-composer---fix-phpmyadmin-install-issue)
+    - [Allow shell for www-data for SFTP usage](#allow-shell-for-www-data-for-sftp-usage)
+  - [PHP 7.1 & 7.2 Setup](#php-71--72-setup)
+    - [Install php7.1-fpm](#install-php71-fpm)
+    - [Install php7.2-fpm](#install-php72-fpm)
+    - [add nginx upstreams](#add-nginx-upstreams)
+    - [add ee common configuration](#add-ee-common-configuration)
+  - [Compile lastest Nginx release](#compile-lastest-nginx-release)
+  - [Custom configurations](#custom-configurations)
+    - [clean php-fpm php.ini configuration](#clean-php-fpm-phpini-configuration)
+    - [Nginx optimized configurations](#nginx-optimized-configurations)
+    - [Nginx configuration for netdata & new upstreams](#nginx-configuration-for-netdata--new-upstreams)
+    - [Increase Nginx open files limits](#increase-nginx-open-files-limits)
+    - [wpcommon-php7x configurations](#wpcommon-php7x-configurations)
+  - [Security](#security)
+    - [Harden SSH Security](#harden-ssh-security)
+    - [UFW](#ufw)
+    - [Custom jails for fail2ban](#custom-jails-for-fail2ban)
+    - [Secure Memcached server](#secure-memcached-server)
+  - [Optional tools](#optional-tools)
+    - [ee-acme-sh](#ee-acme-sh)
+    - [netdata](#netdata)
+    - [bash-snippets](#bash-snippets)
+    - [nanorc - Improved Nano Syntax Highlighting Files](#nanorc---improved-nano-syntax-highlighting-files)
+    - [ucaresystem - script to update & cleanup packages easily](#ucaresystem---script-to-update--cleanup-packages-easily)
+    - [Custom Nginx error pages](#custom-nginx-error-pages)
+    - [WP-CLI](#wp-cli)
+      - [Add bash-completion for user www-data](#add-bash-completion-for-user-www-data)
+
+<!-- /TOC -->
 
 ## Initial Configuration
 
@@ -161,7 +208,8 @@ wget https://raw.githubusercontent.com/VirtuBox/ubuntu-nginx-web-server/files/co
 unzip common.zip
 ```
 
-## Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)
+## Compile lastest Nginx release
+[nginx-ee script](https://github.com/VirtuBox/nginx-ee)
 
 ```bash
 bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)

@@ -203,7 +203,7 @@ fi
 if [ "$mariadb_server_install" = "y" ]; then
 	echo ""
 	echo -ne "     Installing MariaDB $mariadb_version_install    [..]\\r"
-	
+
 	MYSQL_ROOT_PASS=$(date +%s | sha256sum | base64 | head -c 32)
 	export DEBIAN_FRONTEND=noninteractive # to avoid prompt during installation
 	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password password $MYSQL_ROOT_PASS"
@@ -218,7 +218,7 @@ if [ "$mariadb_server_install" = "y" ]; then
 	Q2="FLUSH PRIVILEGES;"
 	SQL="${Q1}${Q2}"
 	mysql -uroot -e "$SQL"
-	
+
 	echo -ne "     Installing MariaDB $mariadb_version_install      [${CGREEN}OK${CEND}]\\r"
 	##################################
 	# MariaDB tweaks
