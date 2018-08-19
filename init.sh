@@ -59,7 +59,7 @@ if [ "$mariadb_server_install" = "n" ]; then
 	read -p "User : " mariadb_remote_user
 	echo ""
 	echo "What is the password of your remote database ?"
-	read -s -p "password [hidden] : " mariadb_remote_pass
+	read -s -p "password [hidden] : " mariadb_remote_password
 fi
 if [[ "$mariadb_server_install" == "y" || "$mariadb_client_install" == "y" ]]; then
 	echo ""
@@ -143,7 +143,8 @@ echo -ne "     Configuring UFW      [${CGREEN}OK${CEND}]\\r"
 echo -ne "     Installing useful packages     [..]\\r"
 {
 
-	apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg2 wget -y
+	apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget -y
+
 	# ntp time
 	systemctl enable ntp
 
@@ -200,6 +201,9 @@ fi
 # MariaDB 10.3 install
 ##################################
 
+
+# if user want to install mariadb_server
+#
 if [ "$mariadb_server_install" = "y" ]; then
 	echo ""
 	echo -ne "     Installing MariaDB $mariadb_version_install    [..]\\r"
@@ -213,13 +217,25 @@ if [ "$mariadb_server_install" = "y" ]; then
 	sudo bash -c 'echo -e "[client]\nuser = root" > $HOME/.my.cnf'
 	echo "password = $MYSQL_ROOT_PASS" >>$HOME/.my.cnf
 	cp $HOME/.my.cnf /etc/mysql/conf.d/my.cnf
+
 	# set password to the root user and grant privileges
-	Q1="GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
-	Q2="FLUSH PRIVILEGES;"
-	SQL="${Q1}${Q2}"
-	mysql -uroot -e "$SQL"
+	#Q1="GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
+	#Q2="FLUSH PRIVILEGES;"
+	#SQL="${Q1}${Q2}"
+	#mysql -uroot -e "$SQL"
+
+	## mysql_secure_installation non-interactive way
+	mysql -e "GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
+	# remove anonymous users
+	mysql -e "DROP USER ''@'localhost'"
+    mysql -e "DROP USER ''@'$(hostname)'"
+	# remove test database
+	mysql -e "DROP DATABASE test"
+	# flush privileges
+	mysql -e "FLUSH PRIVILEGES"
 
 	echo -ne "     Installing MariaDB $mariadb_version_install      [${CGREEN}OK${CEND}]\\r"
+
 	##################################
 	# MariaDB tweaks
 	##################################
@@ -233,9 +249,9 @@ if [ "$mariadb_server_install" = "y" ]; then
 	sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
 
 	cp -f $REPO_PATH/etc/systemd/system/mariadb.service.d/limits.conf /etc/systemd/system/mariadb.service.d/limits.conf
-	sudo systemctl daemon-reload >>/tmp/ubuntu-nginx-web-server.log
+	systemctl daemon-reload >>/tmp/ubuntu-nginx-web-server.log
 
-	sudo service mysql start >>/tmp/ubuntu-nginx-web-server.log
+	service mysql start >>/tmp/ubuntu-nginx-web-server.log
 
 elif [ "$mariadb_client_install" = "y" ]; then
 	echo "installing mariadb-client"
@@ -264,6 +280,10 @@ sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = $USER@$HOSTNAME" > $HOM
 ##################################
 # EasyEngine stacks install
 ##################################
+
+elif [ "$mariadb_client_install" = "y" ]; then
+sudo sed -i 's/grant-host = localhost/grant-host = \%/' /etc/ee/ee.conf
+fi
 
 echo "Installing ee stack"
 {
@@ -315,10 +335,7 @@ if [ "$phpfpm71_install" = "y" ]; then
 	apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
 		php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl >>/tmp/ubuntu-nginx-web-server.log
 
-	sudo cp -f $REPO_PATH/etc/php/7.1/fpm/pool.d/www.conf /etc/php/7.1/fpm/pool.d/www.conf
-
-	sudo cp -f $REPO_PATH/etc/php/7.1/fpm/php.ini /etc/php/7.1/fpm/php.ini
-	cp -f $REPO_PATH/etc/php/7.1/cli/php.ini /etc/php/7.1/cli/php.ini
+	sudo cp -f $REPO_PATH/etc/php/7.1/* /etc/php/7.1/
 	sudo service php7.1-fpm restart
 
 fi
@@ -331,8 +348,7 @@ if [ "$phpfpm72_install" = "y" ]; then
 	echo "installing php7.2-fpm"
 	apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y >>/tmp/ubuntu-nginx-web-server.log
 
-	cp -f $REPO_PATH/etc/php/7.2/fpm/pool.d/www.conf /etc/php/7.2/fpm/pool.d/www.conf
-	cp -f $REPO_PATH/etc/php/7.2/cli/php.ini /etc/php/7.2/cli/php.ini
+	cp -f $REPO_PATH/etc/php/7.2/* /etc/php/7.2/
 	service php7.2-fpm restart
 
 fi
@@ -345,8 +361,7 @@ echo "updating php7.0 configuration"
 
 	if [ ! -d /etc/php/7.0 ]; then
 
-		cp -f $REPO_PATH/etc/php/7.0/cli/php.ini /etc/php/7.0/cli/php.ini
-		cp -f $REPO_PATH/etc/php/7.0/fpm/php.ini /etc/php/7.0/fpm/php.ini
+		cp -f $REPO_PATH/etc/php/7.0/* /etc/php/7.0/
 
 	fi
 
@@ -407,11 +422,8 @@ echo "optimizing nginx configuration"
 echo "configuring fail2ban"
 {
 
-	cp -f $REPO_PATH/etc/fail2ban/filter.d/ddos.conf /etc/fail2ban/filter.d/ddos.conf
-	cp -f $REPO_PATH/etc/fail2ban/filter.d/nginx-forbidden.conf /etc/fail2ban/filter.d/nginx-forbidden.conf
-	cp -f $REPO_PATH/etc/fail2ban/filter.d/ee-wordpress.conf /etc/fail2ban/filter.d/ee-wordpress.conf
-	cp -f $REPO_PATH/etc/fail2ban/jail.d/custom.conf /etc/fail2ban/jail.d/custom.conf
-	cp -f $REPO_PATH/etc/fail2ban/jail.d/ddos.conf /etc/fail2ban/jail.d/ddos.conf
+	cp -rf $REPO_PATH/etc/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+	cp -f $REPO_PATH/etc/fail2ban/jail.d/* /etc/fail2ban/jail.d/
 
 	fail2ban-client reload
 
@@ -420,13 +432,11 @@ echo "configuring fail2ban"
 ##################################
 # Install cheat & nanorc
 ##################################
-echo "installing cheat CLI"
+echo "installing cheat & nanorc"
 {
 
 	curl https://cht.sh/:cht.sh >/usr/bin/cht.sh
 	chmod +x /usr/bin/cht.sh
-	curl https://cht.sh/:bash_completion >/etc/bash_completion.d/cht.sh
-	sed -i 's/complete -F _cht_complete cht.sh/complete -F _cht_complete cheat/' /etc/bash_completion.d/cht.sh
 
 	cd || exit
 	echo "alias cheat='cht.sh'" >>.bashrc
