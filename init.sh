@@ -128,9 +128,9 @@ echo -ne "     Configuring UFW     [..]\\r"
 
 	# optional for monitoring
 
-	ufw allow 161
-	ufw allow 6556
-	ufw allow 10050
+	#fw allow 161
+	#ufw allow 6556
+	#ufw allow 10050
 
 } >>/tmp/ubuntu-nginx-web-server.log
 
@@ -166,7 +166,7 @@ echo -ne "     Cloning ubuntu-nginx-web-server     [..]\\r"
 	git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git
 
 } >>/tmp/ubuntu-nginx-web-server.log
-echo -ne "           [${CGREEN}OK${CEND}]\\r"
+echo -ne "     Cloning ubuntu-nginx-web-server     [${CGREEN}OK${CEND}]\\r"
 
 ##################################
 # Sysctl tweaks +  open_files limits
@@ -182,8 +182,8 @@ echo -ne "     Applying kernel tweaks    [..]\\r"
 	# Redis transparent_hugepage
 	echo never >/sys/kernel/mm/transparent_hugepage/enabled
 
-} >>/tmp/ubuntu-nginx-web-server.log
-echo -ne "     Cloning ubuntu-nginx-web-server      [${CGREEN}OK${CEND}]\\r"
+} >>/tmp/ubuntu-nginx-web-server.log 2>&1
+echo -ne "     Applying kernel tweaks    [${CGREEN}OK${CEND}]\\r"
 ##################################
 # Add MariaDB 10.3 repository
 ##################################
@@ -191,8 +191,8 @@ echo -ne "     Cloning ubuntu-nginx-web-server      [${CGREEN}OK${CEND}]\\r"
 if [[ "$mariadb_server_install" == "y" || "$mariadb_client_install" == "y" ]]; then
 	echo ""
 	echo -ne "     Adding mariadb repository    [..]\\r"
-	curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup |
-		sudo bash -s -- --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
+	curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
+	| sudo bash -s -- --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
 	apt-get update >>/tmp/ubuntu-nginx-web-server.log
 	echo -ne "     Adding mariadb repository      [${CGREEN}OK${CEND}]\\r"
 fi
@@ -235,11 +235,11 @@ if [ "$mariadb_server_install" = "y" ]; then
 	mysql -e "FLUSH PRIVILEGES"
 
 	echo -ne "     Installing MariaDB $mariadb_version_install      [${CGREEN}OK${CEND}]\\r"
-
+fi
 	##################################
 	# MariaDB tweaks
 	##################################
-
+if [ "$mariadb_server_install" = "y" ]; then
 	echo "Configuring MariaDB tweaks"
 	cp -f $REPO_PATH/etc/mysql/my.cnf /etc/mysql/my.cnf
 
@@ -252,8 +252,8 @@ if [ "$mariadb_server_install" = "y" ]; then
 	systemctl daemon-reload >>/tmp/ubuntu-nginx-web-server.log
 
 	service mysql start >>/tmp/ubuntu-nginx-web-server.log
-
-elif [ "$mariadb_client_install" = "y" ]; then
+fi
+if [ "$mariadb_client_install" = "y" ]; then
 	echo "installing mariadb-client"
 	apt-get install -y mariadb-client >>/tmp/ubuntu-nginx-web-server.log
 	echo "[client]" >>$HOME/.my.cnf
@@ -262,7 +262,6 @@ elif [ "$mariadb_client_install" = "y" ]; then
 	echo "password = $mariadb_remote_user" >>$HOME/.my.cnf
 	echo "password = $mariadb_remote_password" >>$HOME/.my.cnf
 	cp -f $REPO_PATH/etc/mysql/my.cnf /etc/mysql/my.cnf
-	sudo sed -i 's/grant-host = localhost/grant-host = \%/' /etc/ee/ee.conf
 fi
 
 ##################################
@@ -281,7 +280,7 @@ sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = $USER@$HOSTNAME" > $HOM
 # EasyEngine stacks install
 ##################################
 
-elif [ "$mariadb_client_install" = "y" ]; then
+if [ "$mariadb_client_install" = "y" ]; then
 sudo sed -i 's/grant-host = localhost/grant-host = \%/' /etc/ee/ee.conf
 fi
 
