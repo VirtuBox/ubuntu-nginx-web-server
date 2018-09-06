@@ -11,7 +11,7 @@
 - Fail2ban & UFW
 - Netdata
 - Proftpd
-- Acme.sh with [ee-acme-sh]()
+- Acme.sh with [ee-acme-sh](https://virtubox.github.io/ee-acme-sh/)
 
 * * *
 
