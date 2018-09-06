@@ -144,7 +144,7 @@ echo -ne "     Configuring UFW      [${CGREEN}OK${CEND}]\\r"
 echo -ne '     Installing useful packages     [..]\r'
 {
 
-    apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget -y
+    apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze  -y
 
     # ntp time
     systemctl enable ntp
@@ -262,7 +262,7 @@ if [ "$mariadb_client_install" = "y" ]; then
     echo "[client]" >>$HOME/.my.cnf
     echo "host = $mariadb_remote_ip" >>$HOME/.my.cnf
     echo "port = 3306" >>$HOME/.my.cnf
-    echo "password = $mariadb_remote_user" >>$HOME/.my.cnf
+    echo "user = $mariadb_remote_user" >>$HOME/.my.cnf
     echo "password = $mariadb_remote_password" >>$HOME/.my.cnf
 	cp $HOME/.my.cnf /etc/mysql/conf.d/my.cnf
 fi
@@ -270,13 +270,14 @@ fi
 ##################################
 # EasyEngine automated install
 ##################################
-echo "installing easyengine"
+
 
 {
     if [ ! -f $HOME/.gitconfig ]; then
         sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = $USER@$HOSTNAME" > $HOME/.gitconfig'
     fi
     if [ ! -x /usr/local/bin/ee ]; then
+	echo "installing easyengine"
         wget -qO ee https://raw.githubusercontent.com/EasyEngine/easyengine/master/install
         bash ee
         source /etc/bash_completion.d/ee_auto.rc
@@ -327,7 +328,7 @@ echo "configuring www-data permissions"
     chown www-data:www-data /var/www/.profile
     chown www-data:www-data /var/www/.bashrc
 
-    sudo -u www-data -H wget https://raw.githubusercontent.com/scopatz/nanorc/files/install.sh -O- | sh
+    sudo -u www-data -H curl https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh | sh
 
 } >>/tmp/ubuntu-nginx-web-server.log
 
@@ -341,7 +342,7 @@ if [ "$phpfpm71_install" = "y" ]; then
     apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
         php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl >>/tmp/ubuntu-nginx-web-server.log
 
-    sudo cp -f $REPO_PATH/etc/php/7.1/* /etc/php/7.1/
+    sudo cp -rf $REPO_PATH/etc/php/7.1/* /etc/php/7.1/
     sudo service php7.1-fpm restart
 
 fi
@@ -354,7 +355,7 @@ if [ "$phpfpm72_install" = "y" ]; then
     echo "installing php7.2-fpm"
     apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y >>/tmp/ubuntu-nginx-web-server.log
 
-    cp -f $REPO_PATH/etc/php/7.2/* /etc/php/7.2/
+    cp -rf $REPO_PATH/etc/php/7.2/* /etc/php/7.2/
     service php7.2-fpm restart
 
 fi
@@ -367,7 +368,7 @@ echo "updating php7.0 configuration"
 
     if [ ! -d /etc/php/7.0 ]; then
 
-        cp -f $REPO_PATH/etc/php/7.0/* /etc/php/7.0/
+        cp -rf $REPO_PATH/etc/php/7.0/* /etc/php/7.0/
 
     fi
 
@@ -451,7 +452,7 @@ echo "installing cheat & nanorc"
     echo "alias cheat='cht.sh'" >>.bashrc
     source $HOME/.bashrc
 
-    wget https://raw.githubusercontent.com/scopatz/nanorc/files/install.sh -O- | sh
+    wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -O- | sh
 
 } >>/tmp/ubuntu-nginx-web-server.log
 
