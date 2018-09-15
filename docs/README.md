@@ -29,7 +29,7 @@ apt-get update && apt-get upgrade -y && apt-get autoremove --purge -y && apt-get
 #### Install useful packages
 
 ```bash
-sudo apt install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
+sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze  -y
 ```
 
 #### Tweak Kernel & Increase open files limits
@@ -38,8 +38,8 @@ sudo apt install haveged curl git unzip zip fail2ban htop nload nmon ntp -y
 
 ```bash
 modprobe tcp_htcp
-wget -O /etc/sysctl.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/sysctl.conf
-sysctl -p
+wget -O /etc/sysctl.d/10-ubuntu-nginx-web-server.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/sysctl.d/10-ubuntu-nginx-web-server.conf
+sysctl -e -p /etc/sysctl.d/10-ubuntu-nginx-web-server.conf
 wget -O /etc/security/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/security/limits.conf
 ```
 
@@ -231,7 +231,7 @@ wget -O /etc/systemd/system/nginx.service.d/limits.conf https://virtubox.github.
 
 sudo systemctl daemon-reload
 sudo systemctl restart nginx.service
-```  
+```
 
 #### wpcommon-php7x configurations
 
@@ -272,12 +272,12 @@ WARNING : SSH Configuration with root login allowed with ed25519 & ECDSA SSH key
 Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/)
 
 ```bash
-# enable ufw log - allow outgoing - deny incoming 
+# enable ufw log - allow outgoing - deny incoming
 ufw logging low
 ufw default allow outgoing
 ufw default deny incoming
 
-# SSH - DNS - HTTP/S - FTP - NTP - SNMP - Librenms - Netdata - EE Backend  
+# SSH - DNS - HTTP/S - FTP - NTP - SNMP - Librenms - Netdata - EE Backend
 ufw allow 22
 ufw allow 53
 ufw allow http
@@ -318,7 +318,7 @@ echo '-U 0' >> /etc/memcached.conf
 sudo systemctl restart memcached
 ```
 
-### Optional tools
+### Optional
 
 #### ee-acme-sh
 
@@ -354,18 +354,20 @@ sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /etc/netdata/health_alarm_notify.co
 service netdata restart
 ```
 
-#### bash-snippets
+#### cht.sh (cheat)
 
-[Github repository](https://github.com/alexanderepstein/Bash-Snippets)
+[Github repository](https://github.com/chubin/cheat.sh)
 
 ```bash
-git clone https://github.com/alexanderepstein/Bash-Snippets
-cd Bash-Snippets
-git checkout v1.22.0
-./install.sh cheat
+curl https://cht.sh/:cht.sh > /usr/bin/cht.sh
+chmod +x /usr/bin/cht.sh
+
+
+echo "alias cheat='cht.sh'" >> $HOME/.bashrc
+source $HOME/.bashrc
 ```
 
-usage : `cheat <command>`  
+usage : `cheat <command>`
 
 ```bash
 root@vps:~ cheat cat
