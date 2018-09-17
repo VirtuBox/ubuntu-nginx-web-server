@@ -40,8 +40,8 @@ sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnu
 
 ```bash
 modprobe tcp_htcp
-wget -O /etc/sysctl.d/10-ubuntu-nginx-web-server.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/sysctl.d/10-ubuntu-nginx-web-server.conf
-sysctl -e -p /etc/sysctl.d/10-ubuntu-nginx-web-server.conf
+wget -O /etc/sysctl.d/60-ubuntu-nginx-web-server.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+sysctl -e -p /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
 wget -O /etc/security/limits.conf https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/security/limits.conf
 ```
 
