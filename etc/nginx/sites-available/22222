@@ -26,33 +26,59 @@ server {
         vhost_traffic_status_display_format html;
     }
 
-# Display menu at location /fpm/status/
-    location =  /fpm/status/;
-    location ~ /fpm/status/(.*) {
-        try_files $uri =404;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_NAME  /status;
-        fastcgi_pass $1;
-    }
-    location ~ \.php$ {
-        try_files $uri =404;
-        include fastcgi_params;
-        fastcgi_pass php7;
-    }
-    
-# ViMbAdmin Rules
-    location = /vimbadmin/ {
-        return 301 $scheme://$host:22222/vimbadmin/public/;
-    }
-    location ~* /vimbadmin/public/(.*)/(.*) {
-        root /var/www/22222/htdocs/vimbadmin/public;
-        try_files $uri $uri/  /vimbadmin/public/index.php?$args;
-    }
-    location ~* /vimbadmin/public/(.*) {
-        root /var/www/22222/htdocs/vimbadmin/public;
-        try_files $uri $uri/  /vimbadmin/public/index.php?$args;
-    }
-    location /netdata {
+  root /var/www/22222/htdocs;
+  index index.php index.htm index.html;
+
+  # Turn on directory listing
+  autoindex on;
+
+  # HTTP Authentication on port 22222
+  include common/acl.conf;
+
+  location / {
+    try_files $uri $uri/ /index.php?$args;
+  }
+
+  # nginx-vts-status
+  location /vts_status {
+  vhost_traffic_status_display;
+  vhost_traffic_status_display_format html;
+  }
+
+  # Display menu at location /fpm/status/
+  location =  /fpm/status/ {}
+
+  location ~ /fpm/status/(.*) {
+    try_files $uri =404;
+    include fastcgi_params;
+    fastcgi_param  SCRIPT_NAME  /status;
+    fastcgi_pass $1;
+  }
+
+  location ~ \.php$ {
+    try_files $uri =404;
+    include fastcgi_params;
+    fastcgi_pass php7;
+  }
+
+  # ViMbAdmin Rules
+  location = /vimbadmin/ {
+    return 301 $scheme://$host:22222/vimbadmin/public/;
+  }
+
+
+
+  location ~* /vimbadmin/public/(.*)/(.*) {
+    root /var/www/22222/htdocs/vimbadmin/public;
+    try_files $uri $uri/  /vimbadmin/public/index.php?$args;
+  }
+
+  location ~* /vimbadmin/public/(.*) {
+    root /var/www/22222/htdocs/vimbadmin/public;
+    try_files $uri $uri/  /vimbadmin/public/index.php?$args;
+  }
+
+   location /netdata {
         return 301 /netdata/;
     }
     location ~ /netdata/(?<ndpath>.*) {
