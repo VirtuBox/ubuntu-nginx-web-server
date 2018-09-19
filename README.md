@@ -16,8 +16,6 @@
 
 * * *
 
-**All Instructions and informations are listed on the [Github page](https://virtubox.github.io/ubuntu-nginx-web-server/)**
-
 Configuration files with comments and informations available by following the link **source**
 
 ### Initial configuration
@@ -60,9 +58,8 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/)
 
 ```bash
-curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
-| sudo bash -s -- --mariadb-server-version=10.3 --skip-maxscale
-sudo apt update && sudo apt install mariadb-server percona-xtrabackup-24 -y
+bash <(wget -qO - https://downloads.mariadb.com/MariaDB/mariadb_repo_setup) --mariadb-server-version=10.3 --skip-maxscale -y
+sudo apt update && sudo apt install mariadb-server -y
 ```
 
 #### MySQL Tuning

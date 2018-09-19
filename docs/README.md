@@ -1,10 +1,10 @@
-# Ubuntu optimized configuration with EasyEngine
+# Optimized configuration for Ubuntu server with EasyEngine
 
 * * *
 
 ## Server Stack
 
-- Ubuntu 16/18.04 LTS
+- Ubuntu 16.04/18.04 LTS
 - Nginx 1.15.x / 1.14.x
 - PHP-FPM 7/7.1/7.2
 - MariaDB 10.3
@@ -58,9 +58,8 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/)
 
 ```bash
-curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup \
-| sudo bash -s -- --mariadb-server-version=10.3 --skip-maxscale
-sudo apt update && sudo apt install mariadb-server percona-xtrabackup-24 -y
+bash <(wget -qO - https://downloads.mariadb.com/MariaDB/mariadb_repo_setup) --mariadb-server-version=10.3 --skip-maxscale -y
+sudo apt update && sudo apt install mariadb-server -y
 ```
 
 #### MySQL Tuning
@@ -449,5 +448,6 @@ Then include this configuration in your nginx vhost by adding the following line
 ```bash
 include common/error_pages.conf;
 ```
+
 
 Published & maintained by [VirtuBox](https://virtubox.net)
