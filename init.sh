@@ -41,6 +41,9 @@ echo ""
 ##################################
 
 echo ""
+echo "What SSH port do you want to use ?"
+read -p "Select a port between 1024 & 65536 : " ssh_port_select
+echo ""
 echo "Do you want to install MariaDB-server ? (y/n)"
 while [[ $mariadb_server_install != "y" && $mariadb_server_install != "n" ]]; do
     read -p "Select an option [y/n]: " mariadb_server_install
@@ -114,126 +117,128 @@ echo ""
 # Update packages
 ##################################
 
-echo -ne '     Updating packages      [..]\r'
-{
-    apt-get update
-    apt-get upgrade -y
-    apt-get autoremove -y --purge
-    apt-get autoclean -y
-} >>/tmp/ubuntu-nginx-web-server.log
+echo "##########################################"
+echo " Updating Packages"
+echo "##########################################"
 
-echo -ne "     Updating packages      [${CGREEN}OK${CEND}]\\r"
+apt-get update
+apt-get upgrade -y
+apt-get autoremove -y --purge
+apt-get autoclean -y
 
 ##################################
 # UFW
 ##################################
-echo ""
-echo -ne '     Configuring UFW     [..]\r'
-{
-    if [ ! -d /etc/ufw ]; then
-        apt-get install ufw -y >>/tmp/ubuntu-nginx-web-server.log
-    fi
+echo "##########################################"
+echo " Configuring UFW"
+echo "##########################################"
 
-    ufw logging low
-    ufw default allow outgoing
-    ufw default deny incoming
+if [ ! -d /etc/ufw ]; then
+    apt-get install ufw -y
+fi
 
-    # required
-    ufw allow 22
-    ufw allow 53
-    ufw allow http
-    ufw allow https
-    ufw allow 21
-    ufw allow 68
-    ufw allow 546
-    ufw allow 873
-    ufw allow 123
-    ufw allow 22222
+ufw logging low
+ufw default allow outgoing
+ufw default deny incoming
 
-    # optional for monitoring
+# required
+ufw allow 22
+ufw allow $ssh_port_select
+ufw allow 53
+ufw allow http
+ufw allow https
+ufw allow 21
+ufw allow 68
+ufw allow 546
+ufw allow 873
+ufw allow 123
+ufw allow 22222
 
-    #fw allow 161
-    #ufw allow 6556
-    #ufw allow 10050
+# optional for monitoring
 
-} >>/tmp/ubuntu-nginx-web-server.log
+#fw allow 161
+#ufw allow 6556
+#ufw allow 10050
 
-echo -ne "     Configuring UFW      [${CGREEN}OK${CEND}]\\r"
 
 ##################################
 # Useful packages
 ##################################
 
-echo -ne '     Installing useful packages     [..]\r'
-{
+echo "##########################################"
+echo " Installing useful packages"
+echo "##########################################"
 
-    apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze  -y
 
-    # ntp time
-    systemctl enable ntp
+apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze  -y
 
-    # increase history size
-    export HISTSIZE=10000
+# ntp time
+systemctl enable ntp
 
-} >>/tmp/ubuntu-nginx-web-server.log
+# increase history size
+export HISTSIZE=10000
 
-echo -ne "     Installing useful packages      [${CGREEN}OK${CEND}]\\r"
+
+
+
 
 ##################################
 # clone repository
 ##################################
-echo ""
-echo -ne '     Cloning ubuntu-nginx-web-server     [..]\r'
-{
-    cd /tmp || exit
-    rm -rf /tmp/ubuntu-nginx-web-server
-    git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git
+echo "##########################################"
+echo " Cloning Ubuntu-nginx-web-server repository"
+echo "##########################################"
 
-} >>/tmp/ubuntu-nginx-web-server.log
-echo -ne "     Cloning ubuntu-nginx-web-server     [${CGREEN}OK${CEND}]\\r"
+cd /tmp || exit
+rm -rf /tmp/ubuntu-nginx-web-server
+git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git
+
+
+
 
 ##################################
 # Sysctl tweaks +  open_files limits
 ##################################
-echo ""
-echo -ne '     Applying kernel tweaks    [..]\r'
-{
-    sudo modprobe tcp_htcp
-    cp -f $REPO_PATH/etc/sysctl.d/60-ubuntu-nginx-web-server.conf /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    sysctl -e -p /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    cp -f $REPO_PATH/etc/security/limits.conf /etc/security/limits.conf
+echo "##########################################"
+echo " Applying Linux Kernel tweaks"
+echo "##########################################"
 
-    # Redis transparent_hugepage
-    echo never >/sys/kernel/mm/transparent_hugepage/enabled
+sudo modprobe tcp_htcp
+cp -f $REPO_PATH/etc/sysctl.d/60-ubuntu-nginx-web-server.conf /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+sysctl -e -p /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+cp -f $REPO_PATH/etc/security/limits.conf /etc/security/limits.conf
 
-    if [ ! -x /usr/bin/docker ]; then
+# Redis transparent_hugepage
+echo never >/sys/kernel/mm/transparent_hugepage/enabled
 
-        echo "" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "# Disables packet forwarding" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv4.ip_forward = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv4.conf.all.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv4.conf.default.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv6.conf.all.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv6.conf.default.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+if [ ! -x /usr/bin/docker ]; then
 
-    fi
+    echo "" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "# Disables packet forwarding" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv4.ip_forward = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv4.conf.all.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv4.conf.default.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.all.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.default.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
 
-    # additional systcl configuration with network interface name
-    # get network interface names like eth0, ens18 or eno1
-    # for each interface found, add the following configuration to sysctl
-    NET_INTERFACES_LIST=$( ls /sys/class/net | grep -E "/(?:veth(.*))|eth(.*)|ens(.*)|eno(.*)/")
-    for NET_INTERFACE in $NET_INTERFACES_LIST; do
-        echo "" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "# do not autoconfigure IPv6 on $NET_INTERFACE" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv6.conf.$NET_INTERFACE.autoconf = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv6.conf.$NET_INTERFACE.accept_ra = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv6.conf.$NET_INTERFACE.accept_ra = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv6.conf.$NET_INTERFACE.autoconf = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-        echo "net.ipv6.conf.$NET_INTERFACE.accept_ra_defrtr = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    done
+fi
 
-} >>/tmp/ubuntu-nginx-web-server.log 2>&1
-echo -ne "     Applying kernel tweaks    [${CGREEN}OK${CEND}]\\r"
+# additional systcl configuration with network interface name
+# get network interface names like eth0, ens18 or eno1
+# for each interface found, add the following configuration to sysctl
+NET_INTERFACES_LIST=$( ls /sys/class/net | grep -E "/(?:veth(.*))|eth(.*)|ens(.*)|eno(.*)/")
+for NET_INTERFACE in $NET_INTERFACES_LIST; do
+    echo "" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "# do not autoconfigure IPv6 on $NET_INTERFACE" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.autoconf = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.accept_ra = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.accept_ra = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.autoconf = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.accept_ra_defrtr = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+done
+
+
+
 ##################################
 # Add MariaDB 10.3 repository
 ##################################
@@ -241,12 +246,14 @@ echo -ne "     Applying kernel tweaks    [${CGREEN}OK${CEND}]\\r"
 if [[ "$mariadb_server_install" == "y" || "$mariadb_client_install" == "y" ]]; then
     if [ ! -f /etc/apt/sources.list.d/mariadb.list ]; then
         echo ""
-        echo -ne '     Adding mariadb repository    [..]\r'
-        {
-            bash <(wget -qO - https://downloads.mariadb.com/MariaDB/mariadb_repo_setup) --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
-            apt-get update
-        } >>/tmp/ubuntu-nginx-web-server.log 2>&1
-        echo -ne "     Adding mariadb repository      [${CGREEN}OK${CEND}]\\r"
+        echo "##########################################"
+        echo " Adding MariaDB $mariadb_version_install repository"
+        echo "##########################################"
+
+        bash <(wget -qO - https://downloads.mariadb.com/MariaDB/mariadb_repo_setup) --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
+        apt-get update
+
+
     fi
 fi
 
@@ -259,60 +266,64 @@ fi
 if [ "$mariadb_server_install" = "y" ]; then
     if [ ! -d /etc/mysql ]; then
         echo ""
-        echo -ne "     Installing MariaDB $mariadb_version_install    [..]\\r"
-        {
-            MYSQL_ROOT_PASS=$(date +%s | sha256sum | base64 | head -c 32)
-            export DEBIAN_FRONTEND=noninteractive # to avoid prompt during installation
+        echo "##########################################"
+        echo " Installing MariaDB server $mariadb_version_install"
+        echo "##########################################"
+
+        MYSQL_ROOT_PASS=$(date +%s | sha256sum | base64 | head -c 32)
+        export DEBIAN_FRONTEND=noninteractive # to avoid prompt during installation
 	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password password $MYSQL_ROOT_PASS"
 	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password_again password $MYSQL_ROOT_PASS"
 	# install mariadb server
-	DEBIAN_FRONTEND=noninteractive apt-get install -qq mariadb-server >>/tmp/ubuntu-nginx-web-server.log # -qq implies -y --force-yes
-            sudo bash -c 'echo -e "[client]\nuser = root" > $HOME/.my.cnf'
-            echo "password = $MYSQL_ROOT_PASS" >>$HOME/.my.cnf
-            cp $HOME/.my.cnf /etc/mysql/conf.d/my.cnf
-            # set password to the root user and grant privileges
-            #Q1="GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
-            #Q2="FLUSH PRIVILEGES;"
-            #SQL="${Q1}${Q2}"
-            #mysql -uroot -e "$SQL"
+	DEBIAN_FRONTEND=noninteractive apt-get install -qq mariadb-server  # -qq implies -y --force-yes
+        sudo bash -c 'echo -e "[client]\nuser = root" > $HOME/.my.cnf'
+        echo "password = $MYSQL_ROOT_PASS" >>$HOME/.my.cnf
+        cp $HOME/.my.cnf /etc/mysql/conf.d/my.cnf
+        # set password to the root user and grant privileges
+        #Q1="GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
+        #Q2="FLUSH PRIVILEGES;"
+        #SQL="${Q1}${Q2}"
+        #mysql -uroot -e "$SQL"
 
-            ## mysql_secure_installation non-interactive way
-            mysql -e "GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
-            # remove anonymous users
-            mysql -e "DROP USER ''@'localhost'"
-            mysql -e "DROP USER ''@'$(hostname)'"
-            # remove test database
-            mysql -e "DROP DATABASE test"
-            # flush privileges
-            mysql -e "FLUSH PRIVILEGES"
+        ## mysql_secure_installation non-interactive way
+        mysql -e "GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
+        # remove anonymous users
+        mysql -e "DROP USER ''@'localhost'"
+        mysql -e "DROP USER ''@'$(hostname)'"
+        # remove test database
+        mysql -e "DROP DATABASE test"
+        # flush privileges
+        mysql -e "FLUSH PRIVILEGES"
 
-        } >>/tmp/ubuntu-nginx-web-server.log
 
-        echo -ne "     Installing MariaDB $mariadb_version_install      [${CGREEN}OK${CEND}]\\r"
+
+
     fi
 fi
 ##################################
 # MariaDB tweaks
 ##################################
 if [ "$mariadb_server_install" = "y" ]; then
-    echo "Configuring MariaDB tweaks"
-    {
-        cp -f $REPO_PATH/etc/mysql/my.cnf /etc/mysql/my.cnf
+    echo "##########################################"
+    echo " Optimizing MariaDB configuration"
+    echo "##########################################"
 
-        sudo service mysql stop
+    cp -f $REPO_PATH/etc/mysql/my.cnf /etc/mysql/my.cnf
 
-        sudo mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
-        sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
+    sudo service mysql stop
 
-        cp -f $REPO_PATH/etc/systemd/system/mariadb.service.d/limits.conf /etc/systemd/system/mariadb.service.d/limits.conf
-        systemctl daemon-reload
+    sudo mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
+    sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
 
-        service mysql start
-    } >>/tmp/ubuntu-nginx-web-server.log 2>&1
+    cp -f $REPO_PATH/etc/systemd/system/mariadb.service.d/limits.conf /etc/systemd/system/mariadb.service.d/limits.conf
+    systemctl daemon-reload
+
+    service mysql start
+
 fi
 if [ "$mariadb_client_install" = "y" ]; then
     echo "installing mariadb-client"
-    apt-get install -y mariadb-client >>/tmp/ubuntu-nginx-web-server.log
+    apt-get install -y mariadb-client
     echo "[client]" >>$HOME/.my.cnf
     echo "host = $mariadb_remote_ip" >>$HOME/.my.cnf
     echo "port = 3306" >>$HOME/.my.cnf
@@ -331,12 +342,14 @@ if [ ! -f $HOME/.gitconfig ]; then
     sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = $USER@$HOSTNAME" > $HOME/.gitconfig'
 fi
 if [ ! -x /usr/local/bin/ee ]; then
-    echo "installing easyengine"
-    {
-        wget -qO ee https://raw.githubusercontent.com/EasyEngine/easyengine/master/install
-        bash ee
-        source /etc/bash_completion.d/ee_auto.rc
-    } >>/tmp/ubuntu-nginx-web-server.log
+    echo "##########################################"
+    echo " Installing EasyEngine"
+    echo "##########################################"
+
+    wget -qO ee https://raw.githubusercontent.com/EasyEngine/easyengine/master/install
+    bash ee
+    source /etc/bash_completion.d/ee_auto.rc
+
 fi
 
 
@@ -348,44 +361,45 @@ if [ "$mariadb_client_install" = "y" ]; then
     sudo sed -i 's/grant-host = localhost/grant-host = \%/' /etc/ee/ee.conf
 fi
 
-echo "Installing ee stack"
-{
-    ee stack install
-    ee stack install --php7 --redis --admin --phpredisadmin
-} >>/tmp/ubuntu-nginx-web-server.log 2>&1
+echo "##########################################"
+echo " Installing EasyEngine Stack"
+echo "##########################################"
+
+ee stack install
+ee stack install --php7 --redis --admin --phpredisadmin
+
 
 ##################################
 # Fix phpmyadmin install
 ##################################
-echo "updating phpmyadmin"
-{
-    cd ~/ || exit
-    curl -sS https://getcomposer.org/installer | php >>/tmp/ubuntu-nginx-web-server.log
-    mv composer.phar /usr/bin/composer
+echo "##########################################"
+echo " Updating phpmyadmin"
+echo "##########################################"
 
-    chown www-data:www-data /var/www
-    sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
+cd ~/ || exit
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/bin/composer
 
-} >>/tmp/ubuntu-nginx-web-server.log 2>&1
+chown www-data:www-data /var/www
+sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
 
 ##################################
 # Allow www-data shell access for SFTP + add .bashrc settings et completion
 ##################################
-echo "configuring www-data permissions"
-{
+echo "##########################################"
+echo " Configuring www-data shell access"
+echo "##########################################"
 
-    usermod -s /bin/bash www-data
+usermod -s /bin/bash www-data
 
-    wget -qO /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash >>/tmp/ubuntu-nginx-web-server.log
-    cp -f $REPO_PATH/var/www/.profile /var/www/.profile
-    cp -f $REPO_PATH/var/www/.bashrc /var/www/.bashrc
+wget -qO /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
+cp -f $REPO_PATH/var/www/.profile /var/www/.profile
+cp -f $REPO_PATH/var/www/.bashrc /var/www/.bashrc
 
-    chown www-data:www-data /var/www/.profile
-    chown www-data:www-data /var/www/.bashrc
+chown www-data:www-data /var/www/.profile
+chown www-data:www-data /var/www/.bashrc
 
-    sudo -u www-data -H curl https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh | sh
-
-} >>/tmp/ubuntu-nginx-web-server.log
+sudo -u www-data -H curl https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh | sh
 
 ##################################
 # Install php7.1-fpm
@@ -393,14 +407,16 @@ echo "configuring www-data permissions"
 
 if [ "$phpfpm71_install" = "y" ]; then
 
-    echo "installing php7.1-fpm"
-    {
-        apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
-        php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl >>/tmp/ubuntu-nginx-web-server.log
+    echo "##########################################"
+    echo " Installing php7.1-fpm"
+    echo "##########################################"
 
-        sudo cp -rf $REPO_PATH/etc/php/7.1/* /etc/php/7.1/
-        sudo service php7.1-fpm restart
-    } >>/tmp/ubuntu-nginx-web-server.log
+    apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
+    php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
+
+    sudo cp -rf $REPO_PATH/etc/php/7.1/* /etc/php/7.1/
+    sudo service php7.1-fpm restart
+
 
 fi
 
@@ -409,28 +425,32 @@ fi
 ##################################
 
 if [ "$phpfpm72_install" = "y" ]; then
-    echo "installing php7.2-fpm"
-    {
-        apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y >>/tmp/ubuntu-nginx-web-server.log
+    echo "##########################################"
+    echo " Installing php7.2-fpm"
+    echo "##########################################"
 
-        cp -rf $REPO_PATH/etc/php/7.2/* /etc/php/7.2/
-        service php7.2-fpm restart
-    }>>/tmp/ubuntu-nginx-web-server.log
+    apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
+
+    cp -rf $REPO_PATH/etc/php/7.2/* /etc/php/7.2/
+    service php7.2-fpm restart
+
 fi
 
 ##################################
 # Update php7.0-fpm config
 ##################################
-echo "updating php7.0 configuration"
-{
+echo "##########################################"
+echo " Configuring php7.0-fpm"
+echo "##########################################"
 
-    if [ -d /etc/php/7.0 ]; then
 
-        cp -rf $REPO_PATH/etc/php/7.0/* /etc/php/7.0/
+if [ -d /etc/php/7.0 ]; then
 
-    fi
+    cp -rf $REPO_PATH/etc/php/7.0/* /etc/php/7.0/
 
-} >>/tmp/ubuntu-nginx-web-server.log
+fi
+
+
 
 ##################################
 # Compile latest nginx release from source
@@ -461,6 +481,10 @@ else
     BUILD_RTMP=''
 fi
 
+echo "##########################################"
+echo " Compiling Nginx with nginx-ee"
+echo "##########################################"
+
 wget -q https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh
 chmod +x nginx-build.sh
 
@@ -470,73 +494,97 @@ chmod +x nginx-build.sh
 ##################################
 # Add nginx additional conf
 ##################################
-echo "optimizing nginx configuration"
-{
+echo "##########################################"
+echo " Configuring Nginx"
+echo "##########################################"
 
-    # php7.1 & 7.2 common configurations
 
-    cp -rf $REPO_PATH/etc/nginx/common/* /etc/nginx/common/
+# php7.1 & 7.2 common configurations
 
-    # optimized nginx.config
-    cp -f $REPO_PATH/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+cp -rf $REPO_PATH/etc/nginx/common/* /etc/nginx/common/
 
-    # check nginx configuration
-    CONF_22222=$(grep -c netdata /etc/nginx/sites-available/22222)
-    CONF_UPSTREAM=$(grep -c netdata /etc/nginx/conf.d/upstream.conf)
-    CONF_DEFAULT=$(grep -c status /etc/nginx/sites-available/default)
+# optimized nginx.config
+cp -f $REPO_PATH/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
-    if [ "$CONF_22222" = "0" ]; then
-        # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
-        sudo cp -f $REPO_PATH/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
-    fi
+# check nginx configuration
+CONF_22222=$(grep -c netdata /etc/nginx/sites-available/22222)
+CONF_UPSTREAM=$(grep -c netdata /etc/nginx/conf.d/upstream.conf)
+CONF_DEFAULT=$(grep -c status /etc/nginx/sites-available/default)
 
-    if [ "$CONF_UPSTREAM" = "0" ]; then
-        # add netdata, php7.1 and php7.2 upstream
-        sudo cp -f $REPO_PATH/etc/nginx/conf.d/upstream.conf /etc/nginx/conf.d/upstream.conf
-    fi
+if [ "$CONF_22222" = "0" ]; then
+    # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
+    sudo cp -f $REPO_PATH/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
+fi
 
-    if [ "$CONF_DEFAULT" = "0" ]; then
-        # additional nginx locations for monitoring
-        sudo cp -f $REPO_PATH/etc/nginx/sites-available/default /etc/nginx/sites-available/default
-    fi
+if [ "$CONF_UPSTREAM" = "0" ]; then
+    # add netdata, php7.1 and php7.2 upstream
+    sudo cp -f $REPO_PATH/etc/nginx/conf.d/upstream.conf /etc/nginx/conf.d/upstream.conf
+fi
 
-    # 1) add webp mapping
-    cp -f $REPO_PATH/etc/nginx/conf.d/webp.conf /etc/nginx/conf.d/webp.conf
+if [ "$CONF_DEFAULT" = "0" ]; then
+    # additional nginx locations for monitoring
+    sudo cp -f $REPO_PATH/etc/nginx/sites-available/default /etc/nginx/sites-available/default
+fi
 
-    nginx -t
-    service nginx reload
+# 1) add webp mapping
+cp -f $REPO_PATH/etc/nginx/conf.d/webp.conf /etc/nginx/conf.d/webp.conf
 
-} >>/tmp/ubuntu-nginx-web-server.log
+nginx -t
+service nginx reload
+
+
 
 ##################################
 # Add fail2ban configurations
 ##################################
-echo "configuring fail2ban"
-{
+echo "##########################################"
+echo " Configuring Fail2Ban"
+echo "##########################################"
 
-    cp -rf $REPO_PATH/etc/fail2ban/filter.d/* /etc/fail2ban/filter.d/
-    cp -rf $REPO_PATH/etc/fail2ban/jail.d/* /etc/fail2ban/jail.d/
 
-    fail2ban-client reload
+cp -rf $REPO_PATH/etc/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+cp -rf $REPO_PATH/etc/fail2ban/jail.d/* /etc/fail2ban/jail.d/
 
-} >>/tmp/ubuntu-nginx-web-server.log
+fail2ban-client reload
+
+##################################
+# Add fail2ban configurations
+##################################
+echo "##########################################"
+echo " Installing ClamAV"
+echo "##########################################"
+
+apt-get install clamav -y
+
+##################################
+# Add fail2ban configurations
+##################################
+echo "##########################################"
+echo " Updating ClamAV signature database"
+echo "##########################################"
+
+/etc/init.d/clamav-freshclam stop
+freshclam
+/etc/init.d/clamav-freshclam start
 
 ##################################
 # Install cheat & nanorc
 ##################################
-echo "installing cheat & nanorc"
-{
+echo "##########################################"
+echo " Installing cheat.sh & nanorc"
+echo "##########################################"
 
-    curl https://cht.sh/:cht.sh >/usr/bin/cht.sh
-    chmod +x /usr/bin/cht.sh
 
-    cd || exit
-    echo "alias cheat='cht.sh'" >>.bashrc
-    source $HOME/.bashrc
+curl https://cht.sh/:cht.sh >/usr/bin/cht.sh
+chmod +x /usr/bin/cht.sh
 
-    wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -qO- | sh
+cd || exit
+echo "alias cheat='cht.sh'" >>.bashrc
+source $HOME/.bashrc
 
-} >>/tmp/ubuntu-nginx-web-server.log
+wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -qO- | sh
+
+
 
 ##################################
 # Install ProFTPd
@@ -544,18 +592,20 @@ echo "installing cheat & nanorc"
 
 if [ "$proftpd_install" = "y" ]; then
 
-    echo "installing proftpd"
-    {
-        apt-get install proftpd -y
+    echo "##########################################"
+    echo " Installing Proftpd"
+    echo "##########################################"
 
-        # secure proftpd and enable PassivePorts
+    apt-get install proftpd -y
 
-        sed -i 's/# DefaultRoot/DefaultRoot/' /etc/proftpd/proftpd.conf
-        sed -i 's/# RequireValidShell/RequireValidShell/' /etc/proftpd/proftpd.conf
-        sed -i 's/# PassivePorts                  49152 65534/PassivePorts                  49000 50000/' /etc/proftpd/proftpd.conf
+    # secure proftpd and enable PassivePorts
 
-        sudo service proftpd restart
-    } >>/tmp/ubuntu-nginx-web-server.log
+    sed -i 's/# DefaultRoot/DefaultRoot/' /etc/proftpd/proftpd.conf
+    sed -i 's/# RequireValidShell/RequireValidShell/' /etc/proftpd/proftpd.conf
+    sed -i 's/# PassivePorts                  49152 65534/PassivePorts                  49000 50000/' /etc/proftpd/proftpd.conf
+
+    sudo service proftpd restart
+
     if [ -d /etc/ufw ]; then
         # ftp passive ports
         ufw allow 49000:50000/tcp
@@ -568,68 +618,74 @@ fi
 ##################################
 
 if [ ! -d /etc/netdata ]; then
-    echo "installing netdata"
-    {
-        ## install nedata
-        wget -q https://my-netdata.io/kickstart.sh >>/tmp/ubuntu-nginx-web-server.log
-        chmod +x kickstart.sh
-        ./kickstart.sh all --dont-wait
+    echo "##########################################"
+    echo " Installing Netdata"
+    echo "##########################################"
 
-        ## optimize netdata resources usage
-        echo 1 >/sys/kernel/mm/ksm/run
-        echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
+    ## install nedata
+    wget -q https://my-netdata.io/kickstart.sh
+    chmod +x kickstart.sh
+    ./kickstart.sh all --dont-wait
 
-        ## disable email notifigrep -cions
-        sudo sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /etc/netdata/health_alarm_notify.conf
-        sudo service netdata restart
-    } >>/tmp/ubuntu-nginx-web-server.log
+    ## optimize netdata resources usage
+    echo 1 >/sys/kernel/mm/ksm/run
+    echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
+
+    ## disable email notifigrep -cions
+    sudo sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /etc/netdata/health_alarm_notify.conf
+    sudo service netdata restart
+
 fi
 
 ##################################
 # Install EasyEngine Dashboard
 ##################################
 
-echo "installing easyengine-dashboard"
-{
-    if [ ! -d /var/www/22222/htdocs/files ]; then
+echo "##########################################"
+echo " Installing EasyEngine Dashboard"
+echo "##########################################"
 
-        mkdir /var/www/22222/htdocs/files
-        wget http://extplorer.net/attachments/download/74/eXtplorer_$EXTPLORER_VER.zip -O /var/www/22222/htdocs/files/ex.zip
-        cd /var/www/22222/htdocs/files || exit 1
-        unzip ex.zip
-        rm ex.zip
-    fi
+if [ ! -d /var/www/22222/htdocs/files ]; then
 
-    cd /var/www/22222 || exit
+    mkdir /var/www/22222/htdocs/files
+    wget http://extplorer.net/attachments/download/74/eXtplorer_$EXTPLORER_VER.zip -O /var/www/22222/htdocs/files/ex.zip
+    cd /var/www/22222/htdocs/files || exit 1
+    unzip ex.zip
+    rm ex.zip
+fi
 
-    ## download latest version of EasyEngine-dashboard
-    cd /tmp || exit
-    git clone https://github.com/VirtuBox/easyengine-dashboard.git
-    cp -rf /tmp/easyengine-dashboard/* /var/www/22222/htdocs/
-    chown -R www-data:www-data /var/www/22222/htdocs
+cd /var/www/22222 || exit
 
-} >>/tmp/ubuntu-nginx-web-server.log
+## download latest version of EasyEngine-dashboard
+cd /tmp || exit
+git clone https://github.com/VirtuBox/easyengine-dashboard.git
+cp -rf /tmp/easyengine-dashboard/* /var/www/22222/htdocs/
+chown -R www-data:www-data /var/www/22222/htdocs
+
+
 
 ##################################
 # Install Acme.sh
 ##################################
-echo "installing acme.sh"
-{
+echo "##########################################"
+echo " Installing Acme.sh"
+echo "##########################################"
 
-    # install acme.sh if needed
+
+# install acme.sh if needed
+echo ""
+echo "checking if acme.sh is already installed"
+echo ""
+if [ ! -f $HOME/.acme.sh/acme.sh ]; then
     echo ""
-    echo "checking if acme.sh is already installed"
+
     echo ""
-    if [ ! -f $HOME/.acme.sh/acme.sh ]; then
-        echo ""
+    wget -O - https://get.acme.sh | sh
+    cd || exit
+    source .bashrc
+fi
 
-        echo ""
-        wget -O - https://get.acme.sh | sh
-        cd || exit
-        source .bashrc
-    fi
 
-} >>/tmp/ubuntu-nginx-web-server.log
 
 ##################################
 # Secure EasyEngine Dashboard with Acme.sh
@@ -640,9 +696,11 @@ MY_IP=$(curl -s v4.vtbox.net)
 MY_HOSTNAME_IP=$(dig +short @8.8.8.8 "$MY_HOSTNAME")
 
 if [[ "$MY_IP" == "$MY_HOSTNAME_IP" ]]; then
-    echo "securing easyengine backend"
+    echo "##########################################"
+    echo " Securing EasyEngine Backend"
+    echo "##########################################"
     if [ ! -f /etc/systemd/system/multi-user.target.wants/nginx.service ]; then
-        systemctl enable nginx.service >>/tmp/ubuntu-nginx-web-server.log
+        systemctl enable nginx.service
         service nginx start
     fi
 

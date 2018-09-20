@@ -15,7 +15,7 @@
 
 * * *
 
-**Documentation is still available here : [Ubuntu-Nginx-Web-Server](https://virtubox.github.io/ubuntu-nginx-web-server/docs/pages/documentation.md)**
+**Documentation is still available here : [Ubuntu-Nginx-Web-Server](https://virtubox.github.io/ubuntu-nginx-web-server/pages/documentation)**
 
 ### Features
 
