@@ -243,8 +243,7 @@ if [[ "$mariadb_server_install" == "y" || "$mariadb_client_install" == "y" ]]; t
         echo ""
         echo -ne '     Adding mariadb repository    [..]\r'
         {
-            curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup |
-            bash -s -- --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
+            bash <(wget -qO - https://downloads.mariadb.com/MariaDB/mariadb_repo_setup) --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
             apt-get update
         } >>/tmp/ubuntu-nginx-web-server.log 2>&1
         echo -ne "     Adding mariadb repository      [${CGREEN}OK${CEND}]\\r"
@@ -377,7 +376,7 @@ echo "configuring www-data permissions"
 
     usermod -s /bin/bash www-data
 
-    wget -O /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash >>/tmp/ubuntu-nginx-web-server.log
+    wget -qO /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash >>/tmp/ubuntu-nginx-web-server.log
     cp -f $REPO_PATH/var/www/.profile /var/www/.profile
     cp -f $REPO_PATH/var/www/.bashrc /var/www/.bashrc
 
@@ -425,7 +424,7 @@ fi
 echo "updating php7.0 configuration"
 {
 
-    if [ ! -d /etc/php/7.0 ]; then
+    if [ -d /etc/php/7.0 ]; then
 
         cp -rf $REPO_PATH/etc/php/7.0/* /etc/php/7.0/
 
@@ -462,7 +461,7 @@ else
     BUILD_RTMP=''
 fi
 
-wget https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh
+wget -q https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh
 chmod +x nginx-build.sh
 
 ./nginx-build.sh $NGINX_BUILD_VER $BUILD_PAGESPEED $BUILD_NAXSI $BUILD_RTMP
@@ -535,7 +534,7 @@ echo "installing cheat & nanorc"
     echo "alias cheat='cht.sh'" >>.bashrc
     source $HOME/.bashrc
 
-    wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -O- | sh
+    wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -qO- | sh
 
 } >>/tmp/ubuntu-nginx-web-server.log
 
@@ -572,7 +571,7 @@ if [ ! -d /etc/netdata ]; then
     echo "installing netdata"
     {
         ## install nedata
-        wget https://my-netdata.io/kickstart.sh >>/tmp/ubuntu-nginx-web-server.log
+        wget -q https://my-netdata.io/kickstart.sh >>/tmp/ubuntu-nginx-web-server.log
         chmod +x kickstart.sh
         ./kickstart.sh all --dont-wait
 
