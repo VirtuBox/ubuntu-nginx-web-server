@@ -40,40 +40,65 @@ echo ""
 # Menu
 ##################################
 
+echo "#####################################"
+echo "Security"
+echo "#####################################"
 echo ""
-echo "What SSH port do you want to use ?"
-read -p "Select a port between 1024 & 65536 : " ssh_port_select
-echo ""
-echo "Do you want to install MariaDB-server ? (y/n)"
-while [[ $mariadb_server_install != "y" && $mariadb_server_install != "n" ]]; do
-    read -p "Select an option [y/n]: " mariadb_server_install
+echo "Do you currently use default SSH port 22 ? (y/n)"
+while [[ $ssh_port_default != "y" && $ssh_port_default != "n" ]]; do
+    read -p "Select an option [y/n]: " ssh_port_default
 done
-if [ "$mariadb_server_install" = "n" ]; then
+echo ""
+if [ $ssh_port_default = "y" ]; then
+    echo "What custom SSH port do you want to use instead of 22 ?"
+    read -p "Select a port between 1024 & 65536 : " ssh_port_select
     echo ""
-    echo "Do you want to install MariaDB-client for a remote database ? (y/n)"
-    while [[ $mariadb_client_install != "y" && $mariadb_client_install != "n" ]]; do
-        read -p "Select an option [y/n]: " mariadb_client_install
-    done
+else
+    echo "What custom SSH port are you using ?"
+    read -p "Select your custom SSH port : " ssh_port_select
+    echo ""
 fi
-if [ "$mariadb_client_install" = "y" ]; then
+sleep 1
+if [ ! -d /etc/mysql ]; then
+    echo "#####################################"
+    echo "MariaDB server"
+    echo "#####################################"
     echo ""
-    echo "What is the IP of your remote database ?"
-    read -p "IP : " mariadb_remote_ip
-    echo ""
-    echo "What is the user of your remote database ?"
-    read -p "User : " mariadb_remote_user
-    echo ""
-    echo "What is the password of your remote database ?"
-    read -s -p "password [hidden] : " mariadb_remote_password
-fi
-if [[ "$mariadb_server_install" == "y" || "$mariadb_client_install" == "y" ]]; then
-    echo ""
-    echo "What version of MariaDB Client/Server do you want to install, 10.1, 10.2 or 10.3 ?"
-    while [[ $mariadb_version_install != "10.1" && $mariadb_version_install != "10.2" && $mariadb_version_install != "10.3" ]]; do
-        read -p "Select an option [10.1 / 10.2 / 10.3]: " mariadb_version_install
+    echo "Do you want to install MariaDB-server ? (y/n)"
+    while [[ $mariadb_server_install != "y" && $mariadb_server_install != "n" ]]; do
+        read -p "Select an option [y/n]: " mariadb_server_install
     done
+    if [ "$mariadb_server_install" = "n" ]; then
+        echo ""
+        echo "Do you want to install MariaDB-client for a remote database ? (y/n)"
+        while [[ $mariadb_client_install != "y" && $mariadb_client_install != "n" ]]; do
+            read -p "Select an option [y/n]: " mariadb_client_install
+        done
+    fi
+    if [ "$mariadb_client_install" = "y" ]; then
+        echo ""
+        echo "What is the IP of your remote database ?"
+        read -p "IP : " mariadb_remote_ip
+        echo ""
+        echo "What is the user of your remote database ?"
+        read -p "User : " mariadb_remote_user
+        echo ""
+        echo "What is the password of your remote database ?"
+        read -s -p "password [hidden] : " mariadb_remote_password
+    fi
+    if [[ "$mariadb_server_install" == "y" || "$mariadb_client_install" == "y" ]]; then
+        echo ""
+        echo "What version of MariaDB Client/Server do you want to install, 10.1, 10.2 or 10.3 ?"
+        while [[ $mariadb_version_install != "10.1" && $mariadb_version_install != "10.2" && $mariadb_version_install != "10.3" ]]; do
+            read -p "Select an option [10.1 / 10.2 / 10.3]: " mariadb_version_install
+        done
+    fi
+    sleep 1
 fi
 echo ""
+echo "#####################################"
+echo "Nginx"
+echo "#####################################"
 echo ""
 echo "Do you want to compile the latest Nginx Mainline [1] or Stable [2] Release ?"
 while [[ $NGINX_RELEASE != "1" && $NGINX_RELEASE != "2" ]]; do
@@ -96,7 +121,11 @@ while [[ $RTMP != "y" && $RTMP != "n" ]]; do
     read -p "Select an option [y/n]: " RTMP
     export $RTMP
 done
+sleep 1
 echo ""
+echo "#####################################"
+echo "PHP"
+echo "#####################################"
 echo "Do you want php7.1-fpm ? (y/n)"
 while [[ $phpfpm71_install != "y" && $phpfpm71_install != "n" ]]; do
     read -p "Select an option [y/n]: " phpfpm71_install
@@ -106,12 +135,22 @@ echo "Do you want php7.2-fpm ? (y/n)"
 while [[ $phpfpm72_install != "y" && $phpfpm72_install != "n" ]]; do
     read -p "Select an option [y/n]: " phpfpm72_install
 done
+if [ ! -d /etc/proftpd ]; then
+    echo ""
+    echo "#####################################"
+    echo "FTP"
+    echo "#####################################"
+    echo "Do you want proftpd ? (y/n)"
+    while [[ $proftpd_install != "y" && $proftpd_install != "n" ]]; do
+        read -p "Select an option [y/n]: " proftpd_install
+    done
+fi
 echo ""
-echo "Do you want proftpd ? (y/n)"
-while [[ $proftpd_install != "y" && $proftpd_install != "n" ]]; do
-    read -p "Select an option [y/n]: " proftpd_install
-done
-echo ""
+echo "#####################################"
+echo "Starting server setup in 5 seconds"
+echo "use CTRL + C if you want to cancel installation"
+echo "#####################################"
+sleep 5
 
 ##################################
 # Update packages
@@ -127,6 +166,19 @@ apt-get autoremove -y --purge
 apt-get autoclean -y
 
 ##################################
+# Secure SSH server
+##################################
+
+# download secure sshd_config
+wget -O /etc/ssh/sshd_config https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/ssh/sshd_config
+
+# change ssh default port
+sudo sed -i "s/Port 22/Port $ssh_port_select/" /etc/ssh/sshd_config
+
+# restart ssh service
+service ssh restart
+
+##################################
 # UFW
 ##################################
 echo "##########################################"
@@ -137,27 +189,44 @@ if [ ! -d /etc/ufw ]; then
     apt-get install ufw -y
 fi
 
+# define firewall rules
+
 ufw logging low
 ufw default allow outgoing
 ufw default deny incoming
 
-# required
+# allow required ports
 ufw allow 22
 ufw allow $ssh_port_select
 ufw allow 53
 ufw allow http
 ufw allow https
-ufw allow 21
-ufw allow 68
-ufw allow 546
-ufw allow 873
 ufw allow 123
+
+# dhcp client
+ufw allow 68
+
+# dhcp ipv6 client
+ufw allow 546
+
+# rsync
+ufw allow 873
+
+# easyengine backend
 ufw allow 22222
 
 # optional for monitoring
 
-#fw allow 161
+# SNMP UDP port
+#ufw allow 161
+
+# Netdata web interface
+#ufw allow 1999
+
+# Librenms linux agent
 #ufw allow 6556
+
+# Zabbix-agent
 #ufw allow 10050
 
 
@@ -179,9 +248,6 @@ systemctl enable ntp
 export HISTSIZE=10000
 
 
-
-
-
 ##################################
 # clone repository
 ##################################
@@ -192,8 +258,6 @@ echo "##########################################"
 cd /tmp || exit
 rm -rf /tmp/ubuntu-nginx-web-server
 git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git
-
-
 
 
 ##################################
@@ -211,6 +275,7 @@ cp -f $REPO_PATH/etc/security/limits.conf /etc/security/limits.conf
 # Redis transparent_hugepage
 echo never >/sys/kernel/mm/transparent_hugepage/enabled
 
+# disable ip forwarding if docker is not installed
 if [ ! -x /usr/bin/docker ]; then
 
     echo "" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
@@ -261,8 +326,7 @@ fi
 # MariaDB 10.3 install
 ##################################
 
-# if user want to install mariadb_server
-#
+# install mariadb server non-interactive way
 if [ "$mariadb_server_install" = "y" ]; then
     if [ ! -d /etc/mysql ]; then
         echo ""
@@ -270,20 +334,17 @@ if [ "$mariadb_server_install" = "y" ]; then
         echo " Installing MariaDB server $mariadb_version_install"
         echo "##########################################"
 
+        # generate random password
         MYSQL_ROOT_PASS=$(date +%s | sha256sum | base64 | head -c 32)
         export DEBIAN_FRONTEND=noninteractive # to avoid prompt during installation
 	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password password $MYSQL_ROOT_PASS"
 	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password_again password $MYSQL_ROOT_PASS"
 	# install mariadb server
 	DEBIAN_FRONTEND=noninteractive apt-get install -qq mariadb-server  # -qq implies -y --force-yes
+        # save credentials in .my.cnf and copy it in /etc/mysql/conf.d for easyengine
         sudo bash -c 'echo -e "[client]\nuser = root" > $HOME/.my.cnf'
         echo "password = $MYSQL_ROOT_PASS" >>$HOME/.my.cnf
         cp $HOME/.my.cnf /etc/mysql/conf.d/my.cnf
-        # set password to the root user and grant privileges
-        #Q1="GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
-        #Q2="FLUSH PRIVILEGES;"
-        #SQL="${Q1}${Q2}"
-        #mysql -uroot -e "$SQL"
 
         ## mysql_secure_installation non-interactive way
         mysql -e "GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
@@ -294,15 +355,12 @@ if [ "$mariadb_server_install" = "y" ]; then
         mysql -e "DROP DATABASE test"
         # flush privileges
         mysql -e "FLUSH PRIVILEGES"
-
-
-
-
     fi
 fi
 ##################################
 # MariaDB tweaks
 ##################################
+
 if [ "$mariadb_server_install" = "y" ]; then
     echo "##########################################"
     echo " Optimizing MariaDB configuration"
@@ -310,25 +368,47 @@ if [ "$mariadb_server_install" = "y" ]; then
 
     cp -f $REPO_PATH/etc/mysql/my.cnf /etc/mysql/my.cnf
 
+    # AVAILABLE_MEMORY=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+    # BUFFER_POOL_SIZE=$(( $AVAILABLE_MEMORY / 2000 ))
+    # LOG_FILE_SIZE=$(( $AVAILABLE_MEMORY / 16000 ))
+    # LOG_BUFFER_SIZE=$(( $AVAILABLE_MEMORY / 8000 ))
+
+
+    # sudo sed -i "s/innodb_buffer_pool_size = 2G/innodb_buffer_pool_size = $BUFFER_POOL_SIZE\\M/" /etc/mysql/my.cnf
+    # sudo sed -i "s/innodb_log_file_size    = 256M/innodb_log_file_size    = $LOG_FILE_SIZE\\M/" /etc/mysql/my.cnf
+    # sudo sed -i "s/innodb_log_buffer_size  = 512M/innodb_log_buffer_size  = $LOG_BUFFER_SIZE\\M/" /etc/mysql/my.cnf
+
+    # stop mysql service to apply new InnoDB log file size
     sudo service mysql stop
 
+    # mv previous log file
     sudo mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
     sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
 
+    # increase mariadb open_files_limit
     cp -f $REPO_PATH/etc/systemd/system/mariadb.service.d/limits.conf /etc/systemd/system/mariadb.service.d/limits.conf
+
+    # reload daemon
     systemctl daemon-reload
 
+    # restart mysql
     service mysql start
 
 fi
 if [ "$mariadb_client_install" = "y" ]; then
+
     echo "installing mariadb-client"
+    # install mariadb-client
     apt-get install -y mariadb-client
+
+    # set mysql credentials in .my.cnf
     echo "[client]" >>$HOME/.my.cnf
     echo "host = $mariadb_remote_ip" >>$HOME/.my.cnf
     echo "port = 3306" >>$HOME/.my.cnf
     echo "user = $mariadb_remote_user" >>$HOME/.my.cnf
     echo "password = $mariadb_remote_password" >>$HOME/.my.cnf
+
+    # copy .my.cnf in /etc/mysql/conf.d/ for easyengine
     cp $HOME/.my.cnf /etc/mysql/conf.d/my.cnf
 fi
 
@@ -336,9 +416,8 @@ fi
 # EasyEngine automated install
 ##################################
 
-
-
 if [ ! -f $HOME/.gitconfig ]; then
+    # define git username and email for non-interactive install
     sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = $USER@$HOSTNAME" > $HOME/.gitconfig'
 fi
 if [ ! -x /usr/local/bin/ee ]; then
@@ -358,6 +437,7 @@ fi
 ##################################
 
 if [ "$mariadb_client_install" = "y" ]; then
+    # change MySQL host to % in case of remote MySQL server
     sudo sed -i 's/grant-host = localhost/grant-host = \%/' /etc/ee/ee.conf
 fi
 
@@ -365,7 +445,9 @@ echo "##########################################"
 echo " Installing EasyEngine Stack"
 echo "##########################################"
 
+# install nginx, php, postfix, memcached
 ee stack install
+# install php7, redis, easyengine backend & phpredisadmin
 ee stack install --php7 --redis --admin --phpredisadmin
 
 
@@ -376,11 +458,14 @@ echo "##########################################"
 echo " Updating phpmyadmin"
 echo "##########################################"
 
+# install composer
 cd ~/ || exit
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/bin/composer
 
+# change owner of /var/www to allow composer cache
 chown www-data:www-data /var/www
+# update phpmyadmin with composer
 sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
 
 ##################################
@@ -390,15 +475,25 @@ echo "##########################################"
 echo " Configuring www-data shell access"
 echo "##########################################"
 
+# change www-data shell
 usermod -s /bin/bash www-data
 
-wget -qO /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
-cp -f $REPO_PATH/var/www/.profile /var/www/.profile
-cp -f $REPO_PATH/var/www/.bashrc /var/www/.bashrc
+if [ ! -f /etc/bash_completion.d/wp-completion.bash ]; then
+    # download wp-cli bash-completion
+    wget -qO /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
+fi
+if [ ! -f /var/www/.profile ] && [ ! -f /var/www/.bashrc ]; then
+    # create .profile & .bashrc for www-data user
+    cp -f $REPO_PATH/var/www/.profile /var/www/.profile
+    cp -f $REPO_PATH/var/www/.bashrc /var/www/.bashrc
 
-chown www-data:www-data /var/www/.profile
-chown www-data:www-data /var/www/.bashrc
 
+    # set www-data as owner
+    chown www-data:www-data /var/www/.profile
+    chown www-data:www-data /var/www/.bashrc
+fi
+
+# install nanorc for www-data
 sudo -u www-data -H curl https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh | sh
 
 ##################################
@@ -412,8 +507,9 @@ if [ "$phpfpm71_install" = "y" ]; then
     echo "##########################################"
 
     apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
-    php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
+    php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl -y
 
+    # copy php7.1 config files
     sudo cp -rf $REPO_PATH/etc/php/7.1/* /etc/php/7.1/
     sudo service php7.1-fpm restart
 
@@ -429,8 +525,10 @@ if [ "$phpfpm72_install" = "y" ]; then
     echo " Installing php7.2-fpm"
     echo "##########################################"
 
-    apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring -y
+    apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd \
+    php7.2-curl php7.2-soap php7.2-mbstring php7.2-xsl php7.2-bcmath -y
 
+    # copy php7.2 config files
     cp -rf $REPO_PATH/etc/php/7.2/* /etc/php/7.2/
     service php7.2-fpm restart
 
@@ -456,6 +554,7 @@ fi
 # Compile latest nginx release from source
 ##################################
 
+# set nginx-ee arguments
 
 if [ $NGINX_RELEASE = "1" ]; then
     NGINX_BUILD_VER='--mainline'
@@ -503,6 +602,14 @@ echo "##########################################"
 
 cp -rf $REPO_PATH/etc/nginx/common/* /etc/nginx/common/
 
+# common nginx configurations
+
+cp -rf $REPO_PATH/etc/nginx/conf.d/* /etc/nginx/conf.d/
+cp -f $REPO_PATH/etc/nginx/proxy_params /etc/nginx/proxy_params
+cp -f $REPO_PATH/etc/nginx/mime.types /etc/nginx/mime.types
+
+
+
 # optimized nginx.config
 cp -f $REPO_PATH/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
@@ -526,12 +633,20 @@ if [ "$CONF_DEFAULT" = "0" ]; then
     sudo cp -f $REPO_PATH/etc/nginx/sites-available/default /etc/nginx/sites-available/default
 fi
 
-# 1) add webp mapping
-cp -f $REPO_PATH/etc/nginx/conf.d/webp.conf /etc/nginx/conf.d/webp.conf
-
-nginx -t
-service nginx reload
-
+VERIFY_NGINX_CONFIG=$(nginx -t 2>&1 | grep failed)
+echo "##########################################"
+echo "Checking Nginx configuration"
+echo "##########################################"
+if [ -z "$VERIFY_NGINX_CONFIG" ]; then
+    echo "##########################################"
+    echo "Reloading Nginx"
+    echo "##########################################"
+    sudo service nginx reload
+else
+    echo "##########################################"
+    echo "Nginx configuration is not correct"
+    echo "##########################################"
+fi
 
 
 ##################################
@@ -554,7 +669,9 @@ echo "##########################################"
 echo " Installing ClamAV"
 echo "##########################################"
 
-apt-get install clamav -y
+if [ ! -x /usr/bin/clamscan ]; then
+    apt-get install clamav -y
+fi
 
 ##################################
 # Add fail2ban configurations
@@ -571,20 +688,22 @@ freshclam
 # Install cheat & nanorc
 ##################################
 echo "##########################################"
-echo " Installing cheat.sh & nanorc"
+echo " Installing cheat.sh & nanorc & mysqldump script"
 echo "##########################################"
 
+if [ ! -x /usr/bin/cht.sh ]; then
+    curl https://cht.sh/:cht.sh >/usr/bin/cht.sh
+    chmod +x /usr/bin/cht.sh
 
-curl https://cht.sh/:cht.sh >/usr/bin/cht.sh
-chmod +x /usr/bin/cht.sh
-
-cd || exit
-echo "alias cheat='cht.sh'" >>.bashrc
-source $HOME/.bashrc
+    cd || exit
+    echo "alias cheat='cht.sh'" >>.bashrc
+    source $HOME/.bashrc
+fi
 
 wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -qO- | sh
 
-
+wget -qO mysqldump.sh https://github.com/VirtuBox/bash-scripts/blob/master/backup/mysqldump/mysqldump.sh
+chmod +x mysqldump.sh
 
 ##################################
 # Install ProFTPd
@@ -607,6 +726,8 @@ if [ "$proftpd_install" = "y" ]; then
     sudo service proftpd restart
 
     if [ -d /etc/ufw ]; then
+        # ftp active port
+        ufw allow 21
         # ftp passive ports
         ufw allow 49000:50000/tcp
     fi
@@ -623,9 +744,9 @@ if [ ! -d /etc/netdata ]; then
     echo "##########################################"
 
     ## install nedata
-    wget -q https://my-netdata.io/kickstart.sh
+    wget -qO kickstart.sh https://my-netdata.io/kickstart.sh
     chmod +x kickstart.sh
-    ./kickstart.sh all --dont-wait
+    ./kickstart.sh all --dont-wait >> /tmp/ubuntu-nginx-web-server.log 2>&1
 
     ## optimize netdata resources usage
     echo 1 >/sys/kernel/mm/ksm/run
@@ -647,8 +768,8 @@ echo "##########################################"
 
 if [ ! -d /var/www/22222/htdocs/files ]; then
 
-    mkdir /var/www/22222/htdocs/files
-    wget http://extplorer.net/attachments/download/74/eXtplorer_$EXTPLORER_VER.zip -O /var/www/22222/htdocs/files/ex.zip
+    mkdir -p /var/www/22222/htdocs/files
+    wget -qO /var/www/22222/htdocs/files/ex.zip http://extplorer.net/attachments/download/74/eXtplorer_$EXTPLORER_VER.zip
     cd /var/www/22222/htdocs/files || exit 1
     unzip ex.zip
     rm ex.zip
@@ -661,7 +782,6 @@ cd /tmp || exit
 git clone https://github.com/VirtuBox/easyengine-dashboard.git
 cp -rf /tmp/easyengine-dashboard/* /var/www/22222/htdocs/
 chown -R www-data:www-data /var/www/22222/htdocs
-
 
 
 ##################################
@@ -684,8 +804,6 @@ if [ ! -f $HOME/.acme.sh/acme.sh ]; then
     cd || exit
     source .bashrc
 fi
-
-
 
 ##################################
 # Secure EasyEngine Dashboard with Acme.sh

@@ -30,12 +30,16 @@
 - Fail2ban Installation & Configuration
 - [Netdata](https://github.com/firehol/netdata/) and [EasyEngine-Dashboard](https://virtubox.github.io/easyengine-dashboard/) installation
 - Proftpd installation & configuration
--
 
 ### Compatibility
 
 - Ubuntu 16.04 LTS
 - Ubuntu 18.04 LTS
+
+### Requirements
+
+- root ssh connection with ssh keys
+- VPS or dedicated server with at least 2GB RAM (Hetzner, OVH, DigitalOcean, Linode, Vultr, Scaleway are good choices)
 
 ### Usage
 
