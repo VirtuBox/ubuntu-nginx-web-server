@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>
+        Optimized configuration for Ubuntu server with EasyEngine
+    </title>
+    <link rel="icon" type="image/png" href="https://notes.vtbox.space/favicon.png">
+    <link rel="apple-touch-icon" href="https://notes.vtbox.space/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" integrity="sha256-3iu9jgsy9TpTwXKb7bNQzqWekRX7pPK+2OLj3R922fo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/octicons.min.css" integrity="sha256-4eCms8tUm+iL29tUvmRhNRnz/7lNI4oTtQzqa/uM2dI=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css" integrity="sha256-vtR0hSWRc3Tb26iuN2oZHt3KRUomwTufNIf5/4oeCyg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css" integrity="sha256-tAflq+ymku3Khs+I/WcAneIlafYgDiOQ9stIHH985Wo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojify.js/1.1.0/css/basic/emojify.min.css" integrity="sha256-UOrvMOsSDSrW6szVLe8ZDZezBxh5IoIfgTwdNDgTjiU=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://virtubox.github.io/ubuntu-nginx-web-server/assets/atom-one-dark.css" type="text/css" media="all" />
+	<script type="text/javascript" src="https://virtubox.github.io/ubuntu-nginx-web-server/assets/highlight.pack.js"></script>
+	<link href="https://virtubox.github.io/ubuntu-nginx-web-server/assets/style.css" type="text/css" media="all" />
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js" integrity="sha256-g6iAfvZp+nDQ2TdTR/VVKJf3bGro4ub5fvWSWVRi2NE=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
+    <![endif]-->
+</head>
+
+<body>
+<!-- Content -->
+<div id="doc" class="markdown-body container-fluid"><h1 id="Optimized-configuration-for-Ubuntu-server-with-EasyEngine"><a class="anchor hidden-xs" href="#Optimized-configuration-for-Ubuntu-server-with-EasyEngine" title="Optimized-configuration-for-Ubuntu-server-with-EasyEngine"><span class="octicon octicon-link"></span></a>Optimized configuration for Ubuntu server with EasyEngine</h1><hr><h2 id="Server-Stack"><a class="anchor hidden-xs" href="#Server-Stack" title="Server-Stack"><span class="octicon octicon-link"></span></a>Server Stack</h2><ul>
+    <li>Ubuntu 16.04/18.04 LTS</li>
+    <li>Nginx 1.15.x / 1.14.x</li>
+    <li>PHP-FPM 7/7.1/7.2</li>
+    <li>MariaDB 10.3</li>
+    <li>REDIS 4.0</li>
+    <li>Memcached</li>
+    <li>Fail2ban</li>
+    <li>Netdata</li>
+    <li>UFW</li>
+    </ul><hr><p>Configuration files with comments available by following the link <strong>source</strong></p><h2 id="Initial-configuration"><a class="anchor hidden-xs" href="#Initial-configuration" title="Initial-configuration"><span class="octicon octicon-link"></span></a>Initial configuration</h2><h3 id="System-update-and-packages-cleanup"><a class="anchor hidden-xs" href="#System-update-and-packages-cleanup" title="System-update-and-packages-cleanup"><span class="octicon octicon-link"></span></a>System update and packages cleanup</h3><pre><code class="bash hljs">apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get autoremove --purge -y &amp;&amp; apt-get clean
+    </code></pre><h3 id="Install-useful-packages"><a class="anchor hidden-xs" href="#Install-useful-packages" title="Install-useful-packages"><span class="octicon octicon-link"></span></a>Install useful packages</h3><pre><code class="bash hljs">sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze  -y
+    </code></pre><h3 id="Clone-the-repository"><a class="anchor hidden-xs" href="#Clone-the-repository" title="Clone-the-repository"><span class="octicon octicon-link"></span></a>Clone the repository</h3><pre><code class="bash hljs">git <span class="hljs-built_in">clone</span> https://github.com/VirtuBox/ubuntu-nginx-web-server.git <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server
+    </code></pre><h3 id="Tweak-Kernel-amp-Increase-open-files-limits"><a class="anchor hidden-xs" href="#Tweak-Kernel-amp-Increase-open-files-limits" title="Tweak-Kernel-amp-Increase-open-files-limits"><span class="octicon octicon-link"></span></a>Tweak Kernel &amp; Increase open files limits</h3><p><a href="https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf" target="_blank">source sysctl.conf</a> - <a href="https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf" target="_blank">limits.conf source</a></p><pre><code class="bash hljs">cp <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/sysctl.d/60-ubuntu-nginx-web-server.conf /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    sysctl -e -p /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/security/limits.conf /etc/security/limits.conf
+    </code></pre><h3 id="disable-transparent-hugepage-for-redis"><a class="anchor hidden-xs" href="#disable-transparent-hugepage-for-redis" title="disable-transparent-hugepage-for-redis"><span class="octicon octicon-link"></span></a>disable transparent hugepage for redis</h3><pre><code class="bash hljs"><span class="hljs-built_in">echo</span> never &gt; /sys/kernel/mm/transparent_hugepage/enabled
+    </code></pre><hr><h2 id="EasyEngine-Setup"><a class="anchor hidden-xs" href="#EasyEngine-Setup" title="EasyEngine-Setup"><span class="octicon octicon-link"></span></a>EasyEngine Setup</h2><h3 id="Install-MariaDB-103"><a class="anchor hidden-xs" href="#Install-MariaDB-103" title="Install-MariaDB-103"><span class="octicon octicon-link"></span></a>Install MariaDB 10.3</h3><p>Instructions available in <a href="https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/" target="_blank">VirtuBox Knowledgebase</a></p><pre><code class="bash hljs">bash &lt;(wget -qO - https://downloads.mariadb.com/MariaDB/mariadb_repo_setup) --mariadb-server-version=10.3 --skip-maxscale -y
+    sudo apt update &amp;&amp; sudo apt install mariadb-server -y
+    </code></pre><h3 id="MySQL-Tuning"><a class="anchor hidden-xs" href="#MySQL-Tuning" title="MySQL-Tuning"><span class="octicon octicon-link"></span></a>MySQL Tuning</h3><p>You can download my example of my.cnf, optimized for VPS with 4GB RAM. <a href="https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/mysql/my.cnf" target="_blank">my.cnf source</a></p><pre><code class="bash hljs">cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/mysql/my.cnf /etc/mysql/my.cnf
+    </code></pre><p>It include modification of innodb_log_file_size variable, so you need to use the following commands to apply the new configuration :</p><pre><code class="bash hljs">sudo service mysql stop
+
+    sudo mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
+    sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
+
+    sudo service mysql start
+    </code></pre><h3 id="Increase-MariaDB-open-files-limits"><a class="anchor hidden-xs" href="#Increase-MariaDB-open-files-limits" title="Increase-MariaDB-open-files-limits"><span class="octicon octicon-link"></span></a>Increase MariaDB open files limits</h3><pre><code class="bash hljs">cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/systemd/system/mariadb.service.d/limits.conf /etc/systemd/system/mariadb.service.d/limits.conf
+
+    sudo systemctl daemon-reload
+    sudo systemctl restart mariadb
+    </code></pre><h2 id="Install-EasyEngine"><a class="anchor hidden-xs" href="#Install-EasyEngine" title="Install-EasyEngine"><span class="octicon octicon-link"></span></a>Install EasyEngine</h2><pre><code class="bash hljs"><span class="hljs-comment"># noninteractive install - you can replace $USER with your username &amp; root@$HOSTNAME by your email</span>
+    sudo bash -c <span class="hljs-string">'echo -e "[user]\n\tname = $USER\n\temail = root@$HOSTNAME" &gt; $HOME/.gitconfig'</span>
+
+    wget -qO ee rt.cx/ee &amp;&amp; bash ee
+    </code></pre><h3 id="enable-ee-bash_completion"><a class="anchor hidden-xs" href="#enable-ee-bash_completion" title="enable-ee-bash_completion"><span class="octicon octicon-link"></span></a>enable ee bash_completion</h3><pre><code class="bash hljs"><span class="hljs-built_in">source</span> /etc/bash_completion.d/ee_auto.rc
+    </code></pre><h3 id="Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend"><a class="anchor hidden-xs" href="#Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend" title="Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend"><span class="octicon octicon-link"></span></a>Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend</h3><pre><code class="bash hljs">ee stack install
+    ee stack install --php7 --redis --admin --phpredisadmin
+    </code></pre><h3 id="Set-your-email-instead-of-rootlocalhost"><a class="anchor hidden-xs" href="#Set-your-email-instead-of-rootlocalhost" title="Set-your-email-instead-of-rootlocalhost"><span class="octicon octicon-link"></span></a>Set your email instead of root@localhost</h3><pre><code class="bash hljs"><span class="hljs-built_in">echo</span> <span class="hljs-string">'root: my.email@address.com'</span> &gt;&gt; /etc/aliases
+    newaliases
+    </code></pre><h3 id="Install-Composer---Fix-phpmyadmin-install-issue"><a class="anchor hidden-xs" href="#Install-Composer---Fix-phpmyadmin-install-issue" title="Install-Composer---Fix-phpmyadmin-install-issue"><span class="octicon octicon-link"></span></a>Install Composer - Fix phpmyadmin install issue</h3><pre><code class="bash hljs"><span class="hljs-built_in">cd</span> ~/ ||<span class="hljs-built_in">exit</span>
+    curl -sS https://getcomposer.org/installer | php
+    mv composer.phar /usr/bin/composer
+
+    chown www-data:www-data /var/www
+    sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
+    </code></pre><h3 id="Allow-shell-for-www-data-for-SFTP-usage"><a class="anchor hidden-xs" href="#Allow-shell-for-www-data-for-SFTP-usage" title="Allow-shell-for-www-data-for-SFTP-usage"><span class="octicon octicon-link"></span></a>Allow shell for www-data for SFTP usage</h3><pre><code class="bash hljs">usermod -s /bin/bash www-data
+    </code></pre><h2 id="PHP-71-amp-72-Setup"><a class="anchor hidden-xs" href="#PHP-71-amp-72-Setup" title="PHP-71-amp-72-Setup"><span class="octicon octicon-link"></span></a>PHP 7.1 &amp; 7.2 Setup</h2><h3 id="Install-php71-fpm"><a class="anchor hidden-xs" href="#Install-php71-fpm" title="Install-php71-fpm"><span class="octicon octicon-link"></span></a>Install php7.1-fpm</h3><pre><code class="bash hljs"><span class="hljs-comment"># php7.1-fpm</span>
+    apt update &amp;&amp; apt install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
+    php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
+
+    <span class="hljs-comment"># copy php-fpm pools &amp; php.ini configuration</span>
+    cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/php/7.1/fpm/* /etc/php/7.1/fpm/
+    service php7.1-fpm restart
+
+    git -C /etc/php/ add /etc/php/ &amp;&amp; git -C /etc/php/ commit -m <span class="hljs-string">"add php7.1 configuration"</span>
+
+    </code></pre><h3 id="Install-php72-fpm"><a class="anchor hidden-xs" href="#Install-php72-fpm" title="Install-php72-fpm"><span class="octicon octicon-link"></span></a>Install php7.2-fpm</h3><pre><code class="bash hljs"><span class="hljs-comment"># php7.2-fpm</span>
+    apt update &amp;&amp; apt install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring php7.2-bcmath -y
+
+    <span class="hljs-comment"># copy php-fpm pools &amp; php.ini configuration</span>
+    cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/php/7.2/fpm/* /etc/php/7.2/fpm/
+    service php7.2-fpm restart
+
+    git -C /etc/php/ add /etc/php/ &amp;&amp; git -C /etc/php/ commit -m <span class="hljs-string">"add php7.2 configuration"</span>
+
+    </code></pre><h2 id="NGINX-Configuration"><a class="anchor hidden-xs" href="#NGINX-Configuration" title="NGINX-Configuration"><span class="octicon octicon-link"></span></a>NGINX Configuration</h2><h3 id="Additional-Nginx-configuration-etcnginxconfd"><a class="anchor hidden-xs" href="#Additional-Nginx-configuration-etcnginxconfd" title="Additional-Nginx-configuration-etcnginxconfd"><span class="octicon octicon-link"></span></a>Additional Nginx configuration (/etc/nginx/conf.d)</h3><ul>
+    <li>New upstreams (php7.1, php7.2, netdata) : upstream.conf</li>
+    <li>webp image mapping : webp.conf</li>
+    <li>new fastcgi_cache_bypass mapping for wordpress : map-wp-fastcgi-cache.conf</li>
+    <li>stub_status configuration on 127.0.0.1:80 : stub_status.conf</li>
+    <li>restore visitor real IP under Cloudflare : cloudflare.conf</li>
+    <li>mitigate WordPress DoS attack</li>
+    </ul><pre><code class="bash hljs"><span class="hljs-comment"># copy all common nginx configurations</span>
+    cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/conf.d/* /etc/nginx/conf.d/
+
+    <span class="hljs-comment"># commit change with git</span>
+    git -C /etc/nginx/ add /etc/nginx/ &amp;&amp; git -C /etc/nginx/ commit -m <span class="hljs-string">"update conf.d configurations"</span>
+    </code></pre><h3 id="EE-common-configuration"><a class="anchor hidden-xs" href="#EE-common-configuration" title="EE-common-configuration"><span class="octicon octicon-link"></span></a>EE common configuration</h3><pre><code class="bash hljs">cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/common/* /etc/nginx/common/
+
+    <span class="hljs-comment"># commit change with git</span>
+    git -C /etc/nginx/ add /etc/nginx/ &amp;&amp; git -C /etc/nginx/ commit -m <span class="hljs-string">"update common configurations"</span>
+    </code></pre><h3 id="Compile-last-Nginx-mainline-release-with-nginx-ee-script"><a class="anchor hidden-xs" href="#Compile-last-Nginx-mainline-release-with-nginx-ee-script" title="Compile-last-Nginx-mainline-release-with-nginx-ee-script"><span class="octicon octicon-link"></span></a>Compile last Nginx mainline release with <a href="https://github.com/VirtuBox/nginx-ee" target="_blank">nginx-ee script</a></h3><pre><code class="bash hljs">bash &lt;(wget-qO - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+    </code></pre><hr><h2 id="Custom-configurations"><a class="anchor hidden-xs" href="#Custom-configurations" title="Custom-configurations"><span class="octicon octicon-link"></span></a>Custom configurations</h2><h3 id="clean-php-fpm-phpini-configuration"><a class="anchor hidden-xs" href="#clean-php-fpm-phpini-configuration" title="clean-php-fpm-phpini-configuration"><span class="octicon octicon-link"></span></a>clean php-fpm php.ini configuration</h3><pre><code class="bash hljs"><span class="hljs-comment"># PHP 7.0</span>
+    cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/php/7.0/* /etc/php/7.0/
+    service php7.0-fpm restart
+
+    git -C /etc/php/ add /etc/php/ &amp;&amp; git -C /etc/php/ commit -m <span class="hljs-string">"add php7.2 configuration"</span>
+    </code></pre><h3 id="Nginx-optimized-configurations"><a class="anchor hidden-xs" href="#Nginx-optimized-configurations" title="Nginx-optimized-configurations"><span class="octicon octicon-link"></span></a>Nginx optimized configurations</h3><pre><code class="bash hljs"><span class="hljs-comment"># TLSv1.2 TLSv1.3 only</span>
+    cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+
+    <span class="hljs-comment"># TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3</span>
+    cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-intermediate.conf
+
+    <span class="hljs-comment"># TLSv1.2 only</span>
+    cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-tlsv12.conf
+
+    <span class="hljs-comment"># commit change with git</span>
+    git -C /etc/nginx/ add /etc/nginx/ &amp;&amp; git -C /etc/nginx/ commit -m <span class="hljs-string">"update nginx.conf configurations"</span>
+    </code></pre><h3 id="Nginx-configuration-for-netdata"><a class="anchor hidden-xs" href="#Nginx-configuration-for-netdata" title="Nginx-configuration-for-netdata"><span class="octicon octicon-link"></span></a>Nginx configuration for netdata</h3><pre><code class="bash hljs"><span class="hljs-comment"># add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/</span>
+    cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
+
+    <span class="hljs-comment"># commit change with git</span>
+    git -C /etc/nginx/ add /etc/nginx/ &amp;&amp; git -C /etc/nginx/ commit -m <span class="hljs-string">"update 22222 configuration"</span>
+    </code></pre><h4 id="Increase-Nginx-open-files-limits"><a class="anchor hidden-xs" href="#Increase-Nginx-open-files-limits" title="Increase-Nginx-open-files-limits"><span class="octicon octicon-link"></span></a>Increase Nginx open files limits</h4><pre><code class="bash hljs">sudo mkdir -p /etc/systemd/system/nginx.service.d
+    cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/systemd/system/nginx.service.d/limits.conf /etc/systemd/system/nginx.service.d/limits.conf
+
+    sudo systemctl daemon-reload
+    sudo systemctl restart nginx.service
+    </code></pre><hr><h2 id="Security"><a class="anchor hidden-xs" href="#Security" title="Security"><span class="octicon octicon-link"></span></a>Security</h2><h3 id="Harden-SSH-Security"><a class="anchor hidden-xs" href="#Harden-SSH-Security" title="Harden-SSH-Security"><span class="octicon octicon-link"></span></a>Harden SSH Security</h3><p>WARNING : SSH Configuration with root login allowed with ed25519 &amp; ECDSA SSH keys only  <a href="https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config" target="_blank">source</a></p><pre><code>cp -f $HOME/ubuntu-nginx-web-server/etc/ssh/sshd_config /etc/ssh/sshd_config
+    </code></pre><h3 id="UFW"><a class="anchor hidden-xs" href="#UFW" title="UFW"><span class="octicon octicon-link"></span></a>UFW</h3><p>Instructions available in <a href="https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/" target="_blank">VirtuBox Knowledgebase</a></p><pre><code class="bash hljs"><span class="hljs-comment"># enable ufw log - allow outgoing - deny incoming</span>
+    ufw logging low
+    ufw default allow outgoing
+    ufw default deny incoming
+
+    <span class="hljs-comment"># allow incoming traffic on SSH port</span>
+    CURRENT_SSH_PORT=$(grep <span class="hljs-string">"Port"</span> /etc/ssh/sshd_config | awk -F <span class="hljs-string">" "</span> <span class="hljs-string">'{print $2}'</span>)
+    ufw allow <span class="hljs-variable">$CURRENT_SSH_PORT</span>
+
+    <span class="hljs-comment"># DNS - HTTP/S - FTP - NTP - RSYNC - DHCP - SNMP - Librenms - Netdata - EE Backend</span>
+    ufw allow 53
+    ufw allow http
+    ufw allow https
+    ufw allow 21
+    ufw allow 123
+    ufw allow 161
+    ufw allow 68
+    ufw allow 546
+    ufw allow 873
+    ufw allow 6556
+    ufw allow 19999
+    ufw allow 22222
+
+
+    <span class="hljs-comment"># enable UFW</span>
+    ufw <span class="hljs-built_in">enable</span>
+    </code></pre><h3 id="Custom-jails-for-fail2ban"><a class="anchor hidden-xs" href="#Custom-jails-for-fail2ban" title="Custom-jails-for-fail2ban"><span class="octicon octicon-link"></span></a>Custom jails for fail2ban</h3><ul>
+    <li>wordpress bruteforce</li>
+    <li>ssh</li>
+    <li>recidive (after 3 bans)</li>
+    <li>backend http auth</li>
+    <li>nginx bad bots</li>
+    </ul><pre><code class="bash hljs">cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+    cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+
+    fail2ban-client reload
+    </code></pre><h3 id="Secure-Memcached-server"><a class="anchor hidden-xs" href="#Secure-Memcached-server" title="Secure-Memcached-server"><span class="octicon octicon-link"></span></a>Secure Memcached server</h3><pre><code class="bash hljs"><span class="hljs-built_in">echo</span> <span class="hljs-string">'-U 0'</span> &gt;&gt; /etc/memcached.conf
+    sudo systemctl restart memcached
+    </code></pre><p>If you do not use memcached, you can safely stop and disable it :</p><pre><code class="bash hljs">sudo systemctl stop memcached
+    sudo systemctl <span class="hljs-built_in">disable</span> memcached.service
+    </code></pre><h2 id="Optional"><a class="anchor hidden-xs" href="#Optional" title="Optional"><span class="octicon octicon-link"></span></a>Optional</h2><h3 id="ee-acme-sh"><a class="anchor hidden-xs" href="#ee-acme-sh" title="ee-acme-sh"><span class="octicon octicon-link"></span></a>ee-acme-sh</h3><p><a href="https://virtubox.github.io/ee-acme-sh/" target="_blank">Github repository</a> - Script to setup letsencrypt certificates using <a href="http://acme.sh" target="_blank">acme.sh</a> on EasyEngine servers</p><ul>
+    <li>subdomain support</li>
+    <li>ivp6 support</li>
+    <li>wildcards certificates support</li>
+    </ul><pre><code class="bash hljs">wget-qO install-ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/install.sh
+    chmod +x install-ee-acme.sh
+    ./install-ee-acme.sh
+
+    <span class="hljs-comment"># enable acme.sh &amp; ee-acme-sh</span>
+    <span class="hljs-built_in">source</span> .bashrc
+    </code></pre><h3 id="netdata"><a class="anchor hidden-xs" href="#netdata" title="netdata"><span class="octicon octicon-link"></span></a>netdata</h3><p><a href="https://github.com/firehol/netdata" target="_blank">Github repository</a></p><pre><code class="bash hljs">
+    bash &lt;(curl -Ss https://my-netdata.io/kickstart.sh) all
+
+    <span class="hljs-comment"># save 40-60% of netdata memory</span>
+    <span class="hljs-built_in">echo</span> 1 &gt;/sys/kernel/mm/ksm/run
+    <span class="hljs-built_in">echo</span> 1000 &gt;/sys/kernel/mm/ksm/sleep_millisecs
+
+    <span class="hljs-comment"># disable email notifications</span>
+    sudo sed -i <span class="hljs-string">'s/SEND_EMAIL="YES"/SEND_EMAIL="NO"/'</span> /usr/lib/netdata/conf.d/health_alarm_notify.conf
+    service netdata restart
+    </code></pre><h3 id="chtsh-cheat"><a class="anchor hidden-xs" href="#chtsh-cheat" title="chtsh-cheat"><span class="octicon octicon-link"></span></a><a href="http://cht.sh" target="_blank">cht.sh</a> (cheat)</h3><p><a href="https://github.com/chubin/cheat.sh" target="_blank">Github repository</a></p><pre><code class="bash hljs">curl https://cht.sh/:cht.sh &gt; /usr/bin/cht.sh
+    chmod +x /usr/bin/cht.sh
+
+
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"alias cheat='cht.sh'"</span> &gt;&gt; <span class="hljs-variable">$HOME</span>/.bashrc
+    <span class="hljs-built_in">source</span> <span class="hljs-variable">$HOME</span>/.bashrc
+    </code></pre><p>usage : <code>cheat &lt;command&gt;</code></p><pre><code class="bash hljs">root@vps:~ cheat cat
+    <span class="hljs-comment"># cat</span>
+
+    <span class="hljs-comment"># Print and concatenate files.</span>
+
+    <span class="hljs-comment"># Print the contents of a file to the standard output:</span>
+      cat file
+
+    <span class="hljs-comment"># Concatenate several files into the target file:</span>
+      cat file1 file2 &gt; target_file
+
+    <span class="hljs-comment"># Append several files into the target file:</span>
+      cat file1 file2 &gt;&gt; target_file
+
+    <span class="hljs-comment"># Number all output lines:</span>
+      cat -n file
+    </code></pre><h3 id="nanorc---Improved-Nano-Syntax-Highlighting-Files"><a class="anchor hidden-xs" href="#nanorc---Improved-Nano-Syntax-Highlighting-Files" title="nanorc---Improved-Nano-Syntax-Highlighting-Files"><span class="octicon octicon-link"></span></a>nanorc - Improved Nano Syntax Highlighting Files</h3><p><a href="https://github.com/scopatz/nanorc" target="_blank">Github repository</a></p><pre><code class="bash hljs">wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -O- | sh
+    </code></pre><h3 id="Add-WP-CLI-amp-bash-completion-for-user-www-data"><a class="anchor hidden-xs" href="#Add-WP-CLI-amp-bash-completion-for-user-www-data" title="Add-WP-CLI-amp-bash-completion-for-user-www-data"><span class="octicon octicon-link"></span></a>Add WP-CLI &amp; bash-completion for user www-data</h3><pre><code class="bashrc hljs"><span class="hljs-comment"># download wp-cli bash_completion</span>
+    cp -f $HOME/ubuntu-nginx-web-server/etc/bash_completion.d/wp-completion.bash https:<span class="hljs-comment">//raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash</span>
+
+    <span class="hljs-comment"># change /var/www owner</span>
+    chown www-data:www-data /<span class="hljs-keyword">var</span>/www
+
+    <span class="hljs-comment"># download .profile &amp; .bashrc for www-data</span>
+    cp -f $HOME/ubuntu-nginx-web-server/<span class="hljs-keyword">var</span>/www/.profile /<span class="hljs-keyword">var</span>/www/.profile
+    cp -f $HOME/ubuntu-nginx-web-server/<span class="hljs-keyword">var</span>/www/.bashrc /<span class="hljs-keyword">var</span>/www/.bashrc
+
+    <span class="hljs-comment"># set owner</span>
+    chown www-data:www-data /<span class="hljs-keyword">var</span>/www/.profile
+    chown www-data:www-data /<span class="hljs-keyword">var</span>/www/.bashrc
+    </code></pre><h3 id="Custom-Nginx-error-pages"><a class="anchor hidden-xs" href="#Custom-Nginx-error-pages" title="Custom-Nginx-error-pages"><span class="octicon octicon-link"></span></a>Custom Nginx error pages</h3><p><a href="https://github.com/alexphelps/server-error-pages" target="_blank">Github Repository</a></p><p>Installation</p><pre><code class="bash hljs"><span class="hljs-comment"># clone the github repository</span>
+    sudo -u www-data -H git <span class="hljs-built_in">clone</span> https://github.com/alexphelps/server-error-pages.git /var/www/error
+    </code></pre><p>Then include this configuration in your nginx vhost by adding the following line</p><pre><code class="bash hljs">include common/error_pages.conf;
+    </code></pre><p>Published &amp; maintained by <a href="https://virtubox.net" target="_blank">VirtuBox</a></p></div>
+        <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
+            <div class="pull-right dropdown">
+                <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
+                    <div class="toc"><ul class="nav">
+    <li class=""><a href="#Optimized-configuration-for-Ubuntu-server-with-EasyEngine" title="Optimized configuration for Ubuntu server with EasyEngine">Optimized configuration for Ubuntu server with EasyEngine</a><ul class="nav">
+    <li><a href="#Server-Stack" title="Server Stack">Server Stack</a></li>
+    <li><a href="#Initial-configuration" title="Initial configuration">Initial configuration</a><ul class="nav">
+    <li><a href="#System-update-and-packages-cleanup" title="System update and packages cleanup">System update and packages cleanup</a></li>
+    <li><a href="#Install-useful-packages" title="Install useful packages">Install useful packages</a></li>
+    <li><a href="#Clone-the-repository" title="Clone the repository">Clone the repository</a></li>
+    <li><a href="#Tweak-Kernel-amp-Increase-open-files-limits" title="Tweak Kernel &amp; Increase open files limits">Tweak Kernel &amp; Increase open files limits</a></li>
+    <li><a href="#disable-transparent-hugepage-for-redis" title="disable transparent hugepage for redis">disable transparent hugepage for redis</a></li>
+    </ul>
+    </li>
+    <li><a href="#EasyEngine-Setup" title="EasyEngine Setup">EasyEngine Setup</a><ul class="nav">
+    <li><a href="#Install-MariaDB-103" title="Install MariaDB 10.3">Install MariaDB 10.3</a></li>
+    <li><a href="#MySQL-Tuning" title="MySQL Tuning">MySQL Tuning</a></li>
+    <li><a href="#Increase-MariaDB-open-files-limits" title="Increase MariaDB open files limits">Increase MariaDB open files limits</a></li>
+    </ul>
+    </li>
+    <li><a href="#Install-EasyEngine" title="Install EasyEngine">Install EasyEngine</a><ul class="nav">
+    <li><a href="#enable-ee-bash_completion" title="enable ee bash_completion">enable ee bash_completion</a></li>
+    <li><a href="#Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend" title="Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend">Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend</a></li>
+    <li><a href="#Set-your-email-instead-of-rootlocalhost" title="Set your email instead of root@localhost">Set your email instead of root@localhost</a></li>
+    <li><a href="#Install-Composer---Fix-phpmyadmin-install-issue" title="Install Composer - Fix phpmyadmin install issue">Install Composer - Fix phpmyadmin install issue</a></li>
+    <li><a href="#Allow-shell-for-www-data-for-SFTP-usage" title="Allow shell for www-data for SFTP usage">Allow shell for www-data for SFTP usage</a></li>
+    </ul>
+    </li>
+    <li><a href="#PHP-71-amp-72-Setup" title="PHP 7.1 &amp; 7.2 Setup">PHP 7.1 &amp; 7.2 Setup</a><ul class="nav">
+    <li><a href="#Install-php71-fpm" title="Install php7.1-fpm">Install php7.1-fpm</a></li>
+    <li><a href="#Install-php72-fpm" title="Install php7.2-fpm">Install php7.2-fpm</a></li>
+    </ul>
+    </li>
+    <li><a href="#NGINX-Configuration" title="NGINX Configuration">NGINX Configuration</a><ul class="nav">
+    <li><a href="#Additional-Nginx-configuration-etcnginxconfd" title="Additional Nginx configuration (/etc/nginx/conf.d)">Additional Nginx configuration (/etc/nginx/conf.d)</a></li>
+    <li><a href="#EE-common-configuration" title="EE common configuration">EE common configuration</a></li>
+    <li><a href="#Compile-last-Nginx-mainline-release-with-nginx-ee-script" title="Compile last Nginx mainline release with nginx-ee script">Compile last Nginx mainline release with nginx-ee script</a></li>
+    </ul>
+    </li>
+    <li><a href="#Custom-configurations" title="Custom configurations">Custom configurations</a><ul class="nav">
+    <li><a href="#clean-php-fpm-phpini-configuration" title="clean php-fpm php.ini configuration">clean php-fpm php.ini configuration</a></li>
+    <li><a href="#Nginx-optimized-configurations" title="Nginx optimized configurations">Nginx optimized configurations</a></li>
+    <li><a href="#Nginx-configuration-for-netdata" title="Nginx configuration for netdata">Nginx configuration for netdata</a></li>
+    </ul>
+    </li>
+    <li><a href="#Security" title="Security">Security</a><ul class="nav">
+    <li><a href="#Harden-SSH-Security" title="Harden SSH Security">Harden SSH Security</a></li>
+    <li><a href="#UFW" title="UFW">UFW</a></li>
+    <li><a href="#Custom-jails-for-fail2ban" title="Custom jails for fail2ban">Custom jails for fail2ban</a></li>
+    <li><a href="#Secure-Memcached-server" title="Secure Memcached server">Secure Memcached server</a></li>
+    </ul>
+    </li>
+    <li><a href="#Optional" title="Optional">Optional</a><ul class="nav">
+    <li><a href="#ee-acme-sh" title="ee-acme-sh">ee-acme-sh</a></li>
+    <li><a href="#netdata" title="netdata">netdata</a></li>
+    <li><a href="#chtsh-cheat" title="cht.sh (cheat)">cht.sh (cheat)</a></li>
+    <li><a href="#nanorc---Improved-Nano-Syntax-Highlighting-Files" title="nanorc - Improved Nano Syntax Highlighting Files">nanorc - Improved Nano Syntax Highlighting Files</a></li>
+    <li><a href="#Add-WP-CLI-amp-bash-completion-for-user-www-data" title="Add WP-CLI &amp; bash-completion for user www-data">Add WP-CLI &amp; bash-completion for user www-data</a></li>
+    <li><a href="#Custom-Nginx-error-pages" title="Custom Nginx error pages">Custom Nginx error pages</a></li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+                </ul>
+            </div>
+        </div>
+        <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;"  >
+            <div class="toc"><ul class="nav">
+    <li class=""><a href="#Optimized-configuration-for-Ubuntu-server-with-EasyEngine" title="Optimized configuration for Ubuntu server with EasyEngine">Optimized configuration for Ubuntu server with EasyEngine</a><ul class="nav">
+    <li><a href="#Server-Stack" title="Server Stack">Server Stack</a></li>
+    <li><a href="#Initial-configuration" title="Initial configuration">Initial configuration</a><ul class="nav">
+    <li><a href="#System-update-and-packages-cleanup" title="System update and packages cleanup">System update and packages cleanup</a></li>
+    <li><a href="#Install-useful-packages" title="Install useful packages">Install useful packages</a></li>
+    <li><a href="#Clone-the-repository" title="Clone the repository">Clone the repository</a></li>
+    <li><a href="#Tweak-Kernel-amp-Increase-open-files-limits" title="Tweak Kernel &amp; Increase open files limits">Tweak Kernel &amp; Increase open files limits</a></li>
+    <li><a href="#disable-transparent-hugepage-for-redis" title="disable transparent hugepage for redis">disable transparent hugepage for redis</a></li>
+    </ul>
+    </li>
+    <li><a href="#EasyEngine-Setup" title="EasyEngine Setup">EasyEngine Setup</a><ul class="nav">
+    <li><a href="#Install-MariaDB-103" title="Install MariaDB 10.3">Install MariaDB 10.3</a></li>
+    <li><a href="#MySQL-Tuning" title="MySQL Tuning">MySQL Tuning</a></li>
+    <li><a href="#Increase-MariaDB-open-files-limits" title="Increase MariaDB open files limits">Increase MariaDB open files limits</a></li>
+    </ul>
+    </li>
+    <li><a href="#Install-EasyEngine" title="Install EasyEngine">Install EasyEngine</a><ul class="nav">
+    <li><a href="#enable-ee-bash_completion" title="enable ee bash_completion">enable ee bash_completion</a></li>
+    <li><a href="#Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend" title="Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend">Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend</a></li>
+    <li><a href="#Set-your-email-instead-of-rootlocalhost" title="Set your email instead of root@localhost">Set your email instead of root@localhost</a></li>
+    <li><a href="#Install-Composer---Fix-phpmyadmin-install-issue" title="Install Composer - Fix phpmyadmin install issue">Install Composer - Fix phpmyadmin install issue</a></li>
+    <li><a href="#Allow-shell-for-www-data-for-SFTP-usage" title="Allow shell for www-data for SFTP usage">Allow shell for www-data for SFTP usage</a></li>
+    </ul>
+    </li>
+    <li><a href="#PHP-71-amp-72-Setup" title="PHP 7.1 &amp; 7.2 Setup">PHP 7.1 &amp; 7.2 Setup</a><ul class="nav">
+    <li><a href="#Install-php71-fpm" title="Install php7.1-fpm">Install php7.1-fpm</a></li>
+    <li><a href="#Install-php72-fpm" title="Install php7.2-fpm">Install php7.2-fpm</a></li>
+    </ul>
+    </li>
+    <li><a href="#NGINX-Configuration" title="NGINX Configuration">NGINX Configuration</a><ul class="nav">
+    <li><a href="#Additional-Nginx-configuration-etcnginxconfd" title="Additional Nginx configuration (/etc/nginx/conf.d)">Additional Nginx configuration (/etc/nginx/conf.d)</a></li>
+    <li><a href="#EE-common-configuration" title="EE common configuration">EE common configuration</a></li>
+    <li><a href="#Compile-last-Nginx-mainline-release-with-nginx-ee-script" title="Compile last Nginx mainline release with nginx-ee script">Compile last Nginx mainline release with nginx-ee script</a></li>
+    </ul>
+    </li>
+    <li><a href="#Custom-configurations" title="Custom configurations">Custom configurations</a><ul class="nav">
+    <li><a href="#clean-php-fpm-phpini-configuration" title="clean php-fpm php.ini configuration">clean php-fpm php.ini configuration</a></li>
+    <li><a href="#Nginx-optimized-configurations" title="Nginx optimized configurations">Nginx optimized configurations</a></li>
+    <li><a href="#Nginx-configuration-for-netdata" title="Nginx configuration for netdata">Nginx configuration for netdata</a></li>
+    </ul>
+    </li>
+    <li><a href="#Security" title="Security">Security</a><ul class="nav">
+    <li><a href="#Harden-SSH-Security" title="Harden SSH Security">Harden SSH Security</a></li>
+    <li><a href="#UFW" title="UFW">UFW</a></li>
+    <li><a href="#Custom-jails-for-fail2ban" title="Custom jails for fail2ban">Custom jails for fail2ban</a></li>
+    <li><a href="#Secure-Memcached-server" title="Secure Memcached server">Secure Memcached server</a></li>
+    </ul>
+    </li>
+    <li><a href="#Optional" title="Optional">Optional</a><ul class="nav">
+    <li><a href="#ee-acme-sh" title="ee-acme-sh">ee-acme-sh</a></li>
+    <li><a href="#netdata" title="netdata">netdata</a></li>
+    <li><a href="#chtsh-cheat" title="cht.sh (cheat)">cht.sh (cheat)</a></li>
+    <li><a href="#nanorc---Improved-Nano-Syntax-Highlighting-Files" title="nanorc - Improved Nano Syntax Highlighting Files">nanorc - Improved Nano Syntax Highlighting Files</a></li>
+    <li><a href="#Add-WP-CLI-amp-bash-completion-for-user-www-data" title="Add WP-CLI &amp; bash-completion for user www-data">Add WP-CLI &amp; bash-completion for user www-data</a></li>
+    <li><a href="#Custom-Nginx-error-pages" title="Custom Nginx error pages">Custom Nginx error pages</a></li>
+    </ul>
+    </li>
+    </ul>
+    </li>
+    </ul>
+    </div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.6.0/gist-embed.min.js" integrity="sha256-KyF2D6xPIJUW5sUDSs93vWyZm+1RzIpKCexxElmxl8g=" crossorigin="anonymous" defer></script>
+        <script>
+            var markdown = $(".markdown-body");
+            //smooth all hash trigger scrolling
+            function smoothHashScroll() {
+                var hashElements = $("a[href^='#']").toArray();
+                for (var i = 0; i < hashElements.length; i++) {
+                    var element = hashElements[i];
+                    var $element = $(element);
+                    var hash = element.hash;
+                    if (hash) {
+                        $element.on('click', function (e) {
+                            // store hash
+                            var hash = this.hash;
+                            if ($(hash).length <= 0) return;
+                            // prevent default anchor click behavior
+                            e.preventDefault();
+                            // animate
+                            $('body, html').stop(true, true).animate({
+                                scrollTop: $(hash).offset().top
+                            }, 100, "linear", function () {
+                                // when done, add hash to url
+                                // (default click behaviour)
+                                window.location.hash = hash;
+                            });
+                        });
+                    }
+                }
+            }
+
+            smoothHashScroll();
+            var toc = $('.ui-toc');
+            var tocAffix = $('.ui-affix-toc');
+            var tocDropdown = $('.ui-toc-dropdown');
+            //toc
+            tocDropdown.click(function (e) {
+                e.stopPropagation();
+            });
+
+            var enoughForAffixToc = true;
+
+            function generateScrollspy() {
+                $(document.body).scrollspy({
+                    target: ''
+                });
+                $(document.body).scrollspy('refresh');
+                if (enoughForAffixToc) {
+                    toc.hide();
+                    tocAffix.show();
+                } else {
+                    tocAffix.hide();
+                    toc.show();
+                }
+                $(document.body).scroll();
+            }
+
+            function windowResize() {
+                //toc right
+                var paddingRight = parseFloat(markdown.css('padding-right'));
+                var right = ($(window).width() - (markdown.offset().left + markdown.outerWidth() - paddingRight));
+                toc.css('right', right + 'px');
+                //affix toc left
+                var newbool;
+                var rightMargin = (markdown.parent().outerWidth() - markdown.outerWidth()) / 2;
+                //for ipad or wider device
+                if (rightMargin >= 133) {
+                    newbool = true;
+                    var affixLeftMargin = (tocAffix.outerWidth() - tocAffix.width()) / 2;
+                    var left = markdown.offset().left + markdown.outerWidth() - affixLeftMargin;
+                    tocAffix.css('left', left + 'px');
+                } else {
+                    newbool = false;
+                }
+                if (newbool != enoughForAffixToc) {
+                    enoughForAffixToc = newbool;
+                    generateScrollspy();
+                }
+            }
+            $(window).resize(function () {
+                windowResize();
+            });
+            $(document).ready(function () {
+                windowResize();
+                generateScrollspy();
+            });
+
+            //remove hash
+            function removeHash() {
+                window.location.hash = '';
+            }
+
+            var backtotop = $('.back-to-top');
+            var gotobottom = $('.go-to-bottom');
+
+            backtotop.click(function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (scrollToTop)
+                    scrollToTop();
+                removeHash();
+            });
+            gotobottom.click(function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (scrollToBottom)
+                    scrollToBottom();
+                removeHash();
+            });
+
+            var toggle = $('.expand-toggle');
+            var tocExpand = false;
+
+            checkExpandToggle();
+            toggle.click(function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                tocExpand = !tocExpand;
+                checkExpandToggle();
+            })
+
+            function checkExpandToggle () {
+                var toc = $('.ui-toc-dropdown .toc');
+                var toggle = $('.expand-toggle');
+                if (!tocExpand) {
+                    toc.removeClass('expand');
+                    toggle.text('Expand all');
+                } else {
+                    toc.addClass('expand');
+                    toggle.text('Collapse all');
+                }
+            }
+
+            function scrollToTop() {
+                $('body, html').stop(true, true).animate({
+                    scrollTop: 0
+                }, 100, "linear");
+            }
+
+            function scrollToBottom() {
+                $('body, html').stop(true, true).animate({
+                    scrollTop: $(document.body)[0].scrollHeight
+                }, 100, "linear");
+            }
+        </script>
+</body>
+
+</html>
