@@ -36,16 +36,16 @@
 
 <body>
 <!-- Content -->
-<div id="doc" class="markdown-body container-fluid"><h1 id="Optimized-configuration-for-Ubuntu-server-with-EasyEngine"><a class="anchor hidden-xs" href="#Optimized-configuration-for-Ubuntu-server-with-EasyEngine" title="Optimized-configuration-for-Ubuntu-server-with-EasyEngine"><span class="octicon octicon-link"></span></a>Optimized configuration for Ubuntu server with EasyEngine</h1><hr><h2 id="Server-Stack"><a class="anchor hidden-xs" href="#Server-Stack" title="Server-Stack"><span class="octicon octicon-link"></span></a>Server Stack</h2><ul>
-    <li>Ubuntu 16.04/18.04 LTS</li>
-    <li>Nginx 1.15.x / 1.14.x</li>
-    <li>PHP-FPM 7/7.1/7.2</li>
-    <li>MariaDB 10.3</li>
-    <li>REDIS 4.0</li>
-    <li>Memcached</li>
-    <li>Fail2ban</li>
-    <li>Netdata</li>
-    <li>UFW</li>
+    <div id="doc" class="markdown-body container-fluid"><h1 id="Optimized-configuration-for-Ubuntu-server-with-EasyEngine"><a class="anchor hidden-xs" href="#Optimized-configuration-for-Ubuntu-server-with-EasyEngine" title="Optimized-configuration-for-Ubuntu-server-with-EasyEngine"><span class="octicon octicon-link"></span></a>Optimized configuration for Ubuntu server with EasyEngine</h1><p><strong><a href="https://github.com/VirtuBox/ubuntu-nginx-web-server" target="_blank">View on GitHub</a></strong></p><h2 id="Server-Stack"><a class="anchor hidden-xs" href="#Server-Stack" title="Server-Stack"><span class="octicon octicon-link"></span></a>Server Stack</h2><ul>
+<li>Ubuntu 16.04/18.04 LTS</li>
+<li>Nginx 1.15.x / 1.14.x</li>
+<li>PHP-FPM 7/7.1/7.2</li>
+<li>MariaDB 10.3</li>
+<li>REDIS 4.0</li>
+<li>Memcached</li>
+<li>Fail2ban</li>
+<li>Netdata</li>
+<li>UFW</li>
     </ul><hr><p>Configuration files with comments available by following the link <strong>source</strong></p><h2 id="Initial-configuration"><a class="anchor hidden-xs" href="#Initial-configuration" title="Initial-configuration"><span class="octicon octicon-link"></span></a>Initial configuration</h2><h3 id="System-update-and-packages-cleanup"><a class="anchor hidden-xs" href="#System-update-and-packages-cleanup" title="System-update-and-packages-cleanup"><span class="octicon octicon-link"></span></a>System update and packages cleanup</h3><pre><code class="bash hljs">apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get autoremove --purge -y &amp;&amp; apt-get clean
     </code></pre><h3 id="Install-useful-packages"><a class="anchor hidden-xs" href="#Install-useful-packages" title="Install-useful-packages"><span class="octicon octicon-link"></span></a>Install useful packages</h3><pre><code class="bash hljs">sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze  -y
     </code></pre><h3 id="Clone-the-repository"><a class="anchor hidden-xs" href="#Clone-the-repository" title="Clone-the-repository"><span class="octicon octicon-link"></span></a>Clone the repository</h3><pre><code class="bash hljs">git <span class="hljs-built_in">clone</span> https://github.com/VirtuBox/ubuntu-nginx-web-server.git <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server
