@@ -1,30 +1,17 @@
 # EasyEngine admin NGINX CONFIGURATION
+
 server {
-    listen 22222 default_server ssl http2;
-    access_log off;
-    error_log /var/log/nginx/22222.error.log;
-    ssl_certificate /var/www/22222/cert/22222.crt;
-    ssl_certificate_key /var/www/22222/cert/22222.key;
 
-# Force HTTP to HTTPS
-    error_page 497 =200 https://$host:22222$request_uri;
-    root /var/www/22222/htdocs;
-    index index.php index.htm index.html;
+  listen 22222 default_server ssl http2;
 
-# Turn on directory listing
-    autoindex on;
+  access_log   off;
+  error_log    /var/log/nginx/22222.error.log;
 
-# HTTP Authentication on port 22222
-    include common/acl.conf;
-    location / {
-        try_files $uri $uri/ /index.php?$args;
-    }
+  ssl_certificate /var/www/22222/cert/22222.crt;
+  ssl_certificate_key /var/www/22222/cert/22222.key;
 
-# nginx-vts-status 
-    location /vts_status {
-        vhost_traffic_status_display;
-        vhost_traffic_status_display_format html;
-    }
+  # Force HTTP to HTTPS
+  error_page 497 =200 https://$host:22222$request_uri;
 
   root /var/www/22222/htdocs;
   index index.php index.htm index.html;
@@ -80,20 +67,24 @@ server {
 
    location /netdata {
         return 301 /netdata/;
-    }
-    location ~ /netdata/(?<ndpath>.*) {
+   }
+
+   location ~ /netdata/(?<ndpath>.*) {
         proxy_redirect off;
         proxy_set_header Host $host;
+
         proxy_set_header X-Forwarded-Host $host;
         proxy_set_header X-Forwarded-Server $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Connection "keep-alive";
         proxy_http_version 1.1;
         proxy_pass_request_headers on;
+        proxy_set_header Connection "keep-alive";
         proxy_store off;
         proxy_pass http://netdata/$ndpath$is_args$args;
+
         gzip on;
         gzip_proxied any;
         gzip_types *;
     }
+
 }

@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>
+        Optimized configuration for Ubuntu server with EasyEngine </title>
+    <link rel="icon" type="image/png" href="https://notes.vtbox.space/favicon.png">
+    <link rel="apple-touch-icon" href="https://notes.vtbox.space/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" integrity="sha256-3iu9jgsy9TpTwXKb7bNQzqWekRX7pPK+2OLj3R922fo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/octicons.min.css" integrity="sha256-4eCms8tUm+iL29tUvmRhNRnz/7lNI4oTtQzqa/uM2dI=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css" integrity="sha256-vtR0hSWRc3Tb26iuN2oZHt3KRUomwTufNIf5/4oeCyg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojify.js/1.1.0/css/basic/emojify.min.css" integrity="sha256-UOrvMOsSDSrW6szVLe8ZDZezBxh5IoIfgTwdNDgTjiU=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://virtubox.github.io/ubuntu-nginx-web-server/assets/atom-one-dark.css" type="text/css" media="all" />
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic,600,600italic,300italic,300|Source+Serif+Pro|Source+Code+Pro:400,300,500&subset=latin,latin-ext" rel="stylesheet">
+    <script type="text/javascript" src="https://virtubox.github.io/ubuntu-nginx-web-server/assets/highlight.pack.js"></script>
+    <style>
+        .markdown-body {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            background-color: #0A0B14;
+        }
+        
+        .markdown-body:after,
+        .markdown-body:before {
+            display: table;
+            content: ""
+        }
+        
+        .markdown-body:after {
+            clear: both
+        }
+        
+        .markdown-body>:first-child {
+            margin-top: 0 !important
+        }
+        
+        .markdown-body>:last-child {
+            margin-bottom: 0 !important
+        }
+        
+        .markdown-body a:not([href]) {
+            color: inherit;
+            text-decoration: none
+        }
+        
+        .markdown-body .absent {
+            color: #c00
+        }
+        
+        .markdown-body .anchor {
+            float: left;
+            padding-right: 4px;
+            margin-left: -20px;
+            line-height: 1
+        }
+        
+        .markdown-body .anchor:focus {
+            outline: none
+        }
+        
+        .markdown-body blockquote,
+        .markdown-body dl,
+        .markdown-body ol,
+        .markdown-body p,
+        .markdown-body pre,
+        .markdown-body table,
+        .markdown-body ul {
+            margin-top: 0;
+            margin-bottom: 16px
+        }
+        
+        .markdown-body hr {
+            height: .25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #333;
+            border: 0
+        }
+        
+        .markdown-body blockquote {
+            padding: 0 1em;
+            color: #777;
+            border-left: .25em solid #ddd
+        }
+        
+        .night .markdown-body blockquote {
+            color: #bcbcbc
+        }
+        
+        .markdown-body blockquote>:first-child {
+            margin-top: 0
+        }
+        
+        .markdown-body blockquote>:last-child {
+            margin-bottom: 0
+        }
+        
+        .markdown-body .loweralpha {
+            list-style-type: lower-alpha
+        }
+        
+        .markdown-body h1,
+        .markdown-body h2,
+        .markdown-body h3,
+        .markdown-body h4,
+        .markdown-body h5,
+        .markdown-body h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25
+        }
+        
+        .night .markdown-body h1,
+        .night .markdown-body h2,
+        .night .markdown-body h3,
+        .night .markdown-body h4,
+        .night .markdown-body h5,
+        .night .markdown-body h6 {
+            color: #ddd
+        }
+        
+        .markdown-body h1 .octicon-link,
+        .markdown-body h2 .octicon-link,
+        .markdown-body h3 .octicon-link,
+        .markdown-body h4 .octicon-link,
+        .markdown-body h5 .octicon-link,
+        .markdown-body h6 .octicon-link {
+            color: #fff;
+            vertical-align: middle;
+            visibility: hidden
+        }
+        
+        .night .markdown-body h1 .octicon-link,
+        .night .markdown-body h2 .octicon-link,
+        .night .markdown-body h3 .octicon-link,
+        .night .markdown-body h4 .octicon-link,
+        .night .markdown-body h5 .octicon-link,
+        .night .markdown-body h6 .octicon-link {
+            color: #fff
+        }
+        
+        .markdown-body h1:hover .anchor,
+        .markdown-body h2:hover .anchor,
+        .markdown-body h3:hover .anchor,
+        .markdown-body h4:hover .anchor,
+        .markdown-body h5:hover .anchor,
+        .markdown-body h6:hover .anchor {
+            text-decoration: none
+        }
+        
+        .markdown-body h1:hover .anchor .octicon-link,
+        .markdown-body h2:hover .anchor .octicon-link,
+        .markdown-body h3:hover .anchor .octicon-link,
+        .markdown-body h4:hover .anchor .octicon-link,
+        .markdown-body h5:hover .anchor .octicon-link,
+        .markdown-body h6:hover .anchor .octicon-link {
+            visibility: visible
+        }
+        
+        .markdown-body h1 code,
+        .markdown-body h1 tt,
+        .markdown-body h2 code,
+        .markdown-body h2 tt,
+        .markdown-body h3 code,
+        .markdown-body h3 tt,
+        .markdown-body h4 code,
+        .markdown-body h4 tt,
+        .markdown-body h5 code,
+        .markdown-body h5 tt,
+        .markdown-body h6 code,
+        .markdown-body h6 tt {
+            font-size: inherit
+        }
+        
+        .markdown-body h1 {
+            font-size: 2em
+        }
+        
+        .markdown-body h1,
+        .markdown-body h2 {
+            padding-bottom: .3em;
+            border-bottom: 1px solid #eee
+        }
+        
+        .markdown-body h2 {
+            font-size: 1.5em
+        }
+        
+        .markdown-body h3 {
+            font-size: 1.25em
+        }
+        
+        .markdown-body h4 {
+            font-size: 1em
+        }
+        
+        .markdown-body h5 {
+            font-size: .875em
+        }
+        
+        .markdown-body h6 {
+            font-size: .85em;
+            color: #777
+        }
+        
+        .markdown-body ol,
+        .markdown-body ul {
+            padding-left: 2em
+        }
+        
+        .markdown-body ol.no-list,
+        .markdown-body ul.no-list {
+            padding: 0;
+            list-style-type: none
+        }
+        
+        .markdown-body ol ol,
+        .markdown-body ol ul,
+        .markdown-body ul ol,
+        .markdown-body ul ul {
+            margin-top: 0;
+            margin-bottom: 0
+        }
+        
+        .markdown-body li>p {
+            margin-top: 16px
+        }
+        
+        .markdown-body li+li {
+            margin-top: .25em
+        }
+        
+        .markdown-body dl {
+            padding: 0
+        }
+        
+        .markdown-body dl dt {
+            padding: 0;
+            margin-top: 16px;
+            font-size: 1em;
+            font-style: italic;
+            font-weight: 700
+        }
+        
+        .markdown-body dl dd {
+            padding: 0 16px;
+            margin-bottom: 16px
+        }
+        
+        .markdown-body table {
+            display: block;
+            width: 100%;
+            overflow: auto;
+            word-break: normal;
+            word-break: keep-all
+        }
+        
+        .markdown-body table th {
+            font-weight: 700
+        }
+        
+        .markdown-body table td,
+        .markdown-body table th {
+            padding: 6px 13px;
+            border: 1px solid #ddd
+        }
+        
+        .markdown-body table tr {
+            background-color: #333;
+            color: #fff;
+            border-top: 1px solid #ccc
+        }
+        
+        .night .markdown-body table tr {
+            background-color: #5f5f5f
+        }
+        
+        .markdown-body table tr:nth-child(2n) {
+            background-color: #333
+        }
+        
+        .night .markdown-body table tr:nth-child(2n) {
+            background-color: #4f4f4f
+        }
+        
+        .markdown-body img {
+            max-width: 100%;
+            box-sizing: content-box;
+            background-color: #333
+        }
+        
+        .markdown-body img[align=right] {
+            padding-left: 20px
+        }
+        
+        .markdown-body img[align=left] {
+            padding-right: 20px
+        }
+        
+        .markdown-body .emoji {
+            max-width: none;
+            vertical-align: text-top;
+            background-color: transparent
+        }
+        
+        .markdown-body span.frame {
+            display: block;
+            overflow: hidden
+        }
+        
+        .markdown-body span.frame>span {
+            display: block;
+            float: left;
+            width: auto;
+            padding: 7px;
+            margin: 13px 0 0;
+            overflow: hidden;
+            border: 1px solid #ddd
+        }
+        
+        .markdown-body span.frame span img {
+            display: block;
+            float: left
+        }
+        
+        .markdown-body span.frame span span {
+            display: block;
+            padding: 5px 0 0;
+            clear: both;
+            color: #333
+        }
+        
+        .markdown-body span.align-center {
+            display: block;
+            overflow: hidden;
+            clear: both
+        }
+        
+        .markdown-body span.align-center>span {
+            display: block;
+            margin: 13px auto 0;
+            overflow: hidden;
+            text-align: center
+        }
+        
+        .markdown-body span.align-center span img {
+            margin: 0 auto;
+            text-align: center
+        }
+        
+        .markdown-body span.align-right {
+            display: block;
+            overflow: hidden;
+            clear: both
+        }
+        
+        .markdown-body span.align-right>span {
+            display: block;
+            margin: 13px 0 0;
+            overflow: hidden;
+            text-align: right
+        }
+        
+        .markdown-body span.align-right span img {
+            margin: 0;
+            text-align: right
+        }
+        
+        .markdown-body span.float-left {
+            display: block;
+            float: left;
+            margin-right: 13px;
+            overflow: hidden
+        }
+        
+        .markdown-body span.float-left span {
+            margin: 13px 0 0
+        }
+        
+        .markdown-body span.float-right {
+            display: block;
+            float: right;
+            margin-left: 13px;
+            overflow: hidden
+        }
+        
+        .markdown-body span.float-right>span {
+            display: block;
+            margin: 13px auto 0;
+            overflow: hidden;
+            text-align: right
+        }
+        
+        .markdown-body code,
+        .markdown-body tt {
+            padding: 0;
+            padding-top: .2em;
+            padding-bottom: .2em;
+            margin: 0;
+            font-size: 85%;
+            background-color: rgba(0, 0, 0, .04);
+            color: #fff;
+            border-radius: 3px
+        }
+        
+        .night .markdown-body code,
+        .night .markdown-body tt {
+            color: #eee;
+            background-color: #333
+        }
+        
+        .markdown-body code:after,
+        .markdown-body code:before,
+        .markdown-body tt:after,
+        .markdown-body tt:before {
+            letter-spacing: -.2em;
+            content: "\A0"
+        }
+        
+        .markdown-body code br,
+        .markdown-body tt br {
+            display: none
+        }
+        
+        .markdown-body del code {
+            text-decoration: inherit
+        }
+        
+        .markdown-body pre {
+            word-wrap: normal
+        }
+        
+        .markdown-body pre>code {
+            padding: 0;
+            margin: 0;
+            font-size: 100%;
+            word-break: normal;
+            white-space: pre;
+            background: #333;
+            color: #fff;
+            border: 0
+        }
+        
+        .markdown-body .highlight {
+            margin-bottom: 16px
+        }
+        
+        .markdown-body .highlight pre {
+            margin-bottom: 0;
+            word-break: normal
+        }
+        
+        .markdown-body .highlight pre,
+        .markdown-body pre {
+            padding: 16px;
+            overflow: auto;
+            font-size: 85%;
+            line-height: 1.45;
+            background-color: #333;
+            color: #fff;
+            border-radius: 3px
+        }
+        
+        .markdown-body pre code,
+        .markdown-body pre tt {
+            display: inline;
+            max-width: auto;
+            padding: 0;
+            margin: 0;
+            color: #fff;
+            overflow: visible;
+            line-height: inherit;
+            word-wrap: normal;
+            background-color: #333;
+            border: 0
+        }
+        
+        .markdown-body pre code:after,
+        .markdown-body pre code:before,
+        .markdown-body pre tt:after,
+        .markdown-body pre tt:before {
+            content: normal
+        }
+        
+        .markdown-body .csv-data td,
+        .markdown-body .csv-data th {
+            padding: 5px;
+            overflow: hidden;
+            font-size: 12px;
+            line-height: 1;
+            text-align: left;
+            white-space: nowrap
+        }
+        
+        .markdown-body .csv-data .blob-line-num {
+            padding: 10px 8px 9px;
+            text-align: right;
+            background: #fff;
+            border: 0
+        }
+        
+        .markdown-body .csv-data tr {
+            border-top: 0
+        }
+        
+        .markdown-body .csv-data th {
+            font-weight: 700;
+            background: #333;
+            border-top: 0
+        }
+        
+        .markdown-body kbd {
+            display: inline-block;
+            padding: 3px 5px;
+            font-size: 11px;
+            line-height: 10px;
+            color: #fff;
+            vertical-align: middle;
+            background-color: #333;
+            border: 1px solid #ccc;
+            border-bottom-color: #bbb;
+            border-radius: 3px;
+            box-shadow: inset 0 -1px 0 #bbb
+        }
+        
+        .news .alert .markdown-body blockquote {
+            padding: 0 0 0 40px;
+            border: 0 none
+        }
+        
+        .activity-tab .news .alert .commits,
+        .activity-tab .news .markdown-body blockquote {
+            padding-left: 0
+        }
+        
+        .task-list-item {
+            list-style-type: none
+        }
+        
+        .task-list-item label {
+            font-weight: 400
+        }
+        
+        .task-list-item.enabled label {
+            cursor: pointer
+        }
+        
+        .task-list-item+.task-list-item {
+            margin-top: 3px
+        }
+        
+        .task-list-item-checkbox {
+            float: left;
+            margin: .31em 0 .2em -1.3em !important;
+            vertical-align: middle;
+            cursor: default !important
+        }
+        
+        .markdown-body {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            max-width: 940px;
+            overflow: visible !important
+        }
+        
+        .markdown-body pre {
+            border: inherit !important
+        }
+        
+        .night .markdown-body pre {
+            filter: invert(100%)
+        }
+        
+        .markdown-body code {
+            color: inherit !important
+        }
+        
+        .markdown-body pre code .wrapper {
+            display: -moz-inline-flex;
+            display: -ms-inline-flex;
+            display: -o-inline-flex;
+            display: inline-flex
+        }
+        
+        .markdown-body pre code .gutter {
+            float: left;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none
+        }
+        
+        .markdown-body pre code .gutter.linenumber {
+            text-align: right;
+            position: relative;
+            display: inline-block;
+            cursor: default;
+            z-index: 4;
+            padding: 0 8px 0 0;
+            min-width: 20px;
+            box-sizing: content-box;
+            color: #fff !important;
+            border-right: 3px solid #6ce26c !important
+        }
+        
+        .markdown-body pre code .gutter.linenumber>span:before {
+            content: attr(data-linenumber)
+        }
+        
+        .markdown-body pre code .code {
+            float: left;
+            margin: 0 0 0 16px
+        }
+        
+        .markdown-body .gist .line-numbers {
+            border-left: none;
+            border-top: none;
+            border-bottom: none
+        }
+        
+        .markdown-body .gist .line-data {
+            border: none
+        }
+        
+        .markdown-body .gist table {
+            border-spacing: 0;
+            border-collapse: inherit !important
+        }
+        
+        .night .markdown-body .gist table tr:nth-child(2n) {
+            background-color: #333
+        }
+        
+        .markdown-body code[data-gist-id] {
+            background: none;
+            padding: 0;
+            filter: invert(100%)
+        }
+        
+        .markdown-body code[data-gist-id]:after,
+        .markdown-body code[data-gist-id]:before {
+            content: ""
+        }
+        
+        .markdown-body code[data-gist-id] .blob-num {
+            border: unset
+        }
+        
+        .markdown-body code[data-gist-id] table {
+            overflow: unset;
+            margin-bottom: unset
+        }
+        
+        .markdown-body code[data-gist-id] table tr {
+            background: unset
+        }
+        
+        .markdown-body[dir=rtl] pre {
+            direction: ltr
+        }
+        
+        .markdown-body[dir=rtl] code {
+            direction: ltr;
+            unicode-bidi: embed
+        }
+        
+        .markdown-body .alert>p {
+            margin-bottom: 0
+        }
+        
+        .markdown-body pre.abc,
+        .markdown-body pre.flow-chart,
+        .markdown-body pre.graphviz,
+        .markdown-body pre.mermaid,
+        .markdown-body pre.sequence-diagram {
+            text-align: center;
+            background-color: inherit;
+            border-radius: 0;
+            white-space: inherit
+        }
+        
+        .night .markdown-body pre.graphviz .graph>polygon {
+            fill: #333
+        }
+        
+        .night .markdown-body pre.mermaid .sectionTitle,
+        .night .markdown-body pre.mermaid .titleText,
+        .night .markdown-body pre.mermaid text {
+            fill: #fff
+        }
+        
+        .markdown-body pre.abc>code,
+        .markdown-body pre.flow-chart>code,
+        .markdown-body pre.graphviz>code,
+        .markdown-body pre.mermaid>code,
+        .markdown-body pre.sequence-diagram>code {
+            text-align: left
+        }
+        
+        .markdown-body pre.abc>svg,
+        .markdown-body pre.flow-chart>svg,
+        .markdown-body pre.graphviz>svg,
+        .markdown-body pre.mermaid>svg,
+        .markdown-body pre.sequence-diagram>svg {
+            max-width: 100%;
+            height: 100%
+        }
+        
+        .night .markdown-body .abc path {
+            fill: #eee
+        }
+        
+        .night .markdown-body .abc path.note_selected {
+            fill: ##4DD0E1
+        }
+        
+        .night tspan {
+            fill: #fefefe
+        }
+        
+        .night pre rect {
+            fill: transparent
+        }
+        
+        .night pre.flow-chart path,
+        .night pre.flow-chart rect {
+            stroke: #fff
+        }
+        
+        .markdown-body pre>code.wrap {
+            white-space: pre-wrap;
+            white-space: -moz-pre-wrap;
+            white-space: -pre-wrap;
+            white-space: -o-pre-wrap;
+            word-wrap: break-word
+        }
+        
+        .markdown-body .alert>p,
+        .markdown-body .alert>ul {
+            margin-bottom: 0
+        }
+        
+        .markdown-body summary {
+            display: list-item
+        }
+        
+        .markdown-body summary:focus {
+            outline: none
+        }
+        
+        .markdown-body details summary {
+            cursor: pointer
+        }
+        
+        .markdown-body details:not([open])>:not(summary) {
+            display: none
+        }
+        
+        .markdown-body figure {
+            margin: 1em 40px
+        }
+        
+        .markdown-body img {
+            background-color: transparent
+        }
+        
+        .vimeo,
+        .youtube {
+            cursor: pointer;
+            display: table;
+            text-align: center;
+            background-position: 50%;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-color: #000;
+            overflow: hidden
+        }
+        
+        .vimeo,
+        .youtube {
+            position: relative;
+            width: 100%
+        }
+        
+        .youtube {
+            padding-bottom: 56.25%
+        }
+        
+        .vimeo img {
+            width: 100%;
+            object-fit: contain;
+            z-index: 0
+        }
+        
+        .youtube img {
+            object-fit: cover;
+            z-index: 0
+        }
+        
+        .vimeo iframe,
+        .youtube iframe,
+        .youtube img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0
+        }
+        
+        .vimeo iframe,
+        .youtube iframe {
+            vertical-align: middle;
+            z-index: 1
+        }
+        
+        .vimeo .icon,
+        .youtube .icon {
+            position: absolute;
+            height: auto;
+            width: auto;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            opacity: .3;
+            transition: opacity .2s;
+            z-index: 0
+        }
+        
+        .vimeo:hover .icon,
+        .youtube:hover .icon {
+            opacity: .6;
+            transition: opacity .2s
+        }
+        
+        .slideshare .inner,
+        .speakerdeck .inner {
+            position: relative;
+            width: 100%
+        }
+        
+        .slideshare .inner iframe,
+        .speakerdeck .inner iframe {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%
+        }
+        
+        .MJX_Assistive_MathML {
+            display: none
+        }
+        
+        .ui-infobar {
+            position: relative;
+            z-index: 2;
+            max-width: 758px;
+            margin-top: 25px;
+            margin-bottom: -25px;
+            color: #fff
+        }
+        
+        .toc .invisable-node {
+            list-style-type: none
+        }
+        
+        .ui-toc {
+            position: fixed;
+            bottom: 20px;
+            z-index: 10000
+        }
+        
+        .ui-toc-label {
+            opacity: .3;
+            background-color: #ccc;
+            border: none;
+            transition: opacity .2s
+        }
+        
+        .ui-toc .open .ui-toc-label {
+            opacity: 1;
+            color: #fff;
+            transition: opacity .2s
+        }
+        
+        .ui-toc-label:focus {
+            opacity: .3;
+            background-color: #ccc;
+            color: #777
+        }
+        
+        .ui-toc-label:hover {
+            opacity: 1;
+            background-color: #ccc;
+            transition: opacity .2s
+        }
+        
+        .ui-toc-dropdown {
+            margin-top: 23px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            padding-right: 10px;
+            max-width: 45vw;
+            width: 25vw;
+            max-height: 70vh;
+            overflow: auto;
+            text-align: inherit
+        }
+        
+        .ui-toc-dropdown>.toc {
+            max-height: calc(70vh - 100px);
+            overflow: auto
+        }
+        
+        .ui-toc-dropdown[dir=rtl] .nav {
+            padding-right: 0;
+            letter-spacing: .0029em
+        }
+        
+        .ui-toc-dropdown a {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: pre
+        }
+        
+        .ui-toc-dropdown .nav>li>a {
+            display: block;
+            padding: 4px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #fff
+        }
+        
+        .ui-toc-dropdown .nav>li:first-child:last-child>ul,
+        .ui-toc-dropdown .toc.expand ul {
+            display: block
+        }
+        
+        .ui-toc-dropdown .nav>li>a:focus,
+        .ui-toc-dropdown .nav>li>a:hover {
+            padding-left: 19px;
+            color: #777;
+            text-decoration: none;
+            background-color: transparent;
+            border-left: 1px solid #777
+        }
+        
+        .night .ui-toc-dropdown .nav>li>a:focus,
+        .night .ui-toc-dropdown .nav>li>a:hover {
+            color: #fff;
+            border-left-color: #fff
+        }
+        
+        .ui-toc-dropdown[dir=rtl] .nav>li>a:focus,
+        .ui-toc-dropdown[dir=rtl] .nav>li>a:hover {
+            padding-right: 19px;
+            border-left: none;
+            border-right: 1px solid #777
+        }
+        
+        .ui-toc-dropdown .nav>.active:focus>a,
+        .ui-toc-dropdown .nav>.active:hover>a,
+        .ui-toc-dropdown .nav>.active>a {
+            padding-left: 18px;
+            font-weight: 700;
+            color: #777;
+            background-color: transparent;
+            border-left: 2px solid #000
+        }
+        
+        .night .ui-toc-dropdown .nav>.active:focus>a,
+        .night .ui-toc-dropdown .nav>.active:hover>a,
+        .night .ui-toc-dropdown .nav>.active>a {
+            color: #fff;
+            border-left: 2px solid #fff
+        }
+        
+        .ui-toc-dropdown[dir=rtl] .nav>.active:focus>a,
+        .ui-toc-dropdown[dir=rtl] .nav>.active:hover>a,
+        .ui-toc-dropdown[dir=rtl] .nav>.active>a {
+            padding-right: 18px;
+            border-left: none;
+            border-right: 2px solid #777
+        }
+        
+        .ui-toc-dropdown .nav .nav {
+            display: none;
+            padding-bottom: 10px
+        }
+        
+        .ui-toc-dropdown .nav>.active>ul {
+            display: block
+        }
+        
+        .ui-toc-dropdown .nav .nav>li>a {
+            padding-top: 1px;
+            padding-bottom: 1px;
+            padding-left: 30px;
+            font-size: 12px;
+            font-weight: 400
+        }
+        
+        .night .ui-toc-dropdown .nav>li>a {
+            color: #aaa
+        }
+        
+        .ui-toc-dropdown[dir=rtl] .nav .nav>li>a {
+            padding-right: 30px
+        }
+        
+        .ui-toc-dropdown .nav .nav>li>ul>li>a {
+            padding-top: 1px;
+            padding-bottom: 1px;
+            padding-left: 40px;
+            font-size: 12px;
+            font-weight: 400
+        }
+        
+        .ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a {
+            padding-right: 40px
+        }
+        
+        .ui-toc-dropdown .nav .nav>li>a:focus,
+        .ui-toc-dropdown .nav .nav>li>a:hover {
+            padding-left: 29px
+        }
+        
+        .ui-toc-dropdown[dir=rtl] .nav .nav>li>a:focus,
+        .ui-toc-dropdown[dir=rtl] .nav .nav>li>a:hover {
+            padding-right: 29px
+        }
+        
+        .ui-toc-dropdown .nav .nav>li>ul>li>a:focus,
+        .ui-toc-dropdown .nav .nav>li>ul>li>a:hover {
+            padding-left: 39px
+        }
+        
+        .ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:focus,
+        .ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:hover {
+            padding-right: 39px
+        }
+        
+        .ui-toc-dropdown .nav .nav>.active:focus>a,
+        .ui-toc-dropdown .nav .nav>.active:hover>a,
+        .ui-toc-dropdown .nav .nav>.active>a {
+            padding-left: 28px;
+            font-weight: 500
+        }
+        
+        .ui-toc-dropdown[dir=rtl] .nav .nav>.active:focus>a,
+        .ui-toc-dropdown[dir=rtl] .nav .nav>.active:hover>a,
+        .ui-toc-dropdown[dir=rtl] .nav .nav>.active>a {
+            padding-right: 28px
+        }
+        
+        .ui-toc-dropdown .nav .nav>.active>.nav>.active:focus>a,
+        .ui-toc-dropdown .nav .nav>.active>.nav>.active:hover>a,
+        .ui-toc-dropdown .nav .nav>.active>.nav>.active>a {
+            padding-left: 38px;
+            font-weight: 500
+        }
+        
+        .ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:focus>a,
+        .ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:hover>a,
+        .ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active>a {
+            padding-right: 38px
+        }
+        
+        .markdown-body[lang^=ja] {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Helvetica, Arial, Hiragino Kaku Gothic Pro, \\30D2\30E9\30AE\30CE\89D2\30B4 Pro W3, Osaka, Meiryo, \\30E1\30A4\30EA\30AA, MS Gothic, "\FF2D\FF33 \30B4\30B7\30C3\30AF", sans-serif
+        }
+        
+        .ui-toc-dropdown[lang^=ja] {
+            font-family: Source Sans Pro, Helvetica, Arial, Meiryo UI, MS PGothic, "\FF2D\FF33 \FF30\30B4\30B7\30C3\30AF", sans-serif
+        }
+        
+        .markdown-body[lang=zh-tw] {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Helvetica, Arial, PingFang TC, Microsoft JhengHei, \\5FAE\8EDF\6B63\9ED1, sans-serif
+        }
+        
+        .ui-toc-dropdown[lang=zh-tw] {
+            font-family: Source Sans Pro, Helvetica, Arial, Microsoft JhengHei UI, \\5FAE\8EDF\6B63\9ED1UI, sans-serif
+        }
+        
+        .markdown-body[lang=zh-cn] {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Helvetica, Arial, PingFang SC, Microsoft YaHei, \\5FAE\8F6F\96C5\9ED1, sans-serif
+        }
+        
+        .ui-toc-dropdown[lang=zh-cn] {
+            font-family: Source Sans Pro, Helvetica, Arial, Microsoft YaHei UI, \\5FAE\8F6F\96C5\9ED1UI, sans-serif
+        }
+        
+        .ui-affix-toc {
+            position: fixed;
+            top: 0;
+            max-width: 15vw;
+            max-height: 70vh;
+            overflow: auto
+        }
+        
+        .back-to-top,
+        .expand-toggle,
+        .go-to-bottom {
+            display: block;
+            padding: 4px 10px;
+            margin-top: 10px;
+            margin-left: 10px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #999
+        }
+        
+        .back-to-top:focus,
+        .back-to-top:hover,
+        .expand-toggle:focus,
+        .expand-toggle:hover,
+        .go-to-bottom:focus,
+        .go-to-bottom:hover {
+            color: #563d7c;
+            text-decoration: none
+        }
+        
+        .back-to-top,
+        .go-to-bottom {
+            margin-top: 0
+        }
+        
+        .ui-user-icon {
+            width: 20px;
+            height: 20px;
+            display: block;
+            border-radius: 3px;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            margin-right: 5px;
+            background-position: 50%;
+            background-repeat: no-repeat;
+            background-size: contain
+        }
+        
+        .ui-user-icon.small {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 0 .2em
+        }
+        
+        small span {
+            line-height: 22px
+        }
+        
+        small .dropdown {
+            display: inline-block
+        }
+        
+        small .dropdown a:focus,
+        small .dropdown a:hover {
+            text-decoration: none
+        }
+        
+        .unselectable {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+            user-select: none
+        }
+        
+        .night .navbar {
+            background: #333;
+            border-bottom-color: #333;
+            color: #eee
+        }
+        
+        .night .navbar a {
+            color: #eee
+        }
+        
+        @media print {
+            blockquote,
+            div,
+            img,
+            pre,
+            table {
+                page-break-inside: avoid !important
+            }
+            a[href]:after {
+                font-size: 12px !important
+            }
+        }
+        
+        .markdown-body.slides {
+            position: relative;
+            z-index: 1;
+            color: #222
+        }
+        
+        .markdown-body.slides:before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background-color: currentColor;
+            box-shadow: 0 0 0 50vw
+        }
+        
+        .markdown-body.slides section[data-markdown] {
+            position: relative;
+            margin-bottom: 1.5em;
+            background-color: #333;
+            text-align: center
+        }
+        
+        .markdown-body.slides section[data-markdown] code {
+            text-align: left
+        }
+        
+        .markdown-body.slides section[data-markdown]:before {
+            content: "";
+            display: block;
+            padding-bottom: 56.23%
+        }
+        
+        .markdown-body.slides section[data-markdown]>div:first-child {
+            position: absolute;
+            top: 50%;
+            left: 1em;
+            right: 1em;
+            transform: translateY(-50%);
+            max-height: 100%;
+            overflow: hidden
+        }
+        
+        .markdown-body.slides section[data-markdown]>ul {
+            display: inline-block
+        }
+        
+        .markdown-body.slides>section>section+section:after {
+            content: "";
+            position: absolute;
+            top: -1.5em;
+            right: 1em;
+            height: 1.5em;
+            border: 3px solid #777
+        }
+        
+        body {
+            font-smoothing: subpixel-antialiased !important;
+            -webkit-font-smoothing: subpixel-antialiased !important;
+            -moz-osx-font-smoothing: auto !important;
+            text-shadow: 0 0 1em transparent, 1px 1px 1.2px rgba(0, 0, 0, .004);
+            -webkit-overflow-scrolling: touch;
+            font-family: Source Sans Pro, Helvetica, Arial, sans-serif;
+            letter-spacing: .025em;
+            background-color: #1E1E2F;
+            color: #fff;
+        }
+        
+        .focus,
+         :focus {
+            outline: none !important
+        }
+        
+        ::-moz-focus-inner {
+            border: 0 !important
+        }
+        
+        body.modal-open {
+            overflow-y: auto;
+            padding-right: 0 !important
+        }
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js" integrity="sha256-g6iAfvZp+nDQ2TdTR/VVKJf3bGro4ub5fvWSWVRi2NE=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="doc" class="markdown-body container-fluid">
+        <h1 id="Optimized-configuration-for-Ubuntu-server-with-EasyEngine"><a class="anchor hidden-xs" href="#Optimized-configuration-for-Ubuntu-server-with-EasyEngine" title="Optimized-configuration-for-Ubuntu-server-with-EasyEngine"><span class="octicon octicon-link"></span></a>Optimized configuration for Ubuntu server
+            with EasyEngine</h1>
+        <p><strong><a href="https://github.com/VirtuBox/ubuntu-nginx-web-server" target="_blank">View on GitHub</a></strong></p>
+        <h2 id="Server-Stack"><a class="anchor hidden-xs" href="#Server-Stack" title="Server-Stack"><span class="octicon octicon-link"></span></a>Server Stack</h2>
+        <ul>
+            <li>Ubuntu 16.04/18.04 LTS</li>
+            <li>Nginx 1.15.x / 1.14.x</li>
+            <li>PHP-FPM 7/7.1/7.2</li>
+            <li>MariaDB 10.3</li>
+            <li>REDIS 4.0</li>
+            <li>Memcached</li>
+            <li>Fail2ban</li>
+            <li>Netdata</li>
+            <li>UFW</li>
+        </ul>
+        <hr>
+        <p>Configuration files with comments available by following the link <strong>source</strong></p>
+        <h2 id="Initial-configuration"><a class="anchor hidden-xs" href="#Initial-configuration" title="Initial-configuration"><span class="octicon octicon-link"></span></a>Initial configuration</h2>
+        <h3 id="System-update-and-packages-cleanup"><a class="anchor hidden-xs" href="#System-update-and-packages-cleanup" title="System-update-and-packages-cleanup"><span class="octicon octicon-link"></span></a>System update and packages cleanup</h3><pre><code class="bash hljs">apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get autoremove --purge -y &amp;&amp; apt-get clean
+</code></pre>
+        <h3 id="Install-useful-packages"><a class="anchor hidden-xs" href="#Install-useful-packages" title="Install-useful-packages"><span class="octicon octicon-link"></span></a>Install useful packages</h3><pre><code class="bash hljs">sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze  -y
+</code></pre>
+        <h3 id="Clone-the-repository"><a class="anchor hidden-xs" href="#Clone-the-repository" title="Clone-the-repository"><span class="octicon octicon-link"></span></a>Clone the repository</h3><pre><code class="bash hljs">git <span class="hljs-built_in">clone</span> https://github.com/VirtuBox/ubuntu-nginx-web-server.git <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server
+</code></pre>
+        <h3 id="Tweak-Kernel-amp-Increase-open-files-limits"><a class="anchor hidden-xs" href="#Tweak-Kernel-amp-Increase-open-files-limits" title="Tweak-Kernel-amp-Increase-open-files-limits"><span class="octicon octicon-link"></span></a>Tweak Kernel &amp; Increase open files limits</h3>
+        <p><a href="https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf" target="_blank">source sysctl.conf</a> - <a href="https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf" target="_blank">limits.conf source</a></p><pre><code class="bash hljs">cp <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/sysctl.d/60-ubuntu-nginx-web-server.conf /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+sysctl -e -p /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/security/limits.conf /etc/security/limits.conf
+</code></pre>
+        <h3 id="disable-transparent-hugepage-for-redis"><a class="anchor hidden-xs" href="#disable-transparent-hugepage-for-redis" title="disable-transparent-hugepage-for-redis"><span class="octicon octicon-link"></span></a>disable transparent hugepage for redis</h3><pre><code class="bash hljs"><span class="hljs-built_in">echo</span> never &gt; /sys/kernel/mm/transparent_hugepage/enabled
+</code></pre>
+        <hr>
+        <h2 id="EasyEngine-Setup"><a class="anchor hidden-xs" href="#EasyEngine-Setup" title="EasyEngine-Setup"><span class="octicon octicon-link"></span></a>EasyEngine Setup</h2>
+        <h3 id="Install-MariaDB-103"><a class="anchor hidden-xs" href="#Install-MariaDB-103" title="Install-MariaDB-103"><span class="octicon octicon-link"></span></a>Install MariaDB 10.3</h3>
+        <p>Instructions available in <a href="https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/" target="_blank">VirtuBox Knowledgebase</a></p><pre><code class="bash hljs">bash &lt;(wget -qO - https://downloads.mariadb.com/MariaDB/mariadb_repo_setup) --mariadb-server-version=10.3 --skip-maxscale -y
+sudo apt update &amp;&amp; sudo apt install mariadb-server -y
+</code></pre>
+        <h3 id="MySQL-Tuning"><a class="anchor hidden-xs" href="#MySQL-Tuning" title="MySQL-Tuning"><span class="octicon octicon-link"></span></a>MySQL Tuning</h3>
+        <p>You can download my example of my.cnf, optimized for VPS with 4GB RAM. <a href="https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/mysql/my.cnf" target="_blank">my.cnf source</a></p><pre><code class="bash hljs">cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/mysql/my.cnf /etc/mysql/my.cnf
+</code></pre>
+        <p>It include modification of innodb_log_file_size variable, so you need to use the following commands to apply the new configuration :</p><pre><code class="bash hljs">sudo service mysql stop
+
+sudo mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
+sudo mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
+
+sudo service mysql start
+</code></pre>
+        <h3 id="Increase-MariaDB-open-files-limits"><a class="anchor hidden-xs" href="#Increase-MariaDB-open-files-limits" title="Increase-MariaDB-open-files-limits"><span class="octicon octicon-link"></span></a>Increase MariaDB open files limits</h3><pre><code class="bash hljs">cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/systemd/system/mariadb.service.d/limits.conf /etc/systemd/system/mariadb.service.d/limits.conf
+
+sudo systemctl daemon-reload
+sudo systemctl restart mariadb
+</code></pre>
+        <h2 id="Install-EasyEngine"><a class="anchor hidden-xs" href="#Install-EasyEngine" title="Install-EasyEngine"><span class="octicon octicon-link"></span></a>Install EasyEngine</h2><pre><code class="bash hljs"><span class="hljs-comment"># noninteractive install - you can replace $USER with your username &amp; root@$HOSTNAME by your email</span>
+sudo bash -c <span class="hljs-string">'echo -e "[user]\n\tname = $USER\n\temail = root@$HOSTNAME" &gt; $HOME/.gitconfig'</span>
+
+wget -qO ee rt.cx/ee &amp;&amp; bash ee
+</code></pre>
+        <h3 id="enable-ee-bash_completion"><a class="anchor hidden-xs" href="#enable-ee-bash_completion" title="enable-ee-bash_completion"><span class="octicon octicon-link"></span></a>enable ee bash_completion</h3><pre><code class="bash hljs"><span class="hljs-built_in">source</span> /etc/bash_completion.d/ee_auto.rc
+</code></pre>
+        <h3 id="Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend"><a class="anchor hidden-xs" href="#Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend" title="Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend"><span class="octicon octicon-link"></span></a>Install Nginx, php5.6,
+            php7.0, postfix, redis and configure EE backend</h3><pre><code class="bash hljs">ee stack install
+ee stack install --php7 --redis --admin --phpredisadmin
+</code></pre>
+        <h3 id="Set-your-email-instead-of-rootlocalhost"><a class="anchor hidden-xs" href="#Set-your-email-instead-of-rootlocalhost" title="Set-your-email-instead-of-rootlocalhost"><span class="octicon octicon-link"></span></a>Set your email instead of root@localhost</h3><pre><code class="bash hljs"><span class="hljs-built_in">echo</span> <span class="hljs-string">'root: my.email@address.com'</span> &gt;&gt; /etc/aliases
+newaliases
+</code></pre>
+        <h3 id="Install-Composer---Fix-phpmyadmin-install-issue"><a class="anchor hidden-xs" href="#Install-Composer---Fix-phpmyadmin-install-issue" title="Install-Composer---Fix-phpmyadmin-install-issue"><span class="octicon octicon-link"></span></a>Install Composer - Fix phpmyadmin install issue</h3><pre><code class="bash hljs"><span class="hljs-built_in">cd</span> ~/ ||<span class="hljs-built_in">exit</span>
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/bin/composer
+
+chown www-data:www-data /var/www
+sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
+</code></pre>
+        <h3 id="Allow-shell-for-www-data-for-SFTP-usage"><a class="anchor hidden-xs" href="#Allow-shell-for-www-data-for-SFTP-usage" title="Allow-shell-for-www-data-for-SFTP-usage"><span class="octicon octicon-link"></span></a>Allow shell for www-data for SFTP usage</h3><pre><code class="bash hljs">usermod -s /bin/bash www-data
+</code></pre>
+        <h2 id="PHP-71-amp-72-Setup"><a class="anchor hidden-xs" href="#PHP-71-amp-72-Setup" title="PHP-71-amp-72-Setup"><span class="octicon octicon-link"></span></a>PHP 7.1 &amp; 7.2 Setup</h2>
+        <h3 id="Install-php71-fpm"><a class="anchor hidden-xs" href="#Install-php71-fpm" title="Install-php71-fpm"><span class="octicon octicon-link"></span></a>Install php7.1-fpm</h3><pre><code class="bash hljs"><span class="hljs-comment"># php7.1-fpm</span>
+apt update &amp;&amp; apt install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
+php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
+
+<span class="hljs-comment"># copy php-fpm pools &amp; php.ini configuration</span>
+cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/php/7.1/fpm/* /etc/php/7.1/fpm/
+service php7.1-fpm restart
+
+git -C /etc/php/ add /etc/php/ &amp;&amp; git -C /etc/php/ commit -m <span class="hljs-string">"add php7.1 configuration"</span>
+
+</code></pre>
+        <h3 id="Install-php72-fpm"><a class="anchor hidden-xs" href="#Install-php72-fpm" title="Install-php72-fpm"><span class="octicon octicon-link"></span></a>Install php7.2-fpm</h3><pre><code class="bash hljs"><span class="hljs-comment"># php7.2-fpm</span>
+apt update &amp;&amp; apt install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring php7.2-bcmath -y
+
+<span class="hljs-comment"># copy php-fpm pools &amp; php.ini configuration</span>
+cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/php/7.2/fpm/* /etc/php/7.2/fpm/
+service php7.2-fpm restart
+
+git -C /etc/php/ add /etc/php/ &amp;&amp; git -C /etc/php/ commit -m <span class="hljs-string">"add php7.2 configuration"</span>
+
+</code></pre>
+        <h2 id="NGINX-Configuration"><a class="anchor hidden-xs" href="#NGINX-Configuration" title="NGINX-Configuration"><span class="octicon octicon-link"></span></a>NGINX Configuration</h2>
+        <h3 id="Additional-Nginx-configuration-etcnginxconfd"><a class="anchor hidden-xs" href="#Additional-Nginx-configuration-etcnginxconfd" title="Additional-Nginx-configuration-etcnginxconfd"><span class="octicon octicon-link"></span></a>Additional Nginx configuration (/etc/nginx/conf.d)</h3>
+        <ul>
+            <li>New upstreams (php7.1, php7.2, netdata) : upstream.conf</li>
+            <li>webp image mapping : webp.conf</li>
+            <li>new fastcgi_cache_bypass mapping for wordpress : map-wp-fastcgi-cache.conf</li>
+            <li>stub_status configuration on 127.0.0.1:80 : stub_status.conf</li>
+            <li>restore visitor real IP under Cloudflare : cloudflare.conf</li>
+            <li>mitigate WordPress DoS attack</li>
+        </ul><pre><code class="bash hljs"><span class="hljs-comment"># copy all common nginx configurations</span>
+cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/conf.d/* /etc/nginx/conf.d/
+
+<span class="hljs-comment"># commit change with git</span>
+git -C /etc/nginx/ add /etc/nginx/ &amp;&amp; git -C /etc/nginx/ commit -m <span class="hljs-string">"update conf.d configurations"</span>
+</code></pre>
+        <h3 id="EE-common-configuration"><a class="anchor hidden-xs" href="#EE-common-configuration" title="EE-common-configuration"><span class="octicon octicon-link"></span></a>EE common configuration</h3><pre><code class="bash hljs">cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/common/* /etc/nginx/common/
+
+<span class="hljs-comment"># commit change with git</span>
+git -C /etc/nginx/ add /etc/nginx/ &amp;&amp; git -C /etc/nginx/ commit -m <span class="hljs-string">"update common configurations"</span>
+</code></pre>
+        <h3 id="Compile-last-Nginx-mainline-release-with-nginx-ee-script"><a class="anchor hidden-xs" href="#Compile-last-Nginx-mainline-release-with-nginx-ee-script" title="Compile-last-Nginx-mainline-release-with-nginx-ee-script"><span class="octicon octicon-link"></span></a>Compile last Nginx mainline release with
+            <a href="https://github.com/VirtuBox/nginx-ee" target="_blank">nginx-ee script</a></h3><pre><code class="bash hljs">bash &lt;(wget-qO - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+</code></pre>
+        <hr>
+        <h2 id="Custom-configurations"><a class="anchor hidden-xs" href="#Custom-configurations" title="Custom-configurations"><span class="octicon octicon-link"></span></a>Custom configurations</h2>
+        <h3 id="clean-php-fpm-phpini-configuration"><a class="anchor hidden-xs" href="#clean-php-fpm-phpini-configuration" title="clean-php-fpm-phpini-configuration"><span class="octicon octicon-link"></span></a>clean php-fpm php.ini configuration</h3><pre><code class="bash hljs"><span class="hljs-comment"># PHP 7.0</span>
+cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/php/7.0/* /etc/php/7.0/
+service php7.0-fpm restart
+
+git -C /etc/php/ add /etc/php/ &amp;&amp; git -C /etc/php/ commit -m <span class="hljs-string">"add php7.2 configuration"</span>
+</code></pre>
+        <h3 id="Nginx-optimized-configurations"><a class="anchor hidden-xs" href="#Nginx-optimized-configurations" title="Nginx-optimized-configurations"><span class="octicon octicon-link"></span></a>Nginx optimized configurations</h3><pre><code class="bash hljs"><span class="hljs-comment"># TLSv1.2 TLSv1.3 only</span>
+cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+
+<span class="hljs-comment"># TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3</span>
+cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-intermediate.conf
+
+<span class="hljs-comment"># TLSv1.2 only</span>
+cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-tlsv12.conf
+
+<span class="hljs-comment"># commit change with git</span>
+git -C /etc/nginx/ add /etc/nginx/ &amp;&amp; git -C /etc/nginx/ commit -m <span class="hljs-string">"update nginx.conf configurations"</span>
+</code></pre>
+        <h3 id="Nginx-configuration-for-netdata"><a class="anchor hidden-xs" href="#Nginx-configuration-for-netdata" title="Nginx-configuration-for-netdata"><span class="octicon octicon-link"></span></a>Nginx configuration for netdata</h3><pre><code class="bash hljs"><span class="hljs-comment"># add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/</span>
+cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
+
+<span class="hljs-comment"># commit change with git</span>
+git -C /etc/nginx/ add /etc/nginx/ &amp;&amp; git -C /etc/nginx/ commit -m <span class="hljs-string">"update 22222 configuration"</span>
+</code></pre>
+        <h4 id="Increase-Nginx-open-files-limits"><a class="anchor hidden-xs" href="#Increase-Nginx-open-files-limits" title="Increase-Nginx-open-files-limits"><span class="octicon octicon-link"></span></a>Increase Nginx open files limits</h4><pre><code class="bash hljs">sudo mkdir -p /etc/systemd/system/nginx.service.d
+cp -f <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/systemd/system/nginx.service.d/limits.conf /etc/systemd/system/nginx.service.d/limits.conf
+
+sudo systemctl daemon-reload
+sudo systemctl restart nginx.service
+</code></pre>
+        <hr>
+        <h2 id="Security"><a class="anchor hidden-xs" href="#Security" title="Security"><span class="octicon octicon-link"></span></a>Security</h2>
+        <h3 id="Harden-SSH-Security"><a class="anchor hidden-xs" href="#Harden-SSH-Security" title="Harden-SSH-Security"><span class="octicon octicon-link"></span></a>Harden SSH Security</h3>
+        <p>WARNING : SSH Configuration with root login allowed with ed25519 &amp; ECDSA SSH keys only <a href="https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config" target="_blank">source</a></p><pre><code>cp -f $HOME/ubuntu-nginx-web-server/etc/ssh/sshd_config /etc/ssh/sshd_config
+</code></pre>
+        <h3 id="UFW"><a class="anchor hidden-xs" href="#UFW" title="UFW"><span class="octicon octicon-link"></span></a>UFW</h3>
+        <p>Instructions available in <a href="https://kb.virtubox.net/knowledgebase/ufw-iptables-firewall-configuration-made-easier/" target="_blank">VirtuBox Knowledgebase</a></p><pre><code class="bash hljs"><span class="hljs-comment"># enable ufw log - allow outgoing - deny incoming</span>
+ufw logging low
+ufw default allow outgoing
+ufw default deny incoming
+
+<span class="hljs-comment"># allow incoming traffic on SSH port</span>
+CURRENT_SSH_PORT=$(grep <span class="hljs-string">"Port"</span> /etc/ssh/sshd_config | awk -F <span class="hljs-string">" "</span> <span class="hljs-string">'{print $2}'</span>)
+ufw allow <span class="hljs-variable">$CURRENT_SSH_PORT</span>
+
+<span class="hljs-comment"># DNS - HTTP/S - FTP - NTP - RSYNC - DHCP - SNMP - Librenms - Netdata - EE Backend</span>
+ufw allow 53
+ufw allow http
+ufw allow https
+ufw allow 21
+ufw allow 123
+ufw allow 161
+ufw allow 68
+ufw allow 546
+ufw allow 873
+ufw allow 6556
+ufw allow 19999
+ufw allow 22222
+
+
+<span class="hljs-comment"># enable UFW</span>
+ufw <span class="hljs-built_in">enable</span>
+</code></pre>
+        <h3 id="Custom-jails-for-fail2ban"><a class="anchor hidden-xs" href="#Custom-jails-for-fail2ban" title="Custom-jails-for-fail2ban"><span class="octicon octicon-link"></span></a>Custom jails for fail2ban</h3>
+        <ul>
+            <li>wordpress bruteforce</li>
+            <li>ssh</li>
+            <li>recidive (after 3 bans)</li>
+            <li>backend http auth</li>
+            <li>nginx bad bots</li>
+        </ul><pre><code class="bash hljs">cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/fail2ban/filter.d/* /etc/fail2ban/filter.d/
+cp -rf <span class="hljs-variable">$HOME</span>/ubuntu-nginx-web-server/etc/fail2ban/jail.d/* /etc/fail2ban/jail.d/
+
+fail2ban-client reload
+</code></pre>
+        <h3 id="Secure-Memcached-server"><a class="anchor hidden-xs" href="#Secure-Memcached-server" title="Secure-Memcached-server"><span class="octicon octicon-link"></span></a>Secure Memcached server</h3><pre><code class="bash hljs"><span class="hljs-built_in">echo</span> <span class="hljs-string">'-U 0'</span> &gt;&gt; /etc/memcached.conf
+sudo systemctl restart memcached
+</code></pre>
+        <p>If you do not use memcached, you can safely stop and disable it :</p><pre><code class="bash hljs">sudo systemctl stop memcached
+sudo systemctl <span class="hljs-built_in">disable</span> memcached.service
+</code></pre>
+        <h2 id="Optional"><a class="anchor hidden-xs" href="#Optional" title="Optional"><span class="octicon octicon-link"></span></a>Optional</h2>
+        <h3 id="ee-acme-sh"><a class="anchor hidden-xs" href="#ee-acme-sh" title="ee-acme-sh"><span class="octicon octicon-link"></span></a>ee-acme-sh</h3>
+        <p><a href="https://virtubox.github.io/ee-acme-sh/" target="_blank">Github repository</a> - Script to setup letsencrypt certificates using <a href="http://acme.sh" target="_blank">acme.sh</a> on EasyEngine servers</p>
+        <ul>
+            <li>subdomain support</li>
+            <li>ivp6 support</li>
+            <li>wildcards certificates support</li>
+        </ul><pre><code class="bash hljs">wget-qO install-ee-acme.sh https://raw.githubusercontent.com/VirtuBox/ee-acme-sh/master/install.sh
+chmod +x install-ee-acme.sh
+./install-ee-acme.sh
+
+<span class="hljs-comment"># enable acme.sh &amp; ee-acme-sh</span>
+<span class="hljs-built_in">source</span> .bashrc
+</code></pre>
+        <h3 id="netdata"><a class="anchor hidden-xs" href="#netdata" title="netdata"><span class="octicon octicon-link"></span></a>netdata</h3>
+        <p><a href="https://github.com/firehol/netdata" target="_blank">Github repository</a></p><pre><code class="bash hljs">
+bash &lt;(curl -Ss https://my-netdata.io/kickstart.sh) all
+
+<span class="hljs-comment"># save 40-60% of netdata memory</span>
+<span class="hljs-built_in">echo</span> 1 &gt;/sys/kernel/mm/ksm/run
+<span class="hljs-built_in">echo</span> 1000 &gt;/sys/kernel/mm/ksm/sleep_millisecs
+
+<span class="hljs-comment"># disable email notifications</span>
+sudo sed -i <span class="hljs-string">'s/SEND_EMAIL="YES"/SEND_EMAIL="NO"/'</span> /usr/lib/netdata/conf.d/health_alarm_notify.conf
+service netdata restart
+</code></pre>
+        <h3 id="chtsh-cheat"><a class="anchor hidden-xs" href="#chtsh-cheat" title="chtsh-cheat"><span class="octicon octicon-link"></span></a><a href="http://cht.sh" target="_blank">cht.sh</a> (cheat)</h3>
+        <p><a href="https://github.com/chubin/cheat.sh" target="_blank">Github repository</a></p><pre><code class="bash hljs">curl https://cht.sh/:cht.sh &gt; /usr/bin/cht.sh
+chmod +x /usr/bin/cht.sh
+
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"alias cheat='cht.sh'"</span> &gt;&gt; <span class="hljs-variable">$HOME</span>/.bashrc
+<span class="hljs-built_in">source</span> <span class="hljs-variable">$HOME</span>/.bashrc
+</code></pre>
+        <p>usage : <code>cheat &lt;command&gt;</code></p><pre><code class="bash hljs">root@vps:~ cheat cat
+<span class="hljs-comment"># cat</span>
+
+<span class="hljs-comment"># Print and concatenate files.</span>
+
+<span class="hljs-comment"># Print the contents of a file to the standard output:</span>
+  cat file
+
+<span class="hljs-comment"># Concatenate several files into the target file:</span>
+  cat file1 file2 &gt; target_file
+
+<span class="hljs-comment"># Append several files into the target file:</span>
+  cat file1 file2 &gt;&gt; target_file
+
+<span class="hljs-comment"># Number all output lines:</span>
+  cat -n file
+</code></pre>
+        <h3 id="nanorc---Improved-Nano-Syntax-Highlighting-Files"><a class="anchor hidden-xs" href="#nanorc---Improved-Nano-Syntax-Highlighting-Files" title="nanorc---Improved-Nano-Syntax-Highlighting-Files"><span class="octicon octicon-link"></span></a>nanorc - Improved Nano Syntax Highlighting Files</h3>
+        <p><a href="https://github.com/scopatz/nanorc" target="_blank">Github repository</a></p><pre><code class="bash hljs">wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -O- | sh
+</code></pre>
+        <h3 id="Add-WP-CLI-amp-bash-completion-for-user-www-data"><a class="anchor hidden-xs" href="#Add-WP-CLI-amp-bash-completion-for-user-www-data" title="Add-WP-CLI-amp-bash-completion-for-user-www-data"><span class="octicon octicon-link"></span></a>Add WP-CLI &amp; bash-completion for user www-data</h3><pre><code class="bashrc hljs"><span class="hljs-comment"># download wp-cli bash_completion</span>
+cp -f $HOME/ubuntu-nginx-web-server/etc/bash_completion.d/wp-completion.bash https:<span class="hljs-comment">//raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash</span>
+
+<span class="hljs-comment"># change /var/www owner</span>
+chown www-data:www-data /<span class="hljs-keyword">var</span>/www
+
+<span class="hljs-comment"># download .profile &amp; .bashrc for www-data</span>
+cp -f $HOME/ubuntu-nginx-web-server/<span class="hljs-keyword">var</span>/www/.profile /<span class="hljs-keyword">var</span>/www/.profile
+cp -f $HOME/ubuntu-nginx-web-server/<span class="hljs-keyword">var</span>/www/.bashrc /<span class="hljs-keyword">var</span>/www/.bashrc
+
+<span class="hljs-comment"># set owner</span>
+chown www-data:www-data /<span class="hljs-keyword">var</span>/www/.profile
+chown www-data:www-data /<span class="hljs-keyword">var</span>/www/.bashrc
+</code></pre>
+        <h3 id="Custom-Nginx-error-pages"><a class="anchor hidden-xs" href="#Custom-Nginx-error-pages" title="Custom-Nginx-error-pages"><span class="octicon octicon-link"></span></a>Custom Nginx error pages</h3>
+        <p><a href="https://github.com/alexphelps/server-error-pages" target="_blank">Github Repository</a></p>
+        <p>Installation</p><pre><code class="bash hljs"><span class="hljs-comment"># clone the github repository</span>
+sudo -u www-data -H git <span class="hljs-built_in">clone</span> https://github.com/alexphelps/server-error-pages.git /var/www/error
+</code></pre>
+        <p>Then include this configuration in your nginx vhost by adding the following line</p><pre><code class="bash hljs">include common/error_pages.conf;
+</code></pre>
+        <p>Published &amp; maintained by <a href="https://virtubox.net" target="_blank">VirtuBox</a></p>
+    </div>
+    <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
+        <div class="pull-right dropdown">
+            <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
+                <i class="fa fa-bars"></i>
+            </a>
+            <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
+                <div class="toc">
+                    <ul class="nav">
+                        <li class=""><a href="#Optimized-configuration-for-Ubuntu-server-with-EasyEngine" title="Optimized configuration for Ubuntu server with EasyEngine">Optimized configuration for Ubuntu server with EasyEngine</a>
+                            <ul class="nav">
+                                <li class=""><a href="#Server-Stack" title="Server Stack">Server Stack</a></li>
+                                <li><a href="#Initial-configuration" title="Initial configuration">Initial configuration</a>
+                                    <ul class="nav">
+                                        <li><a href="#System-update-and-packages-cleanup" title="System update and packages cleanup">System update and packages cleanup</a></li>
+                                        <li><a href="#Install-useful-packages" title="Install useful packages">Install useful packages</a></li>
+                                        <li><a href="#Clone-the-repository" title="Clone the repository">Clone the repository</a></li>
+                                        <li><a href="#Tweak-Kernel-amp-Increase-open-files-limits" title="Tweak Kernel &amp; Increase open files limits">Tweak Kernel &amp; Increase open files limits</a></li>
+                                        <li><a href="#disable-transparent-hugepage-for-redis" title="disable transparent hugepage for redis">disable transparent hugepage for redis</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#EasyEngine-Setup" title="EasyEngine Setup">EasyEngine Setup</a>
+                                    <ul class="nav">
+                                        <li><a href="#Install-MariaDB-103" title="Install MariaDB 10.3">Install MariaDB 10.3</a></li>
+                                        <li><a href="#MySQL-Tuning" title="MySQL Tuning">MySQL Tuning</a></li>
+                                        <li><a href="#Increase-MariaDB-open-files-limits" title="Increase MariaDB open files limits">Increase MariaDB open files limits</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#Install-EasyEngine" title="Install EasyEngine">Install EasyEngine</a>
+                                    <ul class="nav">
+                                        <li><a href="#enable-ee-bash_completion" title="enable ee bash_completion">enable ee bash_completion</a></li>
+                                        <li><a href="#Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend" title="Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend">Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend</a></li>
+                                        <li><a href="#Set-your-email-instead-of-rootlocalhost" title="Set your email instead of root@localhost">Set your email instead of root@localhost</a></li>
+                                        <li><a href="#Install-Composer---Fix-phpmyadmin-install-issue" title="Install Composer - Fix phpmyadmin install issue">Install Composer - Fix phpmyadmin install issue</a></li>
+                                        <li><a href="#Allow-shell-for-www-data-for-SFTP-usage" title="Allow shell for www-data for SFTP usage">Allow shell for www-data for SFTP usage</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#PHP-71-amp-72-Setup" title="PHP 7.1 &amp; 7.2 Setup">PHP 7.1 &amp; 7.2 Setup</a>
+                                    <ul class="nav">
+                                        <li><a href="#Install-php71-fpm" title="Install php7.1-fpm">Install php7.1-fpm</a></li>
+                                        <li><a href="#Install-php72-fpm" title="Install php7.2-fpm">Install php7.2-fpm</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#NGINX-Configuration" title="NGINX Configuration">NGINX Configuration</a>
+                                    <ul class="nav">
+                                        <li><a href="#Additional-Nginx-configuration-etcnginxconfd" title="Additional Nginx configuration (/etc/nginx/conf.d)">Additional Nginx configuration (/etc/nginx/conf.d)</a></li>
+                                        <li><a href="#EE-common-configuration" title="EE common configuration">EE common configuration</a></li>
+                                        <li><a href="#Compile-last-Nginx-mainline-release-with-nginx-ee-script" title="Compile last Nginx mainline release with nginx-ee script">Compile last Nginx mainline release with nginx-ee script</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#Custom-configurations" title="Custom configurations">Custom configurations</a>
+                                    <ul class="nav">
+                                        <li><a href="#clean-php-fpm-phpini-configuration" title="clean php-fpm php.ini configuration">clean php-fpm php.ini configuration</a></li>
+                                        <li><a href="#Nginx-optimized-configurations" title="Nginx optimized configurations">Nginx optimized configurations</a></li>
+                                        <li><a href="#Nginx-configuration-for-netdata" title="Nginx configuration for netdata">Nginx configuration for netdata</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#Security" title="Security">Security</a>
+                                    <ul class="nav">
+                                        <li><a href="#Harden-SSH-Security" title="Harden SSH Security">Harden SSH Security</a></li>
+                                        <li><a href="#UFW" title="UFW">UFW</a></li>
+                                        <li><a href="#Custom-jails-for-fail2ban" title="Custom jails for fail2ban">Custom jails for fail2ban</a></li>
+                                        <li><a href="#Secure-Memcached-server" title="Secure Memcached server">Secure Memcached server</a></li>
+                                    </ul>
+                                </li>
+                                <li class=""><a href="#Optional" title="Optional">Optional</a>
+                                    <ul class="nav">
+                                        <li><a href="#ee-acme-sh" title="ee-acme-sh">ee-acme-sh</a></li>
+                                        <li><a href="#netdata" title="netdata">netdata</a></li>
+                                        <li><a href="#chtsh-cheat" title="cht.sh (cheat)">cht.sh (cheat)</a></li>
+                                        <li><a href="#nanorc---Improved-Nano-Syntax-Highlighting-Files" title="nanorc - Improved Nano Syntax Highlighting Files">nanorc - Improved Nano Syntax Highlighting Files</a></li>
+                                        <li><a href="#Add-WP-CLI-amp-bash-completion-for-user-www-data" title="Add WP-CLI &amp; bash-completion for user www-data">Add WP-CLI &amp; bash-completion for user www-data</a></li>
+                                        <li class=""><a href="#Custom-Nginx-error-pages" title="Custom Nginx error pages">Custom Nginx error pages</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+            </ul>
+        </div>
+    </div>
+    <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;">
+        <div class="toc">
+            <ul class="nav">
+                <li class=""><a href="#Optimized-configuration-for-Ubuntu-server-with-EasyEngine" title="Optimized configuration for Ubuntu server with EasyEngine">Optimized configuration for Ubuntu server with EasyEngine</a>
+                    <ul class="nav">
+                        <li class=""><a href="#Server-Stack" title="Server Stack">Server Stack</a></li>
+                        <li><a href="#Initial-configuration" title="Initial configuration">Initial configuration</a>
+                            <ul class="nav">
+                                <li><a href="#System-update-and-packages-cleanup" title="System update and packages cleanup">System update and packages cleanup</a></li>
+                                <li><a href="#Install-useful-packages" title="Install useful packages">Install useful packages</a></li>
+                                <li><a href="#Clone-the-repository" title="Clone the repository">Clone the repository</a></li>
+                                <li><a href="#Tweak-Kernel-amp-Increase-open-files-limits" title="Tweak Kernel &amp; Increase open files limits">Tweak Kernel &amp; Increase open files limits</a></li>
+                                <li><a href="#disable-transparent-hugepage-for-redis" title="disable transparent hugepage for redis">disable transparent hugepage for redis</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#EasyEngine-Setup" title="EasyEngine Setup">EasyEngine Setup</a>
+                            <ul class="nav">
+                                <li><a href="#Install-MariaDB-103" title="Install MariaDB 10.3">Install MariaDB 10.3</a></li>
+                                <li><a href="#MySQL-Tuning" title="MySQL Tuning">MySQL Tuning</a></li>
+                                <li><a href="#Increase-MariaDB-open-files-limits" title="Increase MariaDB open files limits">Increase MariaDB open files limits</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#Install-EasyEngine" title="Install EasyEngine">Install EasyEngine</a>
+                            <ul class="nav">
+                                <li><a href="#enable-ee-bash_completion" title="enable ee bash_completion">enable ee bash_completion</a></li>
+                                <li><a href="#Install-Nginx-php56-php70-postfix-redis-and-configure-EE-backend" title="Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend">Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend</a></li>
+                                <li><a href="#Set-your-email-instead-of-rootlocalhost" title="Set your email instead of root@localhost">Set your email instead of root@localhost</a></li>
+                                <li><a href="#Install-Composer---Fix-phpmyadmin-install-issue" title="Install Composer - Fix phpmyadmin install issue">Install Composer - Fix phpmyadmin install issue</a></li>
+                                <li><a href="#Allow-shell-for-www-data-for-SFTP-usage" title="Allow shell for www-data for SFTP usage">Allow shell for www-data for SFTP usage</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#PHP-71-amp-72-Setup" title="PHP 7.1 &amp; 7.2 Setup">PHP 7.1 &amp; 7.2 Setup</a>
+                            <ul class="nav">
+                                <li><a href="#Install-php71-fpm" title="Install php7.1-fpm">Install php7.1-fpm</a></li>
+                                <li><a href="#Install-php72-fpm" title="Install php7.2-fpm">Install php7.2-fpm</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#NGINX-Configuration" title="NGINX Configuration">NGINX Configuration</a>
+                            <ul class="nav">
+                                <li><a href="#Additional-Nginx-configuration-etcnginxconfd" title="Additional Nginx configuration (/etc/nginx/conf.d)">Additional Nginx configuration (/etc/nginx/conf.d)</a></li>
+                                <li><a href="#EE-common-configuration" title="EE common configuration">EE common configuration</a></li>
+                                <li><a href="#Compile-last-Nginx-mainline-release-with-nginx-ee-script" title="Compile last Nginx mainline release with nginx-ee script">Compile last Nginx mainline release with nginx-ee script</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#Custom-configurations" title="Custom configurations">Custom configurations</a>
+                            <ul class="nav">
+                                <li><a href="#clean-php-fpm-phpini-configuration" title="clean php-fpm php.ini configuration">clean php-fpm php.ini configuration</a></li>
+                                <li><a href="#Nginx-optimized-configurations" title="Nginx optimized configurations">Nginx optimized configurations</a></li>
+                                <li><a href="#Nginx-configuration-for-netdata" title="Nginx configuration for netdata">Nginx configuration for netdata</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#Security" title="Security">Security</a>
+                            <ul class="nav">
+                                <li><a href="#Harden-SSH-Security" title="Harden SSH Security">Harden SSH Security</a></li>
+                                <li><a href="#UFW" title="UFW">UFW</a></li>
+                                <li><a href="#Custom-jails-for-fail2ban" title="Custom jails for fail2ban">Custom jails for fail2ban</a></li>
+                                <li><a href="#Secure-Memcached-server" title="Secure Memcached server">Secure Memcached server</a></li>
+                            </ul>
+                        </li>
+                        <li class=""><a href="#Optional" title="Optional">Optional</a>
+                            <ul class="nav">
+                                <li><a href="#ee-acme-sh" title="ee-acme-sh">ee-acme-sh</a></li>
+                                <li><a href="#netdata" title="netdata">netdata</a></li>
+                                <li><a href="#chtsh-cheat" title="cht.sh (cheat)">cht.sh (cheat)</a></li>
+                                <li><a href="#nanorc---Improved-Nano-Syntax-Highlighting-Files" title="nanorc - Improved Nano Syntax Highlighting Files">nanorc - Improved Nano Syntax Highlighting Files</a></li>
+                                <li><a href="#Add-WP-CLI-amp-bash-completion-for-user-www-data" title="Add WP-CLI &amp; bash-completion for user www-data">Add WP-CLI &amp; bash-completion for user www-data</a></li>
+                                <li class=""><a href="#Custom-Nginx-error-pages" title="Custom Nginx error pages">Custom Nginx error pages</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.6.0/gist-embed.min.js" integrity="sha256-KyF2D6xPIJUW5sUDSs93vWyZm+1RzIpKCexxElmxl8g=" crossorigin="anonymous" defer></script>
+    <script>
+        var markdown = $(".markdown-body");
+        //smooth all hash trigger scrolling
+        function smoothHashScroll() {
+            var hashElements = $("a[href^='#']").toArray();
+            for (var i = 0; i < hashElements.length; i++) {
+                var element = hashElements[i];
+                var $element = $(element);
+                var hash = element.hash;
+                if (hash) {
+                    $element.on('click', function(e) {
+                        // store hash
+                        var hash = this.hash;
+                        if ($(hash).length <= 0) return;
+                        // prevent default anchor click behavior
+                        e.preventDefault();
+                        // animate
+                        $('body, html').stop(true, true).animate({
+                            scrollTop: $(hash).offset().top
+                        }, 100, "linear", function() {
+                            // when done, add hash to url
+                            // (default click behaviour)
+                            window.location.hash = hash;
+                        });
+                    });
+                }
+            }
+        }
+
+        smoothHashScroll();
+        var toc = $('.ui-toc');
+        var tocAffix = $('.ui-affix-toc');
+        var tocDropdown = $('.ui-toc-dropdown');
+        //toc
+        tocDropdown.click(function(e) {
+            e.stopPropagation();
+        });
+
+        var enoughForAffixToc = true;
+
+        function generateScrollspy() {
+            $(document.body).scrollspy({
+                target: ''
+            });
+            $(document.body).scrollspy('refresh');
+            if (enoughForAffixToc) {
+                toc.hide();
+                tocAffix.show();
+            } else {
+                tocAffix.hide();
+                toc.show();
+            }
+            $(document.body).scroll();
+        }
+
+        function windowResize() {
+            //toc right
+            var paddingRight = parseFloat(markdown.css('padding-right'));
+            var right = ($(window).width() - (markdown.offset().left + markdown.outerWidth() - paddingRight));
+            toc.css('right', right + 'px');
+            //affix toc left
+            var newbool;
+            var rightMargin = (markdown.parent().outerWidth() - markdown.outerWidth()) / 2;
+            //for ipad or wider device
+            if (rightMargin >= 133) {
+                newbool = true;
+                var affixLeftMargin = (tocAffix.outerWidth() - tocAffix.width()) / 2;
+                var left = markdown.offset().left + markdown.outerWidth() - affixLeftMargin;
+                tocAffix.css('left', left + 'px');
+            } else {
+                newbool = false;
+            }
+            if (newbool != enoughForAffixToc) {
+                enoughForAffixToc = newbool;
+                generateScrollspy();
+            }
+        }
+        $(window).resize(function() {
+            windowResize();
+        });
+        $(document).ready(function() {
+            windowResize();
+            generateScrollspy();
+        });
+
+        //remove hash
+        function removeHash() {
+            window.location.hash = '';
+        }
+
+        var backtotop = $('.back-to-top');
+        var gotobottom = $('.go-to-bottom');
+
+        backtotop.click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToTop)
+                scrollToTop();
+            removeHash();
+        });
+        gotobottom.click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToBottom)
+                scrollToBottom();
+            removeHash();
+        });
+
+        var toggle = $('.expand-toggle');
+        var tocExpand = false;
+
+        checkExpandToggle();
+        toggle.click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            tocExpand = !tocExpand;
+            checkExpandToggle();
+        })
+
+        function checkExpandToggle() {
+            var toc = $('.ui-toc-dropdown .toc');
+            var toggle = $('.expand-toggle');
+            if (!tocExpand) {
+                toc.removeClass('expand');
+                toggle.text('Expand all');
+            } else {
+                toc.addClass('expand');
+                toggle.text('Collapse all');
+            }
+        }
+
+        function scrollToTop() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: 0
+            }, 100, "linear");
+        }
+
+        function scrollToBottom() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: $(document.body)[0].scrollHeight
+            }, 100, "linear");
+        }
+    </script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+</body>
+
+</html>
