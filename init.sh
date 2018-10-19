@@ -13,7 +13,7 @@ CGREEN="${CSI}1;32m"
 ##################################
 
 EXTPLORER_VER="2.1.10"
-REPO_PATH=/tmp/ubuntu-nginx-web-server
+REPO_PATH=$HOME/ubuntu-nginx-web-server
 
 ##################################
 # Check if user is root
@@ -33,31 +33,22 @@ clear
 ##################################
 
 echo ""
-echo "Welcome to ubuntu-nginx-web-server install script."
+echo "Welcome to ubuntu-nginx-web-server setup script."
 echo ""
+
+if [ -d /etc/ee ] && [ -d /etc/mysql ] && [ -d /etc/nginx ]; then
+    echo "Previous EasyEngine install detected"
+fi
 
 ##################################
 # Menu
 ##################################
-
 echo "#####################################"
-echo "Security"
+echo "             Warning                 "
 echo "#####################################"
-echo ""
-echo "Do you currently use default SSH port 22 ? (y/n)"
-while [[ $ssh_port_default != "y" && $ssh_port_default != "n" ]]; do
-    read -p "Select an option [y/n]: " ssh_port_default
-done
-echo ""
-if [ $ssh_port_default = "y" ]; then
-    echo "What custom SSH port do you want to use instead of 22 ?"
-    read -p "Select a port between 1024 & 65536 : " ssh_port_select
-    echo ""
-else
-    echo "What custom SSH port are you using ?"
-    read -p "Select your custom SSH port : " ssh_port_select
-    echo ""
-fi
+echo "This script will only allow ssh connection with ssh-keys"
+echo "Make sure you have properly installed your public key in $HOME/.ssh/authorized_keys"
+echo "#####################################"
 sleep 1
 if [ ! -d /etc/mysql ]; then
     echo "#####################################"
@@ -95,46 +86,50 @@ if [ ! -d /etc/mysql ]; then
     fi
     sleep 1
 fi
-echo ""
-echo "#####################################"
-echo "Nginx"
-echo "#####################################"
-echo ""
-echo "Do you want to compile the latest Nginx Mainline [1] or Stable [2] Release ?"
-while [[ $NGINX_RELEASE != "1" && $NGINX_RELEASE != "2" ]]; do
-    read -p "Select an option [1-2]: " NGINX_RELEASE
-done
-echo ""
-echo "Do you want Ngx_Pagespeed ? (y/n)"
-while [[ $PAGESPEED != "y" && $PAGESPEED != "n" ]]; do
-    read -p "Select an option [y/n]: " PAGESPEED
-done
-echo ""
-echo "Do you want NAXSI WAF (still experimental)? (y/n)"
-while [[ $NAXSI != "y" && $NAXSI != "n" ]]; do
-    read -p "Select an option [y/n]: " NAXSI
-    export $NAXSI
-done
-echo ""
-echo "Do you want RTMP streaming module ?"
-while [[ $RTMP != "y" && $RTMP != "n" ]]; do
-    read -p "Select an option [y/n]: " RTMP
-    export $RTMP
-done
+if [ ! -d /etc/nginx ]; then
+    echo ""
+    echo "#####################################"
+    echo "Nginx"
+    echo "#####################################"
+    echo ""
+    echo "Do you want to compile the latest Nginx Mainline [1] or Stable [2] Release ?"
+    while [[ $NGINX_RELEASE != "1" && $NGINX_RELEASE != "2" ]]; do
+        read -p "Select an option [1-2]: " NGINX_RELEASE
+    done
+    echo ""
+    echo "Do you want Ngx_Pagespeed ? (y/n)"
+    while [[ $PAGESPEED != "y" && $PAGESPEED != "n" ]]; do
+        read -p "Select an option [y/n]: " PAGESPEED
+    done
+    echo ""
+    echo "Do you want NAXSI WAF (still experimental)? (y/n)"
+    while [[ $NAXSI != "y" && $NAXSI != "n" ]]; do
+        read -p "Select an option [y/n]: " NAXSI
+    done
+    echo ""
+    echo "Do you want RTMP streaming module ?"
+    while [[ $RTMP != "y" && $RTMP != "n" ]]; do
+        read -p "Select an option [y/n]: " RTMP
+    done
+fi
 sleep 1
 echo ""
 echo "#####################################"
 echo "PHP"
 echo "#####################################"
-echo "Do you want php7.1-fpm ? (y/n)"
-while [[ $phpfpm71_install != "y" && $phpfpm71_install != "n" ]]; do
-    read -p "Select an option [y/n]: " phpfpm71_install
-done
-echo ""
-echo "Do you want php7.2-fpm ? (y/n)"
-while [[ $phpfpm72_install != "y" && $phpfpm72_install != "n" ]]; do
-    read -p "Select an option [y/n]: " phpfpm72_install
-done
+if [ ! -f /etc/php/7.1/fpm/php.ini ]; then
+    echo "Do you want php7.1-fpm ? (y/n)"
+    while [[ $phpfpm71_install != "y" && $phpfpm71_install != "n" ]]; do
+        read -p "Select an option [y/n]: " phpfpm71_install
+    done
+    echo ""
+fi
+if [ ! -f /etc/php/7.2/fpm/php.ini ]; then
+    echo "Do you want php7.2-fpm ? (y/n)"
+    while [[ $phpfpm72_install != "y" && $phpfpm72_install != "n" ]]; do
+        read -p "Select an option [y/n]: " phpfpm72_install
+    done
+fi
 if [ ! -d /etc/proftpd ]; then
     echo ""
     echo "#####################################"
@@ -160,75 +155,10 @@ echo "##########################################"
 echo " Updating Packages"
 echo "##########################################"
 
-apt-get update
-apt-get upgrade -y
-apt-get autoremove -y --purge
-apt-get autoclean -y
-
-##################################
-# Secure SSH server
-##################################
-
-# download secure sshd_config
-wget -O /etc/ssh/sshd_config https://virtubox.github.io/ubuntu-nginx-web-server/files/etc/ssh/sshd_config
-
-# change ssh default port
-sudo sed -i "s/Port 22/Port $ssh_port_select/" /etc/ssh/sshd_config
-
-# restart ssh service
-service ssh restart
-
-##################################
-# UFW
-##################################
-echo "##########################################"
-echo " Configuring UFW"
-echo "##########################################"
-
-if [ ! -d /etc/ufw ]; then
-    apt-get install ufw -y
-fi
-
-# define firewall rules
-
-ufw logging low
-ufw default allow outgoing
-ufw default deny incoming
-
-# allow required ports
-ufw allow 22
-ufw allow $ssh_port_select
-ufw allow 53
-ufw allow http
-ufw allow https
-ufw allow 123
-
-# dhcp client
-ufw allow 68
-
-# dhcp ipv6 client
-ufw allow 546
-
-# rsync
-ufw allow 873
-
-# easyengine backend
-ufw allow 22222
-
-# optional for monitoring
-
-# SNMP UDP port
-#ufw allow 161
-
-# Netdata web interface
-#ufw allow 1999
-
-# Librenms linux agent
-#ufw allow 6556
-
-# Zabbix-agent
-#ufw allow 10050
-
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get autoremove -y --purge
+sudo apt-get autoclean -y
 
 ##################################
 # Useful packages
@@ -238,27 +168,99 @@ echo "##########################################"
 echo " Installing useful packages"
 echo "##########################################"
 
-
-apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze  -y
+sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze -y
 
 # ntp time
-systemctl enable ntp
+sudo systemctl enable ntp
 
 # increase history size
 export HISTSIZE=10000
 
-
 ##################################
 # clone repository
 ##################################
-echo "##########################################"
+echo "###########################################"
 echo " Cloning Ubuntu-nginx-web-server repository"
+echo "###########################################"
+
+if [ ! -d $HOME/ubuntu-nginx-web-server ]; then
+    git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git $HOME/ubuntu-nginx-web-server
+fi
+
+##################################
+# Secure SSH server
+##################################
+
+# get current ssh port
+CURRENT_SSH_PORT=$(grep "Port" /etc/ssh/sshd_config | awk -F " " '{print $2}')
+
+# download secure sshd_config
+sudo cp -f $HOME/ubuntu-nginx-web-server/etc/ssh/sshd_config /etc/ssh/sshd_config
+
+# change ssh default port
+sudo sed -i "s/Port 22/Port $CURRENT_SSH_PORT/" /etc/ssh/sshd_config
+
+# restart ssh service
+sudo service ssh restart
+
+##################################
+# ufw
+##################################
+echo "##########################################"
+echo " Configuring ufw"
 echo "##########################################"
 
-cd /tmp || exit
-rm -rf /tmp/ubuntu-nginx-web-server
-git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git
+if [ ! -d /etc/ufw ]; then
+    sudo apt-get install ufw -y
+fi
 
+# define firewall rules
+
+sudo ufw logging low
+sudo ufw default allow outgoing
+sudo ufw default deny incoming
+
+# allow required ports
+if [ "$CURRENT_SSH_PORT" = "22" ]; then
+    sudo ufw allow 22
+else
+    sudo ufw allow $CURRENT_SSH_PORT
+fi
+# dns
+sudo ufw allow 53
+
+# nginx
+sudo ufw allow http
+sudo ufw allow https
+
+# ntp
+sudo ufw allow 123
+
+# dhcp client
+sudo ufw allow 68
+
+# dhcp ipv6 client
+sudo ufw allow 546
+
+# rsync
+sudo ufw allow 873
+
+# easyengine backend
+sudo ufw allow 22222
+
+# optional for monitoring
+
+# SNMP UDP port
+#sudo ufw allow 161
+
+# Netdata web interface
+#sudo ufw allow 1999
+
+# Librenms linux agent
+#sudo ufw allow 6556
+
+# Zabbix-agent
+#sudo ufw allow 10050
 
 ##################################
 # Sysctl tweaks +  open_files limits
@@ -267,10 +269,9 @@ echo "##########################################"
 echo " Applying Linux Kernel tweaks"
 echo "##########################################"
 
-sudo modprobe tcp_htcp
-cp -f $REPO_PATH/etc/sysctl.d/60-ubuntu-nginx-web-server.conf /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-sysctl -e -p /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-cp -f $REPO_PATH/etc/security/limits.conf /etc/security/limits.conf
+sudo cp -f $REPO_PATH/etc/sysctl.d/60-ubuntu-nginx-web-server.conf /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+sudo sysctl -e -p /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+sudo cp -f $REPO_PATH/etc/security/limits.conf /etc/security/limits.conf
 
 # Redis transparent_hugepage
 echo never >/sys/kernel/mm/transparent_hugepage/enabled
@@ -278,31 +279,29 @@ echo never >/sys/kernel/mm/transparent_hugepage/enabled
 # disable ip forwarding if docker is not installed
 if [ ! -x /usr/bin/docker ]; then
 
-    echo "" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "# Disables packet forwarding" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv4.ip_forward = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv4.conf.all.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv4.conf.default.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv6.conf.all.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv6.conf.default.forwarding = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "# Disables packet forwarding" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv4.ip_forward = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv4.conf.all.forwarding = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv4.conf.default.forwarding = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.all.forwarding = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.default.forwarding = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
 
 fi
 
 # additional systcl configuration with network interface name
 # get network interface names like eth0, ens18 or eno1
 # for each interface found, add the following configuration to sysctl
-NET_INTERFACES_LIST=$( ls /sys/class/net | grep -E "/(?:veth(.*))|eth(.*)|ens(.*)|eno(.*)/")
+NET_INTERFACES_LIST=$(ls /sys/class/net | grep -E "/(?:veth(.*))|eth(.*)|ens(.*)|eno(.*)/")
 for NET_INTERFACE in $NET_INTERFACES_LIST; do
-    echo "" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "# do not autoconfigure IPv6 on $NET_INTERFACE" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv6.conf.$NET_INTERFACE.autoconf = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv6.conf.$NET_INTERFACE.accept_ra = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv6.conf.$NET_INTERFACE.accept_ra = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv6.conf.$NET_INTERFACE.autoconf = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
-    echo "net.ipv6.conf.$NET_INTERFACE.accept_ra_defrtr = 0" >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "# do not autoconfigure IPv6 on $NET_INTERFACE" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.autoconf = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.accept_ra = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.accept_ra = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.autoconf = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
+    echo "net.ipv6.conf.$NET_INTERFACE.accept_ra_defrtr = 0" >>/etc/sysctl.d/60-ubuntu-nginx-web-server.conf
 done
-
-
 
 ##################################
 # Add MariaDB 10.3 repository
@@ -315,11 +314,14 @@ if [[ "$mariadb_server_install" == "y" || "$mariadb_client_install" == "y" ]]; t
         echo " Adding MariaDB $mariadb_version_install repository"
         echo "##########################################"
 
-        bash <(wget -qO - https://downloads.mariadb.com/MariaDB/mariadb_repo_setup) --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
-        apt-get update
-
+        wget -qO mariadb_repo_setup https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+        chmod +x mariadb_repo_setup
+        ./mariadb_repo_setup --mariadb-server-version=$mariadb_version_install --skip-maxscale -y
+        rm mariadb_repo_setup
+        sudo apt-get update
 
     fi
+
 fi
 
 ##################################
@@ -336,15 +338,15 @@ if [ "$mariadb_server_install" = "y" ]; then
 
         # generate random password
         MYSQL_ROOT_PASS=$(date +%s | sha256sum | base64 | head -c 32)
-        export DEBIAN_FRONTEND=noninteractive # to avoid prompt during installation
-	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password password $MYSQL_ROOT_PASS"
-	sudo debconf-set-selections <<<"mariadb-server-$mariadb_version_install mysql-server/root_password_again password $MYSQL_ROOT_PASS"
-	# install mariadb server
-	DEBIAN_FRONTEND=noninteractive apt-get install -qq mariadb-server  # -qq implies -y --force-yes
+        export DEBIAN_FRONTEND=noninteractive                             # to avoid prompt during installation
+        sudo debconf-set-selections <<<"mariadb-server-${mariadb_version_install} mysql-server/root_password password ${MYSQL_ROOT_PASS}"
+        sudo debconf-set-selections <<<"mariadb-server-${mariadb_version_install} mysql-server/root_password_again password ${MYSQL_ROOT_PASS}"
+        # install mariadb server
+        DEBIAN_FRONTEND=noninteractive apt-get install -qq mariadb-server # -qq implies -y --force-yes
         # save credentials in .my.cnf and copy it in /etc/mysql/conf.d for easyengine
         sudo bash -c 'echo -e "[client]\nuser = root" > $HOME/.my.cnf'
         echo "password = $MYSQL_ROOT_PASS" >>$HOME/.my.cnf
-        cp $HOME/.my.cnf /etc/mysql/conf.d/my.cnf
+        cp -f $HOME/.my.cnf /etc/mysql/conf.d/my.cnf
 
         ## mysql_secure_installation non-interactive way
         mysql -e "GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION;"
@@ -372,7 +374,6 @@ if [ "$mariadb_server_install" = "y" ]; then
     # BUFFER_POOL_SIZE=$(( $AVAILABLE_MEMORY / 2000 ))
     # LOG_FILE_SIZE=$(( $AVAILABLE_MEMORY / 16000 ))
     # LOG_BUFFER_SIZE=$(( $AVAILABLE_MEMORY / 8000 ))
-
 
     # sudo sed -i "s/innodb_buffer_pool_size = 2G/innodb_buffer_pool_size = $BUFFER_POOL_SIZE\\M/" /etc/mysql/my.cnf
     # sudo sed -i "s/innodb_log_file_size    = 256M/innodb_log_file_size    = $LOG_FILE_SIZE\\M/" /etc/mysql/my.cnf
@@ -431,7 +432,6 @@ if [ ! -x /usr/local/bin/ee ]; then
 
 fi
 
-
 ##################################
 # EasyEngine stacks install
 ##################################
@@ -449,7 +449,6 @@ echo "##########################################"
 ee stack install
 # install php7, redis, easyengine backend & phpredisadmin
 ee stack install --php7 --redis --admin --phpredisadmin
-
 
 ##################################
 # Fix phpmyadmin install
@@ -480,17 +479,16 @@ usermod -s /bin/bash www-data
 
 if [ ! -f /etc/bash_completion.d/wp-completion.bash ]; then
     # download wp-cli bash-completion
-    wget -qO /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
+    sudo wget -qO /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
 fi
 if [ ! -f /var/www/.profile ] && [ ! -f /var/www/.bashrc ]; then
     # create .profile & .bashrc for www-data user
     cp -f $REPO_PATH/var/www/.profile /var/www/.profile
     cp -f $REPO_PATH/var/www/.bashrc /var/www/.bashrc
 
-
     # set www-data as owner
-    chown www-data:www-data /var/www/.profile
-    chown www-data:www-data /var/www/.bashrc
+    sudo chown www-data:www-data /var/www/.profile
+    sudo chown www-data:www-data /var/www/.bashrc
 fi
 
 # install nanorc for www-data
@@ -506,13 +504,12 @@ if [ "$phpfpm71_install" = "y" ]; then
     echo " Installing php7.1-fpm"
     echo "##########################################"
 
-    apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
-    php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl -y
+    sudo apt-get install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
+        php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl -y
 
     # copy php7.1 config files
     sudo cp -rf $REPO_PATH/etc/php/7.1/* /etc/php/7.1/
     sudo service php7.1-fpm restart
-
 
 fi
 
@@ -525,12 +522,12 @@ if [ "$phpfpm72_install" = "y" ]; then
     echo " Installing php7.2-fpm"
     echo "##########################################"
 
-    apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd \
-    php7.2-curl php7.2-soap php7.2-mbstring php7.2-xsl php7.2-bcmath -y
+    sudo apt-get install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd \
+        php7.2-curl php7.2-soap php7.2-mbstring php7.2-xsl php7.2-bcmath -y
 
     # copy php7.2 config files
-    cp -rf $REPO_PATH/etc/php/7.2/* /etc/php/7.2/
-    service php7.2-fpm restart
+    sudo cp -rf $REPO_PATH/etc/php/7.2/* /etc/php/7.2/
+    sudo service php7.2-fpm restart
 
 fi
 
@@ -541,14 +538,11 @@ echo "##########################################"
 echo " Configuring php7.0-fpm"
 echo "##########################################"
 
-
 if [ -d /etc/php/7.0 ]; then
 
     cp -rf $REPO_PATH/etc/php/7.0/* /etc/php/7.0/
 
 fi
-
-
 
 ##################################
 # Compile latest nginx release from source
@@ -589,14 +583,12 @@ chmod +x nginx-build.sh
 
 ./nginx-build.sh $NGINX_BUILD_VER $BUILD_PAGESPEED $BUILD_NAXSI $BUILD_RTMP
 
-
 ##################################
 # Add nginx additional conf
 ##################################
 echo "##########################################"
 echo " Configuring Nginx"
 echo "##########################################"
-
 
 # php7.1 & 7.2 common configurations
 
@@ -607,8 +599,6 @@ cp -rf $REPO_PATH/etc/nginx/common/* /etc/nginx/common/
 cp -rf $REPO_PATH/etc/nginx/conf.d/* /etc/nginx/conf.d/
 cp -f $REPO_PATH/etc/nginx/proxy_params /etc/nginx/proxy_params
 cp -f $REPO_PATH/etc/nginx/mime.types /etc/nginx/mime.types
-
-
 
 # optimized nginx.config
 cp -f $REPO_PATH/etc/nginx/nginx.conf /etc/nginx/nginx.conf
@@ -648,14 +638,12 @@ else
     echo "##########################################"
 fi
 
-
 ##################################
 # Add fail2ban configurations
 ##################################
 echo "##########################################"
 echo " Configuring Fail2Ban"
 echo "##########################################"
-
 
 cp -rf $REPO_PATH/etc/fail2ban/filter.d/* /etc/fail2ban/filter.d/
 cp -rf $REPO_PATH/etc/fail2ban/jail.d/* /etc/fail2ban/jail.d/
@@ -727,9 +715,9 @@ if [ "$proftpd_install" = "y" ]; then
 
     if [ -d /etc/ufw ]; then
         # ftp active port
-        ufw allow 21
+        sudo ufw allow 21
         # ftp passive ports
-        ufw allow 49000:50000/tcp
+        sudo ufw allow 49000:50000/tcp
     fi
 
 fi
@@ -746,7 +734,7 @@ if [ ! -d /etc/netdata ]; then
     ## install nedata
     wget -qO kickstart.sh https://my-netdata.io/kickstart.sh
     chmod +x kickstart.sh
-    ./kickstart.sh all --dont-wait >> /tmp/ubuntu-nginx-web-server.log 2>&1
+    ./kickstart.sh all --dont-wait >>/tmp/ubuntu-nginx-web-server.log 2>&1
 
     ## optimize netdata resources usage
     echo 1 >/sys/kernel/mm/ksm/run
@@ -783,14 +771,12 @@ git clone https://github.com/VirtuBox/easyengine-dashboard.git
 cp -rf /tmp/easyengine-dashboard/* /var/www/22222/htdocs/
 chown -R www-data:www-data /var/www/22222/htdocs
 
-
 ##################################
 # Install Acme.sh
 ##################################
 echo "##########################################"
 echo " Installing Acme.sh"
 echo "##########################################"
-
 
 # install acme.sh if needed
 echo ""
@@ -835,10 +821,10 @@ if [[ "$MY_IP" == "$MY_HOSTNAME_IP" ]]; then
     # install the cert and reload nginx
     if [ -f $HOME/.acme.sh/${MY_HOSTNAME}_ecc/fullchain.cer ]; then
         $HOME/.acme.sh/acme.sh --install-cert -d ${MY_HOSTNAME} --ecc \
-        --cert-file /etc/letsencrypt/live/${MY_HOSTNAME}/cert.pem \
-        --key-file /etc/letsencrypt/live/${MY_HOSTNAME}/key.pem \
-        --fullchain-file /etc/letsencrypt/live/${MY_HOSTNAME}/fullchain.pem \
-        --reloadcmd "systemctl reload nginx.service"
+            --cert-file /etc/letsencrypt/live/${MY_HOSTNAME}/cert.pem \
+            --key-file /etc/letsencrypt/live/${MY_HOSTNAME}/key.pem \
+            --fullchain-file /etc/letsencrypt/live/${MY_HOSTNAME}/fullchain.pem \
+            --reloadcmd "systemctl reload nginx.service"
     fi
 
     if [ -f /etc/letsencrypt/live/${MY_HOSTNAME}/fullchain.pem ] && [ -f /etc/letsencrypt/live/${MY_HOSTNAME}/key.pem ]; then
