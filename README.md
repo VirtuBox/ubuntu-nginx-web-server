@@ -1,7 +1,5 @@
 # Optimized configuration for Ubuntu server with EasyEngine
 
-**[View on GitHub](https://github.com/VirtuBox/ubuntu-nginx-web-server)**
-
 ## Server Stack
 
 - Ubuntu 16.04/18.04 LTS
