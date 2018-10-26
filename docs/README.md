@@ -14,6 +14,10 @@
 
 * * *
 
+**Ubuntu-Nginx-web-server is now available (in beta) as bash script to automate Optimized EasyEngine Setup. Checkout [EE-NGINX-SETUP](https://github.com/VirtuBox/ee-nginx-setup)**
+
+* * *
+
 Configuration files with comments available by following the link **source**
 
 ## Initial configuration
