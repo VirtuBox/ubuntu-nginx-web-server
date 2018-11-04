@@ -31,7 +31,7 @@ apt-get update && apt-get upgrade -y && apt-get autoremove --purge -y && apt-get
 ### Install useful packages
 
 ```bash
-sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze  -y
+sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnupg gnupg2 wget pigz tree ccze mycli -y
 ```
 
 ### Clone the repository
