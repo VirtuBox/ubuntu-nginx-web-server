@@ -226,12 +226,11 @@ Then you can check php version with command `php -v`
 
 ### Additional Nginx configuration (/etc/nginx/conf.d)
 
-- New upstreams (php7.1, php7.2, netdata) : upstream.conf
+- New upstreams (php7.1, php7.2, netdata and php socket) : upstream.conf
 - webp image mapping : webp.conf
 - new fastcgi_cache_bypass mapping for wordpress : map-wp-fastcgi-cache.conf
 - stub_status configuration on 127.0.0.1:80 : stub_status.conf
 - restore visitor real IP under Cloudflare : cloudflare.conf
-- mitigate WordPress DoS attack
 
 ```bash
 # copy all common nginx configurations
@@ -243,6 +242,10 @@ git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update conf.
 
 ### EE common configuration
 
+- mitigate WordPress DoS attack (wpcommon-phpX.conf)
+- webp image conditional rewrite (wpcommon-phpX.conf)
+- additional directives to prevent hack (locations-phpX.conf)
+
 ```bash
 cp -rf $HOME/ubuntu-nginx-web-server/etc/nginx/common/* /etc/nginx/common/
 
@@ -253,7 +256,7 @@ git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update commo
 ### Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)
 
 ```bash
-bash <(wget-qO - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
 ```
 
 * * *
@@ -375,7 +378,61 @@ sudo systemctl stop memcached
 sudo systemctl disable memcached.service
 ```
 
+* * *
+
 ## Optional
+
+### proftpd
+
+#### Install proftpd
+
+```bash
+apt-get install proftpd -y
+```
+
+secure proftpd and enable passive ports
+
+```bash
+sed -i 's/# DefaultRoot/DefaultRoot/' /etc/proftpd/proftpd.conf
+sed -i 's/# RequireValidShell/RequireValidShell/' /etc/proftpd/proftpd.conf
+sed -i 's/# PassivePorts                  49152 65534/PassivePorts                  49000 50000/' /etc/proftpd/proftpd.conf
+```
+
+restart proftpd
+
+```bash
+sudo service proftpd restart
+```
+
+Allow FTP ports with UFW
+
+```bash
+# ftp active port
+sudo ufw allow 21
+
+# ftp passive ports
+sudo ufw allow 49000:50000/tcp
+```
+
+Enable fail2ban proftpd jail
+
+```bash
+echo -e '\n[proftpd]\nenabled = true\n' >> /etc/fail2ban/jail.d/custom.conf
+
+fail2ban-client reload
+```
+
+#### Adding users
+
+```bash
+# create user without shell access in group www-data
+adduser --home /var/www/yourdomain.tld/ --shell /bin/false --ingroup www-data youruser
+
+# allow group read/write on website folder
+chmod -R g+rw /var/www/yourdomain.tld
+```
+
+* * *
 
 ### ee-acme-sh
 
@@ -393,6 +450,8 @@ chmod +x install-ee-acme.sh
 # enable acme.sh & ee-acme-sh
 source .bashrc
 ```
+
+* * *
 
 ### netdata
 
@@ -417,6 +476,8 @@ sudo systemctl restart netdata.service
 sudo sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /usr/lib/netdata/conf.d/health_alarm_notify.conf
 service netdata restart
 ```
+
+* * *
 
 ### cht.sh (cheat)
 
@@ -452,6 +513,8 @@ root@vps:~ cheat cat
   cat -n file
 ```
 
+* * *
+
 ### nanorc - Improved Nano Syntax Highlighting Files
 
 [Github repository](https://github.com/scopatz/nanorc)
@@ -459,6 +522,8 @@ root@vps:~ cheat cat
 ```bash
 wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -qO- | sh
 ```
+
+* * *
 
 ### Add WP-CLI & bash-completion for user www-data
 
