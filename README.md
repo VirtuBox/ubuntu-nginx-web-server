@@ -4,9 +4,9 @@
 
 - Ubuntu 16.04/18.04 LTS
 - Nginx 1.15.x / 1.14.x
-- PHP-FPM 7/7.1/7.2
+- PHP-FPM 7.x
 - MariaDB 10.3
-- REDIS 4.0
+- REDIS 5.0
 - Memcached
 - Fail2ban
 - Netdata
@@ -171,7 +171,7 @@ sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
 usermod -s /bin/bash www-data
 ```
 
-## PHP 7.1 & 7.2 Setup
+## PHP 7.1 - 7.2 - 7.3 Setup
 
 ### Install php7.1-fpm
 
@@ -202,6 +202,20 @@ git -C /etc/php/ add /etc/php/ && git -C /etc/php/ commit -m "add php7.2 configu
 
 ```
 
+### Install php7.3-fpm
+
+```bash
+# php7.3-fpm
+apt update && apt install php7.3-fpm php7.3-xml php7.3-bz2 php7.3-zip php7.3-mysql php7.3-intl php7.3-gd php7.3-curl php7.3-soap php7.3-mbstring php7.3-bcmath -y
+
+# copy php-fpm pools & php.ini configuration
+cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.3/fpm/* /etc/php/7.3/fpm/
+service php7.3-fpm restart
+
+git -C /etc/php/ add /etc/php/ && git -C /etc/php/ commit -m "add php7.3 configuration"
+
+```
+
 ### Set the proper alternative for /usr/bin/php
 
 If you want to choose which version of php to use with the command `php`, you can use the command `update-alternatives`
@@ -218,6 +232,9 @@ sudo update-alternatives --install /usr/bin/php php /usr/bin/php7.1 80
 
 # php7.2
 sudo update-alternatives --install /usr/bin/php php /usr/bin/php7.2 80
+
+# php7.3
+sudo update-alternatives --install /usr/bin/php php /usr/bin/php7.3 80
 ```
 
 Then you can check php version with command `php -v`
@@ -226,7 +243,7 @@ Then you can check php version with command `php -v`
 
 ### Additional Nginx configuration (/etc/nginx/conf.d)
 
-- New upstreams (php7.1, php7.2, netdata and php socket) : upstream.conf
+- New upstreams (php7.1, php7.2, php7.3 netdata and php socket) : upstream.conf
 - webp image mapping : webp.conf
 - new fastcgi_cache_bypass mapping for wordpress : map-wp-fastcgi-cache.conf
 - stub_status configuration on 127.0.0.1:80 : stub_status.conf

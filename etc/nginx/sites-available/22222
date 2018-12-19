@@ -45,7 +45,7 @@ server {
   location ~ \.php$ {
     try_files $uri =404;
     include fastcgi_params;
-    fastcgi_pass php7;
+    fastcgi_pass php72;
   }
 
   # ViMbAdmin Rules
