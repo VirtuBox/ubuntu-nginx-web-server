@@ -1,10 +1,10 @@
-# Optimized configuration for Ubuntu server with EasyEngine
+# Optimized configuration for Ubuntu server with WordOps
 
 ## Server Stack
 
 - Ubuntu 16.04/18.04 LTS
 - Nginx 1.15.x / 1.14.x
-- PHP-FPM 7.x
+- PHP-FPM 7.2/7.3
 - MariaDB 10.3
 - REDIS 5.0
 - Memcached
@@ -14,7 +14,13 @@
 
 * * *
 
-**Ubuntu-Nginx-web-server is now available (in beta) as bash script to automate Optimized EasyEngine Setup. Checkout [EE-NGINX-SETUP](https://github.com/VirtuBox/ee-nginx-setup)**
+### Info
+
+**As EasyEngine v3 will no longer receive any updates, configurations available in this repository are going to be updated for [WordOps](https://wordops.org/) (EEv3 fork).**
+
+All previous configurations are still available in the branch [easyengine-v3](https://github.com/VirtuBox/ubuntu-nginx-web-server/tree/easyengine-v3).
+
+We are already working on a bash script [wo-nginx-setup](https://github.com/VirtuBox/wo-nginx-setup) to handle the migration from EEv3 to WordOps with all custom configurations of this repository. We will update the README with all informations about the migration as soon as the script is ready.
 
 * * *
 
