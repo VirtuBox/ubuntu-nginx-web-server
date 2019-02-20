@@ -14,7 +14,7 @@
 
 * * *
 
-![](https://img.shields.io/github/license/virtubox/ubuntu-nginx-web-server.svg?style=flat) ![last-commit](https://img.shields.io/github/last-commit/virtubox/ubuntu-nginx-web-server.svg?style=flat)
+![](https://img.shields.io/github/license/virtubox/ubuntu-nginx-web-server.svg?style=flat) ![last-commit](https://img.shields.io/github/last-commit/virtubox/ubuntu-nginx-web-server.svg?style=flat) ![stars](https://img.shields.io/github/stars/VirtuBox/ubuntu-nginx-web-server.svg?style=flat)
 
 ### Info
 
@@ -22,7 +22,7 @@
 
 All previous configurations are still available in the branch [easyengine-v3](https://github.com/VirtuBox/ubuntu-nginx-web-server/tree/easyengine-v3).
 
-We are already working on a bash script [wo-nginx-setup](https://github.com/VirtuBox/wo-nginx-setup) to handle the migration from EEv3 to WordOps with all custom configurations of this repository. We will update the README with all informations about the migration as soon as the script is ready.
+To automate WordOps deployement, we have published a bash script [wo-nginx-setup](https://github.com/VirtuBox/wo-nginx-setup).
 
 * * *
 

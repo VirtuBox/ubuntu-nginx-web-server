@@ -14,13 +14,15 @@
 
 * * *
 
+![](https://img.shields.io/github/license/virtubox/ubuntu-nginx-web-server.svg?style=flat) ![last-commit](https://img.shields.io/github/last-commit/virtubox/ubuntu-nginx-web-server.svg?style=flat) ![stars](https://img.shields.io/github/stars/VirtuBox/ubuntu-nginx-web-server.svg?style=flat)
+
 ### Info
 
 **As EasyEngine v3 will no longer receive any updates, configurations available in this repository are going to be updated for [WordOps](https://wordops.org/) (EEv3 fork).**
 
 All previous configurations are still available in the branch [easyengine-v3](https://github.com/VirtuBox/ubuntu-nginx-web-server/tree/easyengine-v3).
 
-We are already working on a bash script [wo-nginx-setup](https://github.com/VirtuBox/wo-nginx-setup) to handle the migration from EEv3 to WordOps with all custom configurations of this repository. We will update the README with all informations about the migration as soon as the script is ready.
+To automate WordOps deployement, we have published a bash script [wo-nginx-setup](https://github.com/VirtuBox/wo-nginx-setup).
 
 * * *
 
@@ -58,11 +60,11 @@ Ubuntu 16.04 LTS do not support the new tcp congestion control algorithm bbr, we
 
 ```bash
 # On ubuntu 18.04 LTS
-modprobe tcp_bbr
+modprobe tcp_bbr && echo 'tcp_bbr' >> /etc/modules-load.d/bbr.conf
 echo -e '\nnet.ipv4.tcp_congestion_control = bbr\nnet.ipv4.tcp_notsent_lowat = 16384' >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
 
 # On ubuntu 16.04 LTS
-modprobe tcp_htcp
+modprobe tcp_bbr && echo 'tcp_htcp' >> /etc/modules-load.d/htcp.conf
 echo 'net.ipv4.tcp_congestion_control = htcp' >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
 ```
 
@@ -131,6 +133,20 @@ sudo systemctl daemon-reload
 sudo systemctl restart mariadb
 ```
 
+### Setup cronjob to optimize your MySQL databases and repair them if needed
+
+Open the crontab editor
+
+```bash
+sudo crontab -e
+```
+
+Then add the following cronjob
+
+```cronjob
+@weekly /usr/bin/mysqlcheck -Aos --auto-repair > /dev/null 2>&1
+```
+
 ## Install EasyEngine
 
 ```bash
@@ -188,6 +204,7 @@ php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmat
 
 # copy php-fpm pools & php.ini configuration
 cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.1/fpm/* /etc/php/7.1/fpm/
+cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.1/cli/* /etc/php/7.1/cli/
 service php7.1-fpm restart
 
 git -C /etc/php/ add /etc/php/ && git -C /etc/php/ commit -m "add php7.1 configuration"
@@ -202,6 +219,7 @@ apt update && apt install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mys
 
 # copy php-fpm pools & php.ini configuration
 cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.2/fpm/* /etc/php/7.2/fpm/
+cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.2/cli/* /etc/php/7.2/cli/
 service php7.2-fpm restart
 
 git -C /etc/php/ add /etc/php/ && git -C /etc/php/ commit -m "add php7.2 configuration"
@@ -216,6 +234,7 @@ apt update && apt install php7.3-fpm php7.3-xml php7.3-bz2 php7.3-zip php7.3-mys
 
 # copy php-fpm pools & php.ini configuration
 cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.3/fpm/* /etc/php/7.3/fpm/
+cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.3/cli/* /etc/php/7.3/cli/
 service php7.3-fpm restart
 
 git -C /etc/php/ add /etc/php/ && git -C /etc/php/ commit -m "add php7.3 configuration"
@@ -249,7 +268,7 @@ Then you can check php version with command `php -v`
 
 ### Additional Nginx configuration (/etc/nginx/conf.d)
 
-- New upstreams (php7.1, php7.2, php7.3 netdata and php socket) : upstream.conf
+- New upstreams (php7.1, php7.2, php7.3, netdata and php via unix socket) : upstream.conf
 - webp image mapping : webp.conf
 - new fastcgi_cache_bypass mapping for wordpress : map-wp-fastcgi-cache.conf
 - stub_status configuration on 127.0.0.1:80 : stub_status.conf
@@ -279,27 +298,17 @@ git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update commo
 ### Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)
 
 ```bash
-bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+bash <(wget -O - virtubox.net/nginx-ee || curl -sL virtubox.net/nginx-ee)
 ```
 
 * * *
 
 ## Custom configurations
 
-### clean php-fpm php.ini configuration
-
-```bash
-# PHP 7.0
-cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.0/* /etc/php/7.0/
-service php7.0-fpm restart
-
-git -C /etc/php/ add /etc/php/ && git -C /etc/php/ commit -m "add php7.2 configuration"
-```
-
 ### Nginx optimized configurations
 
 ```bash
-# TLSv1.2 TLSv1.3 only
+# TLSv1.2 TLSv1.3 only (recommended)
 cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3
@@ -394,7 +403,7 @@ echo '-U 0' >> /etc/memcached.conf
 sudo systemctl restart memcached
 ```
 
-If you do not use memcached, you can safely stop and disable it :
+If you do not use memcached, you can safely stop it and disable it :
 
 ```bash
 sudo systemctl stop memcached
@@ -445,7 +454,7 @@ echo -e '\n[proftpd]\nenabled = true\n' >> /etc/fail2ban/jail.d/custom.conf
 fail2ban-client reload
 ```
 
-#### Adding users
+#### Adding FTP users
 
 ```bash
 # create user without shell access in group www-data
@@ -482,11 +491,12 @@ source .bashrc
 
 ```bash
 
-bash <(curl -Ss https://my-netdata.io/kickstart.sh) all
-
 # save 40-60% of netdata memory
 echo 1 >/sys/kernel/mm/ksm/run
 echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
+
+# install netdata
+bash <(curl -Ss https://my-netdata.io/kickstart.sh) all --dont-wait
 
 # increase open files limits for netdata
 sudo mkdir -p /etc/systemd/system/netdata.service.d
@@ -558,8 +568,7 @@ wget -qO /etc/bash_completion.d/wp-completion.bash https://raw.githubusercontent
 chown www-data:www-data /var/www
 
 # download .profile & .bashrc for www-data
-cp -f $HOME/ubuntu-nginx-web-server/var/www/.profile /var/www/.profile
-cp -f $HOME/ubuntu-nginx-web-server/var/www/.bashrc /var/www/.bashrc
+cp -f $HOME/ubuntu-nginx-web-server/var/www/.* /var/www/
 
 # set owner
 chown www-data:www-data /var/www/{.profile,.bashrc}
