@@ -23,7 +23,7 @@ server {
   include common/acl.conf;
 
   location / {
-    try_files $uri $uri/ /index.php?$args;
+  try_files $uri $uri/ /index.php$is_args$args;
   }
 
   # nginx-vts-status
@@ -48,24 +48,7 @@ server {
     fastcgi_pass php72;
   }
 
-  # ViMbAdmin Rules
-  location = /vimbadmin/ {
-    return 301 $scheme://$host:22222/vimbadmin/public/;
-  }
-
-
-
-  location ~* /vimbadmin/public/(.*)/(.*) {
-    root /var/www/22222/htdocs/vimbadmin/public;
-    try_files $uri $uri/  /vimbadmin/public/index.php?$args;
-  }
-
-  location ~* /vimbadmin/public/(.*) {
-    root /var/www/22222/htdocs/vimbadmin/public;
-    try_files $uri $uri/  /vimbadmin/public/index.php?$args;
-  }
-
-   location /netdata {
+  location /netdata {
         return 301 /netdata/;
    }
 
