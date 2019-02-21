@@ -1,4 +1,4 @@
-# Optimized configuration for Ubuntu server with EasyEngine
+# Optimized configuration for Ubuntu server with EasyEngine v3
 
 ## Server Stack
 
@@ -11,10 +11,6 @@
 - Fail2ban
 - Netdata
 - UFW
-
-* * *
-
-**Ubuntu-Nginx-web-server is now available (in beta) as bash script to automate Optimized EasyEngine Setup. Checkout [EE-NGINX-SETUP](https://github.com/VirtuBox/ee-nginx-setup)**
 
 * * *
 
@@ -42,7 +38,7 @@ git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git $HOME/ubuntu-n
 
 ### Tweak Kernel & Increase open files limits
 
-[source sysctl.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf) - [limits.conf source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf)
+[source sysctl.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/easyengine-v3/etc/sysctl.d/60-ubuntu-nginx-web-server.conf) - [limits.conf source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/easyengine-v3/etc/security/limits.conf)
 
 ```bash
 cp $HOME/ubuntu-nginx-web-server/etc/sysctl.d/60-ubuntu-nginx-web-server.conf /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
@@ -99,7 +95,7 @@ mysql_secure_installation
 
 ### MySQL Tuning
 
-You can download my example of my.cnf, optimized for VPS with 4GB RAM. [my.cnf source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/mysql/my.cnf)
+You can download my example of my.cnf, optimized for VPS with 4GB RAM. [my.cnf source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/easyengine-v3/etc/mysql/my.cnf)
 
 ```bash
 cp -f $HOME/ubuntu-nginx-web-server/etc/mysql/my.cnf /etc/mysql/my.cnf
@@ -332,7 +328,7 @@ sudo systemctl restart nginx.service
 
 ### Harden SSH Security
 
-WARNING : SSH Configuration with root login allowed using SSH keys only  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
+WARNING : SSH Configuration with root login allowed using SSH keys only  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/easyengine-v3/etc/ssh/sshd_config)
 
     cp -f $HOME/ubuntu-nginx-web-server/etc/ssh/sshd_config /etc/ssh/sshd_config
 
