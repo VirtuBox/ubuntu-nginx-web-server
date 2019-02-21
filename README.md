@@ -64,7 +64,7 @@ modprobe tcp_bbr && echo 'tcp_bbr' >> /etc/modules-load.d/bbr.conf
 echo -e '\nnet.ipv4.tcp_congestion_control = bbr\nnet.ipv4.tcp_notsent_lowat = 16384' >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
 
 # On ubuntu 16.04 LTS
-modprobe tcp_bbr && echo 'tcp_htcp' >> /etc/modules-load.d/htcp.conf
+modprobe tcp_htcp && echo 'tcp_htcp' >> /etc/modules-load.d/htcp.conf
 echo 'net.ipv4.tcp_congestion_control = htcp' >> /etc/sysctl.d/60-ubuntu-nginx-web-server.conf
 ```
 
