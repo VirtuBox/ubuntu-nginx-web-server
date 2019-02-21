@@ -37,7 +37,7 @@ sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnu
 ### Clone the repository
 
 ```bash
-git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git $HOME/ubuntu-nginx-web-server
+git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git $HOME/ubuntu-nginx-web-server -b easyengine-v3
 ```
 
 ### Tweak Kernel & Increase open files limits
@@ -273,7 +273,7 @@ git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update commo
 ### Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)
 
 ```bash
-bash <(wget -O - https://raw.githubusercontent.com/VirtuBox/nginx-ee/master/nginx-build.sh)
+bash <(wget -O - virtubox.net/nginx-ee || curl -sL virtubox.net/nginx-ee)
 ```
 
 * * *
