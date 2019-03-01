@@ -147,26 +147,25 @@ Then add the following cronjob
 @weekly /usr/bin/mysqlcheck -Aos --auto-repair > /dev/null 2>&1
 ```
 
-## Install EasyEngine
+## Install WordOps
 
 ```bash
 # noninteractive install - you can replace $USER with your username & root@$HOSTNAME by your email
 sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = root@$HOSTNAME" > $HOME/.gitconfig'
 
-wget -qO ee rt.cx/ee && bash ee
+wget -qO wo https://raw.githubusercontent.com/WordOps/WordOps/master/install && sudo bash wo
 ```
 
-### enable ee bash_completion
+### enable wo bash_completion
 
 ```bash
-source /etc/bash_completion.d/ee_auto.rc
+source /etc/bash_completion.d/wo_auto.rc
 ```
 
-### Install Nginx, php5.6, php7.0, postfix, redis and configure EE backend
+### Install Nginx, php7.2, and configure WO backend
 
 ```bash
-ee stack install
-ee stack install --php7 --redis --admin --phpredisadmin
+wo stack install
 ```
 
 ### Set your email instead of root@localhost
@@ -282,7 +281,7 @@ cp -rf $HOME/ubuntu-nginx-web-server/etc/nginx/conf.d/* /etc/nginx/conf.d/
 git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update conf.d configurations"
 ```
 
-### EE common configuration
+### WO common configuration
 
 - mitigate WordPress DoS attack (wpcommon-phpX.conf)
 - webp image conditional rewrite (wpcommon-phpX.conf)
@@ -305,7 +304,7 @@ bash <(wget -O - virtubox.net/nginx-ee || curl -sL virtubox.net/nginx-ee)
 
 ## Custom configurations
 
-### Nginx optimized configurations
+### Nginx optimized configurations (choose one of them)
 
 ```bash
 # TLSv1.2 TLSv1.3 only (recommended)
