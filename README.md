@@ -1,4 +1,4 @@
-# Optimized configuration for Ubuntu server with WordOps
+# Optimized configuration for WordOps running on Ubuntu server
 
 ## Server Stack
 
@@ -12,19 +12,82 @@
 - Netdata
 - UFW
 
-* * *
+--------------------------------------------------------------------------------
 
 ![](https://img.shields.io/github/license/virtubox/ubuntu-nginx-web-server.svg?style=flat) ![last-commit](https://img.shields.io/github/last-commit/virtubox/ubuntu-nginx-web-server.svg?style=flat) ![stars](https://img.shields.io/github/stars/VirtuBox/ubuntu-nginx-web-server.svg?style=flat)
 
 ### Info
 
-**As EasyEngine v3 will no longer receive any updates, configurations available in this repository are going to be updated for [WordOps](https://wordops.org/) (EEv3 fork).**
+**As EasyEngine v3 will no longer receive any updates, configurations available in this repository are being updated for [WordOps](https://wordops.org/) (EEv3 fork).**
+
+We are currently contributing to WordOps project to include the most part of custom configurations available in this repository
 
 All previous configurations are still available in the branch [easyengine-v3](https://github.com/VirtuBox/ubuntu-nginx-web-server/tree/easyengine-v3).
 
-To automate WordOps deployement, we have published a bash script [wo-nginx-setup](https://github.com/VirtuBox/wo-nginx-setup).
+--------------------------------------------------------------------------------
 
-* * *
+- [Initial configuration](#initial-configuration)
+
+  - [System update and packages cleanup](#system-update-and-packages-cleanup)
+  - [Install useful packages](#install-useful-packages)
+  - [Clone the repository](#clone-the-repository)
+  - [Updating the repository](#updating-the-repository)
+  - [Tweak Kernel & Increase open files limits](#tweak-kernel--increase-open-files-limits)
+  - [disable transparent hugepage for redis](#disable-transparent-hugepage-for-redis)
+
+- [WordOps Setup](#wordops-setup)
+
+  - [Install MariaDB 10.3](#install-mariadb-103)
+  - [MySQL Tuning](#mysql-tuning)
+  - [Increase MariaDB open files limits](#increase-mariadb-open-files-limits)
+  - [Setup cronjob to optimize your MySQL databases and repair them if needed](#setup-cronjob-to-optimize-your-mysql-databases-and-repair-them-if-needed)
+
+- [Install WordOps](#install-wordops)
+
+  - [enable wo bash_completion](#enable-wo-bash_completion)
+  - [Install Nginx, php7.2, and configure WO backend](#install-nginx-php72-and-configure-wo-backend)
+  - [Set your email instead of root@localhost](#set-your-email-instead-of-rootlocalhost)
+  - [Install Composer - Fix phpmyadmin install issue](#install-composer---fix-phpmyadmin-install-issue)
+  - [Allow shell for www-data for SFTP usage](#allow-shell-for-www-data-for-sftp-usage)
+  - [Set the proper alternative for /usr/bin/php](#set-the-proper-alternative-for-usrbinphp)
+
+- [NGINX Configuration](#nginx-configuration)
+
+  - [Additional Nginx configuration (/etc/nginx/conf.d)](#additional-nginx-configuration-etcnginxconfd)
+  - [WO common configuration](#wo-common-configuration)
+  - [Compile last Nginx mainline release with nginx-ee](#compile-last-nginx-mainline-release-with-nginx-ee-scripthttpsgithubcomvirtuboxnginx-ee)
+  - [Custom configurations](#custom-configurations)
+  - [Nginx optimized configurations](#nginx-optimized-configurations-choose-one-of-them)
+  - [Increase Nginx open files limits](#increase-nginx-open-files-limits)
+
+- [Security](#security)
+
+  - [Harden SSH Security](#harden-ssh-security)
+  - [UFW](#ufw)
+  - [Custom jails for fail2ban](#custom-jails-for-fail2ban)
+  - [Secure Memcached server](#secure-memcached-server)
+
+- [Optional](#optional)
+
+  - [proftpd](#proftpd)
+
+    - [Install proftpd](#install-proftpd)
+    - [Adding FTP users](#adding-ftp-users)
+
+  - [ee-acme-sh](#ee-acme-sh)
+
+  - [netdata](#netdata)
+  - [cht.sh (cheat)](#chtsh-cheat)
+  - [nanorc - Improved Nano Syntax Highlighting Files](#nanorc---improved-nano-syntax-highlighting-files)
+  - [Add WP-CLI & bash-completion for user www-data](#add-wp-cli--bash-completion-for-user-www-data)
+
+- [Cleanup previous EasyEngine v3](#cleanup-previous-easyengine-v3)
+
+  - [Backup EEv3 configurations and files](#backup-eev3-configurations-and-files)
+  - [Remove EEv3 configurations and data](#remove-eev3-configurations-and-data)
+  - [Removing previous php versions](#removing-previous-php-versions)
+
+--------------------------------------------------------------------------------
 
 Configuration files with comments available by following the link **source**
 
@@ -33,7 +96,7 @@ Configuration files with comments available by following the link **source**
 ### System update and packages cleanup
 
 ```bash
-apt-get update && apt-get upgrade -y && apt-get autoremove --purge -y && apt-get clean
+apt-get update && apt-get dist-upgrade -y && apt-get autoremove --purge -y && apt-get clean
 ```
 
 ### Install useful packages
@@ -46,6 +109,12 @@ sudo apt-get install haveged curl git unzip zip fail2ban htop nload nmon ntp gnu
 
 ```bash
 git clone https://github.com/VirtuBox/ubuntu-nginx-web-server.git $HOME/ubuntu-nginx-web-server
+```
+
+### Updating the repository
+
+```bash
+git -C $HOME/ubuntu-nginx-web-server pull origin master
 ```
 
 ### Tweak Kernel & Increase open files limits
@@ -86,11 +155,13 @@ sudo bash -c 'echo -e "*         hard    nofile      500000\n*         soft    n
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 ```
 
-* * *
+--------------------------------------------------------------------------------
 
-## EasyEngine Setup
+## WordOps Setup
 
 ### Install MariaDB 10.3
+
+**WordOps already install MariaDB 10.3 by default, so this section isn't needed anymore**
 
 Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/)
 
@@ -153,7 +224,7 @@ Then add the following cronjob
 # noninteractive install - you can replace $USER with your username & root@$HOSTNAME by your email
 sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = root@$HOSTNAME" > $HOME/.gitconfig'
 
-wget -qO wo https://raw.githubusercontent.com/WordOps/WordOps/master/install && sudo bash wo
+wget -qO wo wordops.se/tup && sudo bash wo
 ```
 
 ### enable wo bash_completion
@@ -162,10 +233,11 @@ wget -qO wo https://raw.githubusercontent.com/WordOps/WordOps/master/install && 
 source /etc/bash_completion.d/wo_auto.rc
 ```
 
-### Install Nginx, php7.2, and configure WO backend
+### Install Nginx, php7.2, php7.3, and configure WO backend
 
 ```bash
 wo stack install
+wo stack install --php73 --admin
 ```
 
 ### Set your email instead of root@localhost
@@ -192,53 +264,9 @@ sudo -u www-data -H composer update -d /var/www/22222/htdocs/db/pma/
 usermod -s /bin/bash www-data
 ```
 
-## PHP 7.1 - 7.2 - 7.3 Setup
+## Install PHP
 
-### Install php7.1-fpm
-
-```bash
-# php7.1-fpm
-apt update && apt install php7.1-fpm php7.1-cli php7.1-zip php7.1-opcache php7.1-mysql php7.1-mcrypt php7.1-mbstring php7.1-json php7.1-intl \
-php7.1-gd php7.1-curl php7.1-bz2 php7.1-xml php7.1-tidy php7.1-soap php7.1-bcmath -y php7.1-xsl
-
-# copy php-fpm pools & php.ini configuration
-cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.1/fpm/* /etc/php/7.1/fpm/
-cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.1/cli/* /etc/php/7.1/cli/
-service php7.1-fpm restart
-
-git -C /etc/php/ add /etc/php/ && git -C /etc/php/ commit -m "add php7.1 configuration"
-
-```
-
-### Install php7.2-fpm
-
-```bash
-# php7.2-fpm
-apt update && apt install php7.2-fpm php7.2-xml php7.2-bz2 php7.2-zip php7.2-mysql php7.2-intl php7.2-gd php7.2-curl php7.2-soap php7.2-mbstring php7.2-bcmath -y
-
-# copy php-fpm pools & php.ini configuration
-cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.2/fpm/* /etc/php/7.2/fpm/
-cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.2/cli/* /etc/php/7.2/cli/
-service php7.2-fpm restart
-
-git -C /etc/php/ add /etc/php/ && git -C /etc/php/ commit -m "add php7.2 configuration"
-
-```
-
-### Install php7.3-fpm
-
-```bash
-# php7.3-fpm
-apt update && apt install php7.3-fpm php7.3-xml php7.3-bz2 php7.3-zip php7.3-mysql php7.3-intl php7.3-gd php7.3-curl php7.3-soap php7.3-mbstring php7.3-bcmath -y
-
-# copy php-fpm pools & php.ini configuration
-cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.3/fpm/* /etc/php/7.3/fpm/
-cp -rf $HOME/ubuntu-nginx-web-server/etc/php/7.3/cli/* /etc/php/7.3/cli/
-service php7.3-fpm restart
-
-git -C /etc/php/ add /etc/php/ && git -C /etc/php/ commit -m "add php7.3 configuration"
-
-```
+This section has been removed because WordOps already install PHP 7.2 & PHP 7.3 by default
 
 ### Set the proper alternative for /usr/bin/php
 
@@ -267,9 +295,6 @@ Then you can check php version with command `php -v`
 
 ### Additional Nginx configuration (/etc/nginx/conf.d)
 
-- New upstreams (php7.1, php7.2, php7.3, netdata and php via unix socket) : upstream.conf
-- webp image mapping : webp.conf
-- new fastcgi_cache_bypass mapping for wordpress : map-wp-fastcgi-cache.conf
 - stub_status configuration on 127.0.0.1:80 : stub_status.conf
 - restore visitor real IP under Cloudflare : cloudflare.conf
 
@@ -283,8 +308,6 @@ git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update conf.
 
 ### WO common configuration
 
-- mitigate WordPress DoS attack (wpcommon-phpX.conf)
-- webp image conditional rewrite (wpcommon-phpX.conf)
 - additional directives to prevent hack (locations-phpX.conf)
 
 ```bash
@@ -294,17 +317,19 @@ cp -rf $HOME/ubuntu-nginx-web-server/etc/nginx/common/* /etc/nginx/common/
 git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update common configurations"
 ```
 
-### Compile last Nginx mainline release with [nginx-ee script](https://github.com/VirtuBox/nginx-ee)
+### Compile the latest Nginx release with [nginx-ee](https://github.com/VirtuBox/nginx-ee)
 
 ```bash
 bash <(wget -O - virtubox.net/nginx-ee || curl -sL virtubox.net/nginx-ee)
 ```
 
-* * *
+--------------------------------------------------------------------------------
 
 ## Custom configurations
 
-### Nginx optimized configurations (choose one of them)
+### Nginx optimized configurations
+
+Choose one of them
 
 ```bash
 # TLSv1.2 TLSv1.3 only (recommended)
@@ -315,7 +340,9 @@ cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-interm
 
 # TLSv1.2 only
 cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-tlsv12.conf
+```
 
+```bash
 # commit change with git
 git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update nginx.conf configurations"
 ```
@@ -340,15 +367,17 @@ sudo systemctl daemon-reload
 sudo systemctl restart nginx.service
 ```
 
-* * *
+--------------------------------------------------------------------------------
 
 ## Security
 
 ### Harden SSH Security
 
-WARNING : SSH Configuration with root login allowed using SSH keys only  [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
+WARNING : SSH Configuration with root login allowed using SSH keys only [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
 
-    cp -f $HOME/ubuntu-nginx-web-server/etc/ssh/sshd_config /etc/ssh/sshd_config
+```
+cp -f $HOME/ubuntu-nginx-web-server/etc/ssh/sshd_config /etc/ssh/sshd_config
+```
 
 ### UFW
 
@@ -409,7 +438,7 @@ sudo systemctl stop memcached
 sudo systemctl disable memcached.service
 ```
 
-* * *
+--------------------------------------------------------------------------------
 
 ## Optional
 
@@ -463,7 +492,7 @@ adduser --home /var/www/yourdomain.tld/ --shell /bin/false --ingroup www-data yo
 chmod -R g+rw /var/www/yourdomain.tld
 ```
 
-* * *
+--------------------------------------------------------------------------------
 
 ### ee-acme-sh
 
@@ -482,14 +511,13 @@ chmod +x install-ee-acme.sh
 source .bashrc
 ```
 
-* * *
+--------------------------------------------------------------------------------
 
 ### netdata
 
 [Github repository](https://github.com/firehol/netdata)
 
 ```bash
-
 # save 40-60% of netdata memory
 echo 1 >/sys/kernel/mm/ksm/run
 echo 1000 >/sys/kernel/mm/ksm/sleep_millisecs
@@ -509,7 +537,7 @@ sudo sed -i 's/SEND_EMAIL="YES"/SEND_EMAIL="NO"/' /usr/lib/netdata/conf.d/health
 service netdata restart
 ```
 
-* * *
+--------------------------------------------------------------------------------
 
 ### cht.sh (cheat)
 
@@ -545,7 +573,7 @@ root@vps:~ cheat cat
   cat -n file
 ```
 
-* * *
+--------------------------------------------------------------------------------
 
 ### nanorc - Improved Nano Syntax Highlighting Files
 
@@ -555,7 +583,7 @@ root@vps:~ cheat cat
 wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -qO- | sh
 ```
 
-* * *
+--------------------------------------------------------------------------------
 
 ### Add WP-CLI & bash-completion for user www-data
 
@@ -573,21 +601,32 @@ cp -f $HOME/ubuntu-nginx-web-server/var/www/.* /var/www/
 chown www-data:www-data /var/www/{.profile,.bashrc}
 ```
 
-### Custom Nginx error pages
+## Cleanup previous EasyEngine v3
 
-[Github Repository](https://github.com/alexphelps/server-error-pages)
-
-Installation
+### Backup EEv3 configurations and files
 
 ```bash
-# clone the github repository
-sudo -u www-data -H git clone https://github.com/alexphelps/server-error-pages.git /var/www/error
+tar -I pigz -cvf $HOME/ee-backup.tar.gz /etc/ee /var/lib/ee /usr/lib/ee/templates
 ```
 
-Then include this configuration in your nginx vhost by adding the following line
+### Remove EEv3 configurations and data
 
 ```bash
-include common/error_pages.conf;
+# main ee directories
+rm -rf /etc/ee /var/lib/ee /usr/lib/ee /usr/local/bin/ee /etc/bash_completion.d/ee_auto.rc
+
+# python package
+rm -rf /usr/local/lib/python3.6/dist-packages/ee-3.*
+```
+
+### Removing previous php versions
+
+```bash
+# php5.6
+apt-get -y autoremove php5.6-fpm php5.6-common --purge
+
+# php7.0
+apt-get -y autoremove php7.0-fpm php7.0-common --purge
 ```
 
 Published & maintained by [VirtuBox](https://virtubox.net)

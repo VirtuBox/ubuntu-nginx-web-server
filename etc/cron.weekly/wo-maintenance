@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# update wp-cli
+[ -x /usr/bin/wp ] && {
+    /usr/bin/wp cli update --yes --allow-root
+} > /dev/null 2>&1
+
+# optimize mysql databases
+if [ -x /usr/bin/mysqlcheck ] && [ -f /root/.my.cnf ]; then
+    /usr/bin/mysqlcheck -Aos --auto-repair > /dev/null 2>&1
+fi
+
