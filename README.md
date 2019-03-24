@@ -603,21 +603,7 @@ chown www-data:www-data /var/www/{.profile,.bashrc}
 
 ## Cleanup previous EasyEngine v3
 
-### Backup EEv3 configurations and files
-
-```bash
-tar -I pigz -cvf $HOME/ee-backup.tar.gz /etc/ee /var/lib/ee /usr/lib/ee/templates
-```
-
-### Remove EEv3 configurations and data
-
-```bash
-# main ee directories
-rm -rf /etc/ee /var/lib/ee /usr/lib/ee /usr/local/bin/ee /etc/bash_completion.d/ee_auto.rc
-
-# python package
-rm -rf /usr/local/lib/python3.6/dist-packages/ee-3.*
-```
+EasyEngine migration to WordOps is now handled by the install script. The only step to finish the migration is to remove previous php versions if you don't need them anymore.
 
 ### Removing previous php versions
 
