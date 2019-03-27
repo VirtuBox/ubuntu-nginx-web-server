@@ -54,7 +54,6 @@ All previous configurations are still available in the branch [easyengine-v3](ht
 - [NGINX Configuration](#nginx-configuration)
 
   - [Additional Nginx configuration (/etc/nginx/conf.d)](#additional-nginx-configuration-etcnginxconfd)
-  - [WO common configuration](#wo-common-configuration)
   - [Compile last Nginx mainline release with nginx-ee](#compile-last-nginx-mainline-release-with-nginx-ee-scripthttpsgithubcomvirtuboxnginx-ee)
   - [Custom configurations](#custom-configurations)
   - [Nginx optimized configurations](#nginx-optimized-configurations-choose-one-of-them)
@@ -83,9 +82,6 @@ All previous configurations are still available in the branch [easyengine-v3](ht
   - [Add WP-CLI & bash-completion for user www-data](#add-wp-cli--bash-completion-for-user-www-data)
 
 - [Cleanup previous EasyEngine v3](#cleanup-previous-easyengine-v3)
-
-  - [Backup EEv3 configurations and files](#backup-eev3-configurations-and-files)
-  - [Remove EEv3 configurations and data](#remove-eev3-configurations-and-data)
   - [Removing previous php versions](#removing-previous-php-versions)
 
 --------------------------------------------------------------------------------
@@ -162,7 +158,7 @@ echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
 ### Install MariaDB 10.3
 
-**WordOps already install MariaDB 10.3 by default, so this section isn't needed anymore**
+<span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
 
 Instructions available in [VirtuBox Knowledgebase](https://kb.virtubox.net/knowledgebase/install-latest-mariadb-release-easyengine/)
 
@@ -296,6 +292,8 @@ Then you can check php version with command `php -v`
 
 ### Additional Nginx configuration (/etc/nginx/conf.d)
 
+<span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
+
 - stub_status configuration on 127.0.0.1:80 : stub_status.conf
 - restore visitor real IP under Cloudflare : cloudflare.conf
 
@@ -305,17 +303,6 @@ cp -rf $HOME/ubuntu-nginx-web-server/etc/nginx/conf.d/* /etc/nginx/conf.d/
 
 # commit change with git
 git -C /etc/nginx init && git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update conf.d configurations"
-```
-
-### WO common configuration
-
-- additional directives to prevent hack (locations-phpX.conf)
-
-```bash
-cp -rf $HOME/ubuntu-nginx-web-server/etc/nginx/common/* /etc/nginx/common/
-
-# commit change with git
-git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update common configurations"
 ```
 
 ### Compile the latest Nginx release with [nginx-ee](https://github.com/VirtuBox/nginx-ee)
@@ -349,6 +336,9 @@ git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update nginx.conf conf
 ```
 
 ### Nginx configuration for netdata
+
+<span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
+
 
 ```bash
 # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
@@ -497,6 +487,9 @@ chmod -R g+rw /var/www/yourdomain.tld
 
 ### ee-acme-sh
 
+<span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
+
+
 [Github repository](https://virtubox.github.io/ee-acme-sh/) - Script to setup letsencrypt certificates using acme.sh on EasyEngine servers
 
 - subdomain support
@@ -587,6 +580,9 @@ wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -qO- | s
 --------------------------------------------------------------------------------
 
 ### Add WP-CLI & bash-completion for user www-data
+
+<span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
+
 
 ```bashrc
 # download wp-cli bash_completion
