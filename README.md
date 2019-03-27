@@ -303,7 +303,7 @@ Then you can check php version with command `php -v`
 cp -rf $HOME/ubuntu-nginx-web-server/etc/nginx/conf.d/* /etc/nginx/conf.d/
 
 # commit change with git
-git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update conf.d configurations"
+git -C /etc/nginx init && git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update conf.d configurations"
 ```
 
 ### WO common configuration
@@ -314,7 +314,7 @@ git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update conf.
 cp -rf $HOME/ubuntu-nginx-web-server/etc/nginx/common/* /etc/nginx/common/
 
 # commit change with git
-git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update common configurations"
+git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update common configurations"
 ```
 
 ### Compile the latest Nginx release with [nginx-ee](https://github.com/VirtuBox/nginx-ee)
@@ -344,7 +344,7 @@ cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-tlsv12
 
 ```bash
 # commit change with git
-git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update nginx.conf configurations"
+git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update nginx.conf configurations"
 ```
 
 ### Nginx configuration for netdata
@@ -354,7 +354,7 @@ git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update nginx
 cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
 
 # commit change with git
-git -C /etc/nginx/ add /etc/nginx/ && git -C /etc/nginx/ commit -m "update 22222 configuration"
+git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update 22222 configuration"
 ```
 
 #### Increase Nginx open files limits
@@ -375,7 +375,7 @@ sudo systemctl restart nginx.service
 
 WARNING : SSH Configuration with root login allowed using SSH keys only [source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/ssh/sshd_config)
 
-```
+```bash
 cp -f $HOME/ubuntu-nginx-web-server/etc/ssh/sshd_config /etc/ssh/sshd_config
 ```
 
