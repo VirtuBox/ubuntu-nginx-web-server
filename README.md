@@ -304,7 +304,8 @@ Then you can check php version with command `php -v`
 cp -rf $HOME/ubuntu-nginx-web-server/etc/nginx/conf.d/* /etc/nginx/conf.d/
 
 # commit change with git
-git -C /etc/nginx init && git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update conf.d configurations"
+[ ! -d /etc/nginx/.git ] && { git -C /etc/nginx init; } git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update conf.d configurations"
+
 ```
 
 ### Compile the latest Nginx release with [nginx-ee](https://github.com/VirtuBox/nginx-ee)
@@ -325,16 +326,13 @@ Choose one of them
 # TLSv1.2 TLSv1.3 only (recommended)
 cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
-# TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3
-cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-intermediate.conf
-
 # TLSv1.2 only
 cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-tlsv12.conf
 ```
 
 ```bash
 # commit change with git
-git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update nginx.conf configurations"
+[ ! -d /etc/nginx/.git ] && { git -C /etc/nginx init; } git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update nginx.conf"
 ```
 
 ### Nginx configuration for netdata
@@ -346,7 +344,7 @@ git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update nginx.conf conf
 cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
 
 # commit change with git
-git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update 22222 configuration"
+[ ! -d /etc/nginx/.git ] && { git -C /etc/nginx init; } git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update 22222 configuration"
 ```
 
 #### Increase Nginx open files limits

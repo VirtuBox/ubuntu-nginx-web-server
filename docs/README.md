@@ -78,10 +78,13 @@ All previous configurations are still available in the branch [easyengine-v3](ht
   - [netdata](#netdata)
 
   - [cht.sh (cheat)](#chtsh-cheat)
+
   - [nanorc - Improved Nano Syntax Highlighting Files](#nanorc---improved-nano-syntax-highlighting-files)
+
   - [Add WP-CLI & bash-completion for user www-data](#add-wp-cli--bash-completion-for-user-www-data)
 
 - [Cleanup previous EasyEngine v3](#cleanup-previous-easyengine-v3)
+
   - [Removing previous php versions](#removing-previous-php-versions)
 
 --------------------------------------------------------------------------------
@@ -302,7 +305,7 @@ Then you can check php version with command `php -v`
 cp -rf $HOME/ubuntu-nginx-web-server/etc/nginx/conf.d/* /etc/nginx/conf.d/
 
 # commit change with git
-git -C /etc/nginx init && git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update conf.d configurations"
+[ ! -d /etc/nginx/.git ] && { git -C /etc/nginx init; } git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update conf.d configurations"
 ```
 
 ### Compile the latest Nginx release with [nginx-ee](https://github.com/VirtuBox/nginx-ee)
@@ -323,29 +326,25 @@ Choose one of them
 # TLSv1.2 TLSv1.3 only (recommended)
 cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
-# TLS intermediate - TLS v1.0 v1.1 v1.2 v1.3
-cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-intermediate.conf
-
 # TLSv1.2 only
 cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/nginx.conf /etc/nginx/nginx-tlsv12.conf
 ```
 
 ```bash
 # commit change with git
-git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update nginx.conf configurations"
+[ ! -d /etc/nginx/.git ] && { git -C /etc/nginx init; } git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update nginx.conf"
 ```
 
 ### Nginx configuration for netdata
 
 <span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
 
-
 ```bash
 # add nginx reverse-proxy for netdata on https://yourserver.hostname:22222/netdata/
 cp -f $HOME/ubuntu-nginx-web-server/etc/nginx/sites-available/22222 /etc/nginx/sites-available/22222
 
 # commit change with git
-git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update 22222 configuration"
+[ ! -d /etc/nginx/.git ] && { git -C /etc/nginx init; } git -C /etc/nginx/ add . && git -C /etc/nginx/ commit -m "update 22222 configuration"
 ```
 
 #### Increase Nginx open files limits
@@ -489,7 +488,6 @@ chmod -R g+rw /var/www/yourdomain.tld
 
 <span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
 
-
 [Github repository](https://virtubox.github.io/ee-acme-sh/) - Script to setup letsencrypt certificates using acme.sh on EasyEngine servers
 
 - subdomain support
@@ -582,7 +580,6 @@ wget https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh -qO- | s
 ### Add WP-CLI & bash-completion for user www-data
 
 <span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
-
 
 ```bashrc
 # download wp-cli bash_completion
