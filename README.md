@@ -3,7 +3,7 @@
 ## Server Stack
 
 - Ubuntu 16.04/18.04 LTS
-- Nginx 1.15.x / 1.14.x
+- Nginx 1.17.x / 1.16.x
 - PHP-FPM 7.2/7.3
 - MariaDB 10.3
 - REDIS 5.0
@@ -20,7 +20,7 @@
 
 **As EasyEngine v3 will no longer receive any updates, configurations available in this repository are being updated for [WordOps](https://wordops.org/) (EEv3 fork).**
 
-We are currently contributing to WordOps project to include the most part of custom configurations available in this repository
+We are currently contributing to WordOps project and several parts of this repository are already included in WordOps.
 
 All previous configurations are still available in the branch [easyengine-v3](https://github.com/VirtuBox/ubuntu-nginx-web-server/tree/easyengine-v3).
 
@@ -117,6 +117,8 @@ git -C $HOME/ubuntu-nginx-web-server pull origin master
 ```
 
 ### Tweak Kernel & Increase open files limits
+
+<span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
 
 [source sysctl.conf](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/sysctl.conf) - [limits.conf source](https://github.com/VirtuBox/ubuntu-nginx-web-server/blob/master/etc/security/limits.conf)
 
@@ -223,7 +225,7 @@ Then add the following cronjob
 # noninteractive install - you can replace $USER with your username & root@$HOSTNAME by your email
 sudo bash -c 'echo -e "[user]\n\tname = $USER\n\temail = root@$HOSTNAME" > $HOME/.gitconfig'
 
-wget -qO wo wordops.se/tup && sudo bash wo
+wget -qO wo wops.cc && sudo bash wo
 ```
 
 ### enable wo bash_completion
@@ -236,7 +238,7 @@ source /etc/bash_completion.d/wo_auto.rc
 
 ```bash
 wo stack install
-wo stack install --php73 --admin
+wo stack install --php73
 ```
 
 ### Set your email instead of root@localhost
@@ -247,6 +249,8 @@ newaliases
 ```
 
 ### Install Composer - Fix phpmyadmin install issue
+
+<span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
 
 ```bash
 cd ~/ ||exit
@@ -507,6 +511,8 @@ source .bashrc
 
 ### netdata
 
+<span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
+
 [Github repository](https://github.com/firehol/netdata)
 
 ```bash
@@ -596,6 +602,8 @@ chown www-data:www-data /var/www/{.profile,.bashrc}
 ```
 
 ## Cleanup previous EasyEngine v3
+
+<span style="color: red">Included by default in WordOps - this may not be needed anymore</span>
 
 EasyEngine migration to WordOps is now handled by the install script. The only step to finish the migration is to remove previous php versions if you don't need them anymore.
 
