@@ -18,7 +18,7 @@
 
 ### Info
 
-**As EasyEngine v3 will no longer receive any updates, configurations available in this repository are being updated for [WordOps](https://wordops.org/) (EEv3 fork).**
+**As EasyEngine v3 will no longer receive any updates, configurations available in this repository are being updated for [WordOps](https://wordops.net/) (EEv3 fork).**
 
 We are currently contributing to WordOps project and several parts of this repository are already included in WordOps.
 
